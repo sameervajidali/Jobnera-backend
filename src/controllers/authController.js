@@ -75,6 +75,48 @@ export const activateAccount = asyncHandler(async (req, res) => {
 });
 
 // ─── Local Login ──────────────────────────────────────────────────────────────
+// export const login = asyncHandler(async (req, res) => {
+//   const { email, password } = req.body;
+//   if (!email || !password) {
+//     return res.status(400).json({ message: 'Email and password are required.' });
+//   }
+
+//   const user = await User.findOne({ email }).select('+password');
+//   if (!user) {
+//     return res.status(401).json({ message: 'Invalid credentials.' });
+//   }
+
+//   const isMatch = await bcrypt.compare(password, user.password);
+//   if (!isMatch) {
+//     return res.status(401).json({ message: 'Invalid credentials.' });
+//   }
+
+//   // Issue tokens
+//   const accessToken = createAccessToken({ userId: user._id, role: user.role });
+//   const refreshToken = createRefreshToken({ userId: user._id });
+//   user.password = undefined;
+
+//   res
+//     .cookie('accessToken', accessToken, {
+//       ...cookieOptions,
+//       maxAge: 15 * 60 * 1000,   // 15 minutes
+//     })
+//     .cookie('refreshToken', refreshToken, {
+//       ...cookieOptions,
+//       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+//     })
+//     .status(200)
+//     .json({
+//       message: 'Login successful',
+//       user: {
+//         id: user._id,
+//         name: user.name,
+//         email: user.email,
+//         role: user.role,
+//       },
+//     });
+// });
+
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -84,6 +126,11 @@ export const login = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email }).select('+password');
   if (!user) {
     return res.status(401).json({ message: 'Invalid credentials.' });
+  }
+
+  // Check if user is verified
+  if (!user.isVerified) {
+    return res.status(403).json({ message: 'Please verify your email before logging in.' });
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
@@ -391,17 +438,17 @@ export const changePassword = asyncHandler(async (req, res) => {
   const user = await User.findById(userId).select("+password");
   if (!user) return res.status(404).json({ message: "User not found." });
 
-  // If password is not set (social login user), allow setting a new one
-  if (!user.password) {
-    user.password = newPassword;
-    await user.save();
-    return res.status(200).json({ message: "Password set successfully." });
-  }
-
-  // For normal users, verify current password
-  const isMatch = await bcrypt.compare(currentPassword, user.password);
-  if (!isMatch) {
-    return res.status(401).json({ message: "Incorrect current password." });
+  // If user has password set (i.e., not a social login user setting it for the first time)
+  if (user.password) {
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) return res.status(401).json({ message: "Incorrect current password." });
+  } else {
+    // If password doesn't exist, allow setting it directly — useful for social login users
+    if (currentPassword) {
+      return res.status(400).json({
+        message: "You don't have a current password. Just set a new one.",
+      });
+    }
   }
 
   user.password = newPassword;
