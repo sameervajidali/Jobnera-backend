@@ -135,7 +135,6 @@ import { protect, requireRole } from './middlewares/authMiddleware.js';
 import authRoutes from './routes/authRoutes.js';
 import resumeRoutes from './routes/resumeRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
-import testRoutes from './routes/test.js'; // Test route for checking API status
 
 // ========== APP INITIALIZATION ==========
 const app = express();
