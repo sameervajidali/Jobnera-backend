@@ -26,7 +26,7 @@ const createRefreshToken = (payload) =>
 const cookieOptions = {
   httpOnly: true,
   secure: true,        // must be true for SameSite=None to work in modern browsers
-  sameSite: isProduction ? 'None' : 'Lax',   // allow cross-site
+  sameSite:'None',   // allow cross-site
   path: '/',           // ensure cookie is sent on all routes
 };
 
