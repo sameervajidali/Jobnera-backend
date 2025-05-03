@@ -135,6 +135,7 @@ import { protect, requireRole } from './middlewares/authMiddleware.js';
 import authRoutes from './routes/authRoutes.js';
 import resumeRoutes from './routes/resumeRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import testRoutes from './routes/test.js'; // Test route for checking API status
 
 // ========== APP INITIALIZATION ==========
 const app = express();
@@ -147,6 +148,18 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(morgan('dev'));
+const testRoutes = require('./routes/test');
+app.use('/api/test', testRoutes);
+
+
+app.get('/api/test', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Backend is working fine!',
+    time: new Date().toISOString()
+  });
+});
+
 
 // ========== MIDDLEWARE: SESSION & PASSPORT ==========
 app.use(session({
