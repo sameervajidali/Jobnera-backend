@@ -365,33 +365,22 @@ export const deleteAccount = asyncHandler(async (req, res) => {
   res.status(200).json({ message: 'Account deleted.' });
 });
 
-// Get current user after authentication
-// controllers/authController.js
-// export const getCurrentUser = async (req, res) => {
-//   try {
-//     console.log("🔍 getCurrentUser triggered");
-//     console.log("👉 req.user:", req.user);
-
-//     if (!req.user || !req.user.userId) {
-//       return res.status(401).json({ message: "User not authenticated" });
-//     }
-
-//     const user = await User.findById(req.user.userId).select("-password");
-//     if (!user) return res.status(404).json({ message: "User not found" });
-
-//     res.status(200).json(user);
-//   } catch (err) {
-//     console.error("❌ getCurrentUser error:", err);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
 
 
 export const getCurrentUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user.userId).select('-password');
-  if (!user) return res.status(404).json({ message: 'User not found.' });
+  const user = await User.findById(req.user.userId).select("+password");
 
-  res.status(200).json({ user });
+  if (!user) return res.status(404).json({ message: "User not found." });
+
+  res.status(200).json({
+    user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar,
+      hasPassword: !!user.password, // <- Important addition
+    },
+  });
 });
 
 
@@ -402,8 +391,18 @@ export const changePassword = asyncHandler(async (req, res) => {
   const user = await User.findById(userId).select("+password");
   if (!user) return res.status(404).json({ message: "User not found." });
 
+  // If password is not set (social login user), allow setting a new one
+  if (!user.password) {
+    user.password = newPassword;
+    await user.save();
+    return res.status(200).json({ message: "Password set successfully." });
+  }
+
+  // For normal users, verify current password
   const isMatch = await bcrypt.compare(currentPassword, user.password);
-  if (!isMatch) return res.status(401).json({ message: "Incorrect current password." });
+  if (!isMatch) {
+    return res.status(401).json({ message: "Incorrect current password." });
+  }
 
   user.password = newPassword;
   await user.save();
