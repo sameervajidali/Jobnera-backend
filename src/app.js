@@ -148,8 +148,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(morgan('dev'));
-const testRoutes = require('./routes/test');
-app.use('/api/test', testRoutes);
+
 
 
 app.get('/api/test', (req, res) => {
