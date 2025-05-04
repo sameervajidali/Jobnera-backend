@@ -89,14 +89,15 @@ const userSchema = new Schema({
   role: {
     type: String,
     enum: [
-      'user',
-      'moderator',
-      'creator',
-      'support',
-      'admin',
-      'superadmin',
+      'USER',
+      'MODERATOR',
+      'CREATOR',
+      'SUPPORT',
+      'ADMIN',
+      'SUPERADMIN',
     ],
-    default: 'user',
+    default: 'USER',
+    uppercase: true, // 🔐 ensures value is stored as uppercase
   },
 
   // Brute-force protection
