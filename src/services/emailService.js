@@ -181,3 +181,53 @@ export async function sendPasswordChangedEmail(to, name) {
     html,
   });
 }
+
+
+export async function sendActivationSuccessEmail(to, name) {
+  const html = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f4f6f8; padding: 40px;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06);">
+        <tr>
+          <td style="padding: 30px; background: linear-gradient(90deg, #4a00e0, #8e2de2); color: white;">
+            <h2 style="margin: 0; font-size: 22px;">🎉 Welcome to JobNeura</h2>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 30px;">
+            <p style="font-size: 16px; color: #333;">Hi <strong>${name}</strong>,</p>
+            <p style="font-size: 16px; color: #333;">
+              Your account has been successfully activated. You’re all set to explore the future of smart career growth with <strong>JobNeura</strong>.
+            </p>
+            <p style="font-size: 16px; color: #333;">Here’s what you can do next:</p>
+            <ul style="font-size: 16px; color: #333; padding-left: 20px; margin-bottom: 24px;">
+              <li>🚀 Build your AI-enhanced resume</li>
+              <li>🧠 Test your skills with smart quizzes</li>
+              <li>🎯 Match with ideal jobs automatically</li>
+            </ul>
+            <div style="text-align: center; margin-top: 30px;">
+              <a href="${process.env.CLIENT_URL}/dashboard" style="background-color: #4a00e0; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                Go to Dashboard
+              </a>
+            </div>
+            <p style="font-size: 14px; color: #888; margin-top: 30px;">
+              Welcome aboard, and let’s build your future together 🚀
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 20px; text-align: center; background: #f0f0f5; font-size: 12px; color: #999;">
+            <p style="margin: 0;">Need help? Contact <a href="mailto:support@jobneura.tech" style="color: #4a00e0;">support@jobneura.tech</a></p>
+            <p style="margin: 5px 0 0;">© ${new Date().getFullYear()} JobNeura.tech. All rights reserved.</p>
+          </td>
+        </tr>
+      </table>
+    </div>
+  `;
+
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to,
+    subject: "🎉 Your JobNeura Account is Activated!",
+    html,
+  });
+}

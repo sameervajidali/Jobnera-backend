@@ -10,6 +10,7 @@ import {
   sendActivationEmail,
   sendPasswordChangedEmail,
   sendResetPasswordEmail,
+  sendActivationSuccessEmail
 } from '../services/emailService.js';
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -72,51 +73,13 @@ export const activateAccount = asyncHandler(async (req, res) => {
   user.activationToken = undefined;
   await user.save();
 
+   // ✉️ Send confirmation email
+   await sendActivationSuccessEmail(user.email, user.name);
+
   res.status(200).json({ message: 'Account activated successfully.' });
 });
 
-// ─── Local Login ──────────────────────────────────────────────────────────────
-// export const login = asyncHandler(async (req, res) => {
-//   const { email, password } = req.body;
-//   if (!email || !password) {
-//     return res.status(400).json({ message: 'Email and password are required.' });
-//   }
 
-//   const user = await User.findOne({ email }).select('+password');
-//   if (!user) {
-//     return res.status(401).json({ message: 'Invalid credentials.' });
-//   }
-
-//   const isMatch = await bcrypt.compare(password, user.password);
-//   if (!isMatch) {
-//     return res.status(401).json({ message: 'Invalid credentials.' });
-//   }
-
-//   // Issue tokens
-//   const accessToken = createAccessToken({ userId: user._id, role: user.role });
-//   const refreshToken = createRefreshToken({ userId: user._id });
-//   user.password = undefined;
-
-//   res
-//     .cookie('accessToken', accessToken, {
-//       ...cookieOptions,
-//       maxAge: 15 * 60 * 1000,   // 15 minutes
-//     })
-//     .cookie('refreshToken', refreshToken, {
-//       ...cookieOptions,
-//       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-//     })
-//     .status(200)
-//     .json({
-//       message: 'Login successful',
-//       user: {
-//         id: user._id,
-//         name: user.name,
-//         email: user.email,
-//         role: user.role,
-//       },
-//     });
-// });
 
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -361,34 +324,51 @@ export const logout = (req, res) => {
 // ─────────────────────────────────────────────────────────────────────────────
 export const requestPasswordReset = asyncHandler(async (req, res) => {
   const { email } = req.body;
-  const user = await User.findOne({ email });
-  if (!user) return res.status(404).json({ message: 'User not found.' });
 
-  const token = crypto.randomBytes(32).toString('hex');
+  const user = await User.findOne({ email });
+  if (!user) {
+    // Silent to avoid user enumeration
+    return res.status(200).json({ message: "If this email exists, a reset link has been sent." });
+  }
+
+  const token = crypto.randomBytes(32).toString("hex");
   user.resetToken = token;
-  user.resetTokenExpiry = Date.now() + 3600_000; // 1h
+  user.resetTokenExpiry = Date.now() + 60 * 60 * 1000; // 1 hour expiry
   await user.save();
 
-  const link = `${CLIENT_URL}/reset-password?token=${token}`;
-  await sendResetPasswordEmail(email, user.name, link);
-  res.status(200).json({ message: 'Password reset link sent.' });
+  const resetLink = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
+  await sendResetPasswordEmail(user.email, user.name, resetLink);
+
+  res.status(200).json({ message: "If this email exists, a reset link has been sent." });
 });
 
+
+
 export const resetPassword = asyncHandler(async (req, res) => {
-  const { token, newPassword } = req.body;
+  const { token, password } = req.body;
+
+  if (!token || !password) {
+    return res.status(400).json({ message: "Token and password are required." });
+  }
+
   const user = await User.findOne({
     resetToken: token,
     resetTokenExpiry: { $gt: Date.now() },
   });
-  if (!user) return res.status(400).json({ message: 'Invalid or expired token.' });
 
-  user.password = await bcrypt.hash(newPassword, 12);
+  if (!user) {
+    return res.status(400).json({ message: "Invalid or expired token." });
+  }
+
+  user.password = await bcrypt.hash(password, 12);
   user.resetToken = undefined;
   user.resetTokenExpiry = undefined;
   await user.save();
+  await sendPasswordChangedEmail(user.email, user.name);
 
-  res.status(200).json({ message: 'Password updated successfully.' });
+  res.status(200).json({ message: "✅ Password updated successfully. Please log in." });
 });
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Profile CRUD
