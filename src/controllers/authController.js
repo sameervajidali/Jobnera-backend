@@ -347,10 +347,12 @@ export const requestPasswordReset = asyncHandler(async (req, res) => {
 
 
 export const resetPassword = asyncHandler(async (req, res) => {
-  const { token, password } = req.body;
+  console.log("📥 Reset request body:", req.body);
 
+  const { token, password } = req.body;
   if (!token || !password) {
-    return res.status(400).json({ message: "Token and password are required." });
+    console.log("❌ Missing token or password");
+    return res.status(400).json({ message: "Token and password required." });
   }
 
   const user = await User.findOne({
@@ -359,6 +361,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
   });
 
   if (!user) {
+    console.log("❌ Invalid or expired token");
     return res.status(400).json({ message: "Invalid or expired token." });
   }
 
@@ -366,10 +369,12 @@ export const resetPassword = asyncHandler(async (req, res) => {
   user.resetToken = undefined;
   user.resetTokenExpiry = undefined;
   await user.save();
-  await sendPasswordChangedEmail(user.email, user.name);
 
-  res.status(200).json({ message: "✅ Password updated successfully. Please log in." });
+  console.log("✅ Password reset successful for:", user.email);
+
+  res.status(200).json({ message: "Password updated successfully." });
 });
+
 
 
 // ─────────────────────────────────────────────────────────────────────────────
