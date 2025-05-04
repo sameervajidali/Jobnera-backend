@@ -278,6 +278,8 @@ export const githubAuth = asyncHandler(async (req, res) => {
 // ─── Token Refresh ─────────────────────────────────────────────────────────────
 export const refreshToken = asyncHandler(async (req, res) => {
   const token = req.cookies.refreshToken;
+  console.log("🔄 Refresh endpoint hit, token:", req.cookies.refreshToken);
+
   if (!token) {
     return res.status(401).json({ message: 'No refresh token.' });
   }
@@ -402,22 +404,28 @@ export const deleteAccount = asyncHandler(async (req, res) => {
 
 
 
-export const getCurrentUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user.userId).select("+password");
+// export const getCurrentUser = asyncHandler(async (req, res) => {
+//   const user = await User.findById(req.user.userId).select("+password");
 
-  if (!user) return res.status(404).json({ message: "User not found." });
-  console.log("🔐 /auth/me →", user.role);
+//   if (!user) return res.status(404).json({ message: "User not found." });
+//   console.log("🔐 /auth/me →", user.role);
 
-  res.status(200).json({
-    user: {
-      _id: user._id,
-      name: user.name,      
-      email: user.email,      
-      avatar: user.avatar,
-      hasPassword: !!user.password, // <- Important addition
-    },
-  });
-});
+//   res.status(200).json({
+//     user: {
+//       _id: user._id,
+//       name: user.name,      
+//       email: user.email,      
+//       avatar: user.avatar,
+//       hasPassword: !!user.password, // <- Important addition
+//     },
+//   });
+// });
+export const getCurrentUser = async (req, res) => {
+  console.log("🧁 Cookies:", req.cookies); // <- Log all cookies
+
+  const user = await User.findById(req.user.userId).select('-password');
+  res.status(200).json({ user });
+};
 
 
 export const changePassword = asyncHandler(async (req, res) => {
