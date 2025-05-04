@@ -137,18 +137,47 @@ export async function sendUserCredentialsEmail(to, name, plainPassword) {
 
 export async function sendPasswordChangedEmail(to, name) {
   const html = `
-    <div style="font-family:sans-serif; background:#f9f9f9; padding:30px;">
-      <h2 style="color:#4a00e0;">Hi ${name},</h2>
-      <p>Your password was recently changed on JobNeura.tech.</p>
-      <p>If this wasn’t you, please reset your password immediately or contact support.</p>
-      <p style="margin-top:20px; font-size:12px; color:#888;">This is a security alert.</p>
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f4f6f8; padding: 40px;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.06);">
+        <tr>
+          <td style="padding: 30px; background: linear-gradient(90deg, #4a00e0, #8e2de2); color: white;">
+            <h2 style="margin: 0; font-size: 24px;">🔒 Security Alert</h2>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 30px;">
+            <p style="font-size: 16px; color: #333;">Hi <strong>${name}</strong>,</p>
+            <p style="font-size: 16px; color: #333;">
+              We wanted to let you know that your password was recently changed on <strong>JobNeura</strong>.
+            </p>
+            <p style="font-size: 16px; color: #333;">
+              If you made this change, no further action is needed.
+            </p>
+            <p style="font-size: 16px; color: #d9534f;">
+              If you did <strong>not</strong> make this change, please reset your password immediately or contact our support team.
+            </p>
+            <div style="margin: 30px 0; text-align: center;">
+              <a href="${process.env.CLIENT_URL}/forgot-password" style="background-color: #4a00e0; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                Reset Your Password
+              </a>
+            </div>
+            <p style="font-size: 14px; color: #888;">This alert was sent for your protection.</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 20px; text-align: center; background: #f0f0f5; font-size: 12px; color: #999;">
+            <p style="margin: 0;">Need help? Contact <a href="mailto:support@jobneura.tech" style="color: #4a00e0;">support@jobneura.tech</a></p>
+            <p style="margin: 5px 0 0;">© ${new Date().getFullYear()} JobNeura.tech. All rights reserved.</p>
+          </td>
+        </tr>
+      </table>
     </div>
   `;
 
   await transporter.sendMail({
     from: process.env.EMAIL_FROM,
     to,
-    subject: 'Your JobNeura password was changed',
+    subject: '🔒 Your JobNeura password was changed',
     html,
   });
 }
