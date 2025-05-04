@@ -406,11 +406,12 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.userId).select("+password");
 
   if (!user) return res.status(404).json({ message: "User not found." });
+  console.log("🔐 /auth/me →", user.role);
 
   res.status(200).json({
     user: {
       _id: user._id,
-      name: user.name,
+      name: user.name,      
       email: user.email,      
       avatar: user.avatar,
       hasPassword: !!user.password, // <- Important addition
