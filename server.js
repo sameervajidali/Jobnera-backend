@@ -3,7 +3,9 @@ import app from './src/app.js';
 import connectDB from './src/config/db.js';
 
 // Load env variables
-dotenv.config();
+dotenv.config({ path: './.env' });
+console.log("✅ TEST ENV:", process.env.EMAIL_USER);
+
 
 // Connect Database
 connectDB();

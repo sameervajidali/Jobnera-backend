@@ -12,7 +12,7 @@ import {
 } from '../services/emailService.js';
 const isProduction = process.env.NODE_ENV === 'production';
 
-const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+const CLIENT_URL = process.env.CLIENT_URL || 'https://jobneura.tech';
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
