@@ -1,32 +1,19 @@
-
+// models/Quiz.js
 import mongoose from 'mongoose';
 
-const quizSchema = new mongoose.Schema(
-  {
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    description: {
-      type: String,
-    },
-    questions: [
-      {
-        questionText: { type: String, required: true },
-        options: [{ type: String, required: true }],
-        correctAnswer: { type: String, required: true },
-      }
-    ],
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User', // Admin who created it
-    },
+const quizSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  category: { type: String, required: true }, // e.g. Programming
+  topic: { type: String, required: true }, // e.g. JavaScript
+  level: {
+    type: String,
+    enum: ['Beginner', 'Intermediate', 'Expert'],
+    required: true,
   },
-  {
-    timestamps: true,
-  }
-);
+  questions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Question' }],
+  duration: { type: Number, required: true }, // in minutes
+  totalMarks: { type: Number, required: true },
+  isActive: { type: Boolean, default: true },
+}, { timestamps: true });
 
-const Quiz = mongoose.model('Quiz', quizSchema);
-export default Quiz;
+export default mongoose.model('Quiz', quizSchema);

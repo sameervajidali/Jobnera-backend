@@ -1,32 +1,23 @@
+// models/QuizAttempt.js
 import mongoose from 'mongoose';
 
-const quizAttemptSchema = new mongoose.Schema(
-  {
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    quizId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Quiz',
-      required: true,
-    },
-    answers: [
-      {
-        questionId: { type: mongoose.Schema.Types.ObjectId, required: true },
-        selectedAnswer: { type: String, required: true },
-      }
-    ],
-    score: {
-      type: Number,
-      required: true,
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
+const quizAttemptSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  quiz: { type: mongoose.Schema.Types.ObjectId, ref: 'Quiz', required: true },
+  score: { type: Number, required: true },
+  totalQuestions: { type: Number, required: true },
+  correctAnswers: { type: Number, required: true },
+  answers: [
+    {
+      question: { type: mongoose.Schema.Types.ObjectId, ref: 'Question' },
+      selectedIndex: Number,
+      isCorrect: Boolean
+    }
+  ],
+  timeTaken: { type: Number }, // seconds
+  submittedAt: { type: Date, default: Date.now },
+  rankSnapshot: { type: Number },
+  weakTopics: [String]
+}, { timestamps: true });
 
-const QuizAttempt = mongoose.model('QuizAttempt', quizAttemptSchema);
-export default QuizAttempt;
+export default mongoose.model('QuizAttempt', quizAttemptSchema);
