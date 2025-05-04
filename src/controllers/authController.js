@@ -323,8 +323,10 @@ export const logout = (req, res) => {
 // Password Reset
 // ─────────────────────────────────────────────────────────────────────────────
 export const requestPasswordReset = asyncHandler(async (req, res) => {
-  const { email } = req.body;
+  console.log("📨 Password reset route HIT");
 
+  const { email } = req.body;
+  console.log("👉 Email received:", email);
   const user = await User.findOne({ email });
   if (!user) {
     // Silent to avoid user enumeration
