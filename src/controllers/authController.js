@@ -123,7 +123,7 @@ export const login = asyncHandler(async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role.toUpperCase(),
+        role: user.role,
       },
     });
 });
@@ -411,8 +411,7 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
     user: {
       _id: user._id,
       name: user.name,
-      email: user.email,
-      role: user.role.toUpperCase(), // ✅ force consistent casing
+      email: user.email,      
       avatar: user.avatar,
       hasPassword: !!user.password, // <- Important addition
     },
