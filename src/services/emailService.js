@@ -123,10 +123,32 @@ export async function sendUserCredentialsEmail(to, name, plainPassword) {
     </div>
   `;
 
+
+  
+
   await transporter.sendMail({
     from: process.env.EMAIL_FROM,
     to,
     subject: 'Your JobNeura.Tech Account Details',
+    html,
+  });
+}
+
+
+export async function sendPasswordChangedEmail(to, name) {
+  const html = `
+    <div style="font-family:sans-serif; background:#f9f9f9; padding:30px;">
+      <h2 style="color:#4a00e0;">Hi ${name},</h2>
+      <p>Your password was recently changed on JobNeura.tech.</p>
+      <p>If this wasn’t you, please reset your password immediately or contact support.</p>
+      <p style="margin-top:20px; font-size:12px; color:#888;">This is a security alert.</p>
+    </div>
+  `;
+
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to,
+    subject: 'Your JobNeura password was changed',
     html,
   });
 }

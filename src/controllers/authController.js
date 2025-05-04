@@ -8,6 +8,7 @@ import asyncHandler from '../utils/asyncHandler.js';
 import User from '../models/User.js';
 import {
   sendActivationEmail,
+  sendPasswordChangedEmail,
   sendResetPasswordEmail,
 } from '../services/emailService.js';
 const isProduction = process.env.NODE_ENV === 'production';
@@ -432,27 +433,37 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
 
 
 export const changePassword = asyncHandler(async (req, res) => {
-  const userId = req.user.userId;
   const { currentPassword, newPassword } = req.body;
 
-  const user = await User.findById(userId).select("+password");
-  if (!user) return res.status(404).json({ message: "User not found." });
+  // 🔒 Validate input
+  if (!newPassword || newPassword.length < 6) {
+    return res.status(400).json({
+      message: 'New password must be at least 6 characters long.',
+    });
+  }
 
-  // If user has password set (i.e., not a social login user setting it for the first time)
+  const user = await User.findById(req.user._id).select('+password');
+  if (!user) {
+    return res.status(404).json({ message: 'User not found.' });
+  }
+
+  // 🔐 For regular users with existing password
   if (user.password) {
     const isMatch = await bcrypt.compare(currentPassword, user.password);
-    if (!isMatch) return res.status(401).json({ message: "Incorrect current password." });
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Incorrect current password.' });
+    }
   } else {
-    // If password doesn't exist, allow setting it directly — useful for social login users
+    // 👥 For social login users without password
     if (currentPassword) {
       return res.status(400).json({
-        message: "You don't have a current password. Just set a new one.",
+        message: "You don't have an existing password. Leave 'Current Password' empty to set one.",
       });
     }
   }
 
   user.password = newPassword;
   await user.save();
-
-  res.status(200).json({ message: "Password updated successfully." });
+  await sendPasswordChangedEmail(user.email, user.name);
+  res.status(200).json({ message: 'Password updated successfully.' });
 });
