@@ -18,5 +18,6 @@ export const passwordResetRequestSchema = Joi.object({
 
 export const passwordResetSchema = Joi.object({
   token: Joi.string().required(),
-  newPassword: Joi.string().min(8).required(),
+  password: Joi.string().min(8).required(), // ✅ Match frontend
 });
+
