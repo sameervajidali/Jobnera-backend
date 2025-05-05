@@ -568,3 +568,271 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
   if (!user) return res.status(404).json({ message: 'User not found' });
   res.status(200).json(user);
 });
+
+
+// ─── Change Password ────────────────────────────────────────────────────────
+export const changePassword = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  // 🔒 Validate input
+  if (!newPassword || newPassword.length < 6) {
+    return res.status(400).json({
+      message: 'New password must be at least 6 characters long.',
+    });
+  }
+
+  const user = await User.findById(req.user._id).select('+password');
+  if (!user) {
+    return res.status(404).json({ message: 'User not found.' });
+  }
+
+  // 🔐 For regular users with existing password
+  if (user.password) {
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Incorrect current password.' });
+    }
+  } else {
+    // 👥 For social login users without password
+    if (currentPassword) {
+      return res.status(400).json({
+        message: "You don't have an existing password. Leave 'Current Password' empty to set one.",
+      });
+    }
+  }
+
+  user.password = newPassword;
+  await user.save();
+  await sendPasswordChangedEmail(user.email, user.name);
+  res.status(200).json({ message: 'Password updated successfully.' });
+});
+
+
+export const deleteAccount = asyncHandler(async (req, res) => {
+  await User.findByIdAndDelete(req.user.userId);
+  res.status(200).json({ message: 'Account deleted.' });
+});
+
+
+
+
+// ─── Google Social Login/Signup ───────────────────────────────────────────────
+export const googleAuth = asyncHandler(async (req, res) => {
+  const { idToken } = req.body;
+  const ticket = await googleClient.verifyIdToken({
+    idToken,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+  const { email, name, picture, email_verified } = ticket.getPayload();
+  if (!email_verified) {
+    return res.status(400).json({ message: 'Google email not verified.' });
+  }
+
+  let user = await User.findOne({ email });
+  if (!user) {
+    user = await User.create({
+      name,
+      email,
+      avatar: picture,
+      isVerified: true,
+      provider: 'google',
+    });
+  }
+
+  const accessToken = createAccessToken({ userId: user._id, role: user.role });
+  const refreshToken = createRefreshToken({ userId: user._id });
+
+  res
+    .cookie('accessToken', accessToken, {
+      ...cookieOptions,
+      maxAge: 15 * 60 * 1000,
+    })
+    .cookie('refreshToken', refreshToken, {
+      ...cookieOptions,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    })
+    .status(200)
+    .json({ message: 'Google authentication successful', user });
+});
+
+// ─── Facebook Social Login/Signup ─────────────────────────────────────────────
+export const facebookAuth = asyncHandler(async (req, res) => {
+  const { accessToken: fbToken } = req.body;
+  const fbRes = await fetch(
+    `https://graph.facebook.com/me?fields=id,name,email,picture&access_token=${fbToken}`
+  );
+  const data = await fbRes.json();
+  if (data.error) throw new Error('Facebook auth failed');
+
+  const { email, name, picture } = data;
+  let user = await User.findOne({ email });
+  if (!user) {
+    user = await User.create({
+      name,
+      email,
+      avatar: picture.data.url,
+      isVerified: true,
+      provider: 'facebook',
+    });
+  }
+
+  const accessToken = createAccessToken({ userId: user._id, role: user.role });
+  const refreshToken = createRefreshToken({ userId: user._id });
+
+  res
+    .cookie('accessToken', accessToken, {
+      ...cookieOptions,
+      maxAge: 15 * 60 * 1000,
+    })
+    .cookie('refreshToken', refreshToken, {
+      ...cookieOptions,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    })
+    .status(200)
+    .json({ message: 'Facebook authentication successful', user });
+});
+
+
+// ─── GitHub Social Login/Signup ───────────────────────────────────────────────
+export const githubAuth = asyncHandler(async (req, res) => {
+  const { code } = req.body;
+  if (!code) return res.status(400).json({ message: 'Authorization code missing' });
+
+  try {
+    // Exchange code for access token
+    const tokenRes = await axios.post(
+      `https://github.com/login/oauth/access_token`,
+      {
+        client_id: process.env.GITHUB_CLIENT_ID,
+        client_secret: process.env.GITHUB_CLIENT_SECRET,
+        code,
+      },
+      {
+        headers: { Accept: 'application/json' },
+      }
+    );
+
+    const accessToken = tokenRes.data.access_token;
+    if (!accessToken) throw new Error('GitHub token exchange failed');
+
+    // Get user data
+    const userRes = await axios.get(`https://api.github.com/user`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    const emailRes = await axios.get(`https://api.github.com/user/emails`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    const primaryEmail = emailRes.data.find(e => e.primary && e.verified)?.email;
+
+    const { name, avatar_url } = userRes.data;
+    const email = primaryEmail;
+
+    if (!email) throw new Error('GitHub email not verified');
+
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({
+        name: name || 'GitHub User',
+        email,
+        avatar: avatar_url,
+        isVerified: true,
+        provider: 'github',
+      });
+    }
+
+    const accessTokenJwt = createAccessToken({ userId: user._id, role: user.role });
+    const refreshToken = createRefreshToken({ userId: user._id });
+
+    res
+      .cookie('accessToken', accessTokenJwt, {
+        ...cookieOptions,
+        maxAge: 15 * 60 * 1000,
+      })
+      .cookie('refreshToken', refreshToken, {
+        ...cookieOptions,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      })
+      .status(200)
+      .json({ message: 'GitHub authentication successful', user });
+  } catch (err) {
+    console.error('❌ GitHub auth error:', err.message);
+    res.status(500).json({ message: 'GitHub authentication failed' });
+  }
+});
+
+
+
+export const getProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.userId).select('-password').lean();
+  res.status(200).json({ user });
+});
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Password Reset
+// ─────────────────────────────────────────────────────────────────────────────
+export const requestPasswordReset = asyncHandler(async (req, res) => {
+  console.log("📨 Password reset route HIT");
+
+  const { email } = req.body;
+  console.log("👉 Email received:", email);
+  const user = await User.findOne({ email });
+  if (!user) {
+    // Silent to avoid user enumeration
+    return res.status(200).json({ message: "If this email exists, a reset link has been sent." });
+  }
+
+  const token = crypto.randomBytes(32).toString("hex");
+  user.resetToken = token;
+  user.resetTokenExpiry = Date.now() + 60 * 60 * 1000; // 1 hour expiry
+  await user.save();
+
+  const resetLink = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
+  await sendResetPasswordEmail(user.email, user.name, resetLink);
+
+  res.status(200).json({ message: "If this email exists, a reset link has been sent." });
+});
+
+
+
+export const resetPassword = asyncHandler(async (req, res) => {
+  console.log("📥 Reset request body:", req.body);
+
+  const { token, password } = req.body;
+  if (!token || !password) {
+    console.log("❌ Missing token or password");
+    return res.status(400).json({ message: "Token and password required." });
+  }
+
+  const user = await User.findOne({
+    resetToken: token,
+    resetTokenExpiry: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    console.log("❌ Invalid or expired token");
+    return res.status(400).json({ message: "Invalid or expired token." });
+  }
+
+  user.password = await bcrypt.hash(password, 12);
+  user.resetToken = undefined;
+  user.resetTokenExpiry = undefined;
+  await user.save();
+
+  console.log("✅ Password reset successful for:", user.email);
+
+  res.status(200).json({ message: "Password updated successfully." });
+});
+
+
+export const updateProfile = asyncHandler(async (req, res) => {
+  const updates = { name: req.body.name };
+  const user = await User.findByIdAndUpdate(
+    req.user.userId,
+    updates,
+    { new: true, runValidators: true }
+  ).select('-password');
+  res.status(200).json({ message: 'Profile updated.', user });
+});
