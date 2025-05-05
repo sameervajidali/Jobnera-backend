@@ -1,4 +1,3 @@
-
 import express from 'express';
 import passport from 'passport';
 import {
@@ -18,7 +17,6 @@ import {
   checkEmailAvailability,
   getCurrentUser,
 } from '../controllers/authController.js';
-
 import { protect } from '../middlewares/authMiddleware.js';
 import { validate } from '../validators/validate.js';
 import {
@@ -26,11 +24,9 @@ import {
   loginSchema,
   passwordResetRequestSchema,
   passwordResetSchema,
-  
 } from '../validators/authValidator.js';
 import upload from '../config/multer.js';
-
-import { handleGitHubCallback } from '../controllers/githubOAuthController.js'; // 👈 You'll create this
+import { handleGitHubCallback } from '../controllers/githubOAuthController.js';
 
 const router = express.Router();
 
@@ -41,16 +37,11 @@ router.get('/activate-account', activateAccount);
 router.post('/login', validate(loginSchema), login);
 
 // ─── Social Auth ─────────────────────────────────────────────
-// Google: via ID Token
 router.post('/google', googleAuth);
-
-// Facebook: via Access Token
 router.post('/facebook', facebookAuth);
 
-// GitHub: OAuth redirect flow (passport)
+// GitHub OAuth
 router.get('/github', passport.authenticate('github', { scope: ['user:email'] }));
-
-// GitHub Callback
 router.get(
   '/github/callback',
   passport.authenticate('github', {
@@ -60,7 +51,7 @@ router.get(
   handleGitHubCallback
 );
 
-// ─── Token / Session ─────────────────────────────────────────
+// ─── Tokens & Sessions ───────────────────────────────────────
 router.post('/refresh-token', refreshToken);
 router.post('/logout', protect, logout);
 
@@ -74,23 +65,19 @@ router.post(
   requestPasswordReset
 );
 router.post('/reset-password', validate(passwordResetSchema), resetPassword);
-router.put("/change-password", protect, changePassword);
+router.put('/change-password', protect, changePassword);
 
-
-
-router.put(
-     '/profile',
-     protect,
-     upload.fields([
-       { name: 'avatar', maxCount: 1 },
-       { name: 'resume', maxCount: 1 },
-     ]),
-     updateProfile
-   );
 // ─── Profile ─────────────────────────────────────────────────
-//router.get('/profile', protect, getProfile);
-router.put('/profile', protect, updateProfile);
+router.get('/profile', protect, getProfile);
+router.put(
+  '/profile',
+  protect,
+  upload.fields([
+    { name: 'avatar', maxCount: 1 },
+    { name: 'resume', maxCount: 1 },
+  ]),
+  updateProfile
+);
 router.delete('/profile', protect, deleteAccount);
 
 export default router;
-
