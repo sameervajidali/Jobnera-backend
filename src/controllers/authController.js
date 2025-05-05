@@ -20,13 +20,13 @@ const createAccessToken = (payload) => jwt.sign(payload, process.env.JWT_SECRET,
 const createRefreshToken = (payload) => jwt.sign(payload, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
 
 const cookieOptions = {
-  httpOnly: true,
-  secure: true,
-  sameSite: 'None',
-  path: '/',
   domain: process.env.NODE_ENV === 'production'
-    ? '.jobneura.tech'   // ← leading dot includes www.jobneura.tech & api.jobneura.tech
+    ? '.jobneura.tech'
     : 'localhost',
+  path: '/',
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'None',
 };
 
 // ─── Register ───────────────────────────────────────────────────────────────
