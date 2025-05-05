@@ -320,9 +320,11 @@ export const githubAuth = asyncHandler(async (req, res) => {
 
 
 export const getProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user.userId).select('-password').lean();
+  const user = await User.findById(req.user._id).select('-password').lean();
+  if (!user) return res.status(404).json({ message: 'User not found.' });
   res.status(200).json({ user });
 });
+
 
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -385,32 +387,22 @@ export const resetPassword = asyncHandler(async (req, res) => {
 // controllers/authController.js
 
 export const updateProfile = asyncHandler(async (req, res) => {
-  // 1) Destructure only the fields you want to allow updating
-  const { name, phone, location, bio } = req.body;
-
-  // 2) Build your updates object
-  const updates = { name, phone, location, bio };
-
-  // 3) Run the update by the authenticated user's ID
-  const user = await User.findByIdAndUpdate(
-    req.user.userId,   // <-- the correct order: (id, updates, options)
-    updates,
-    {
-      new: true,            // return the updated document
-      runValidators: true,  // enforce your schema validators
-    }
-  )
-  .select('-password');    // hide the password field
-
-  // 4) If no user was found, return a 404
-  if (!user) {
-    return res.status(404).json({ message: 'User not found.' });
-  }
-
-  // 5) Send back the updated user
-  res.status(200).json({ message: 'Profile updated.', user });
-});
-
+    const { name, phone, location, bio } = req.body;
+    const updates = { name, phone, location, bio };
+  
+    // use the actual _id from the loaded user document
+    const user = await User.findByIdAndUpdate(
+      req.user._id,       // ← fixed
+      updates,
+      { new: true, runValidators: true }
+    ).select('-password');
+   
+     if (!user) {
+       return res.status(404).json({ message: 'User not found.' });
+     }
+   
+     res.status(200).json({ message: 'Profile updated.', user });
+   });
 
 // ─── Check Email Availability ─────────────────────────────────────────────
 export const checkEmailAvailability = async (req, res) => {
