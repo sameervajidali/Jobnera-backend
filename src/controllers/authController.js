@@ -383,14 +383,40 @@ export const resetPassword = asyncHandler(async (req, res) => {
 
 
 export const updateProfile = asyncHandler(async (req, res) => {
-  const updates = { name: req.body.name };
+  // 1) Collect all allowed fields from the parsed form body
+  const updates = {
+    name:     req.body.name,
+    phone:    req.body.phone,
+    location: req.body.location,
+    bio:      req.body.bio,
+    // any others you support, e.g. website, linkedin, etc.
+  };
+
+  // 2) If you have multer in place and want to store file URLs:
+  if (req.files?.avatar?.[0]) {
+    // e.g. you saved it somewhere and have a URL in req.files.avatar[0].path
+    updates.avatar = req.files.avatar[0].path;
+  }
+  if (req.files?.resume?.[0]) {
+    updates.resume = req.files.resume[0].path;
+  }
+
+  // 3) Perform the update
   const user = await User.findByIdAndUpdate(
+    // use the authenticated user's ID
     req.user.userId,
     updates,
-    { new: true, runValidators: true }
-  ).select('-password');
+    {
+      new: true,            // return the updated doc
+      runValidators: true,  // enforce schema validation
+    }
+  )
+  .select('-password');    // never send back the hash
+
+  // 4) Return the updated user
   res.status(200).json({ message: 'Profile updated.', user });
 });
+
 
 
 // ─── Check Email Availability ─────────────────────────────────────────────

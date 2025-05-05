@@ -28,6 +28,7 @@ import {
   passwordResetSchema,
   
 } from '../validators/authValidator.js';
+import upload from '../config/multer.js';
 
 import { handleGitHubCallback } from '../controllers/githubOAuthController.js'; // 👈 You'll create this
 
@@ -76,8 +77,18 @@ router.post('/reset-password', validate(passwordResetSchema), resetPassword);
 router.put("/change-password", protect, changePassword);
 
 
+
+router.put(
+     '/profile',
+     protect,
+     upload.fields([
+       { name: 'avatar', maxCount: 1 },
+       { name: 'resume', maxCount: 1 },
+     ]),
+     updateProfile
+   );
 // ─── Profile ─────────────────────────────────────────────────
-router.get('/profile', protect, getProfile);
+//router.get('/profile', protect, getProfile);
 router.put('/profile', protect, updateProfile);
 router.delete('/profile', protect, deleteAccount);
 
