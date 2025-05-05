@@ -563,11 +563,23 @@ export const refreshToken = asyncHandler(async (req, res) => {
 });
 
 // ─── Get Current User ────────────────────────────────────────────────────────
-export const getCurrentUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user.userId).select('-password');
+// export const getCurrentUser = asyncHandler(async (req, res) => {
+//   // const user = await User.findById(req.user.userId).select('-password');
+//   const user = await User.findById(req.user._id).select('-password');
+
+//   if (!user) return res.status(404).json({ message: 'User not found' });
+//   res.status(200).json(user);
+// });
+
+export const getCurrentUser = async (req, res) => {
+  console.log("🧁 Cookies:", req.cookies);
+
+  const user = await User.findById(req.user._id).select('-password');
   if (!user) return res.status(404).json({ message: 'User not found' });
-  res.status(200).json(user);
-});
+
+  res.status(200).json({ user });
+};
+
 
 
 // ─── Change Password ────────────────────────────────────────────────────────
