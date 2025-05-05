@@ -848,3 +848,17 @@ export const updateProfile = asyncHandler(async (req, res) => {
   ).select('-password');
   res.status(200).json({ message: 'Profile updated.', user });
 });
+
+
+// ─── Check Email Availability ─────────────────────────────────────────────
+export const checkEmailAvailability = async (req, res) => {
+  const { email } = req.query;
+
+  if (!email) {
+    return res.status(400).json({ message: "Email query parameter is required." });
+  }
+
+  const exists = await User.exists({ email: email.toLowerCase() });
+
+  res.status(200).json({ available: !exists });
+};

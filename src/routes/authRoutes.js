@@ -15,6 +15,7 @@ import {
   changePassword,
   updateProfile,
   deleteAccount,
+  checkEmailAvailability,
   getCurrentUser,
 } from '../controllers/authController.js';
 
@@ -25,6 +26,7 @@ import {
   loginSchema,
   passwordResetRequestSchema,
   passwordResetSchema,
+  
 } from '../validators/authValidator.js';
 
 import { handleGitHubCallback } from '../controllers/githubOAuthController.js'; // 👈 You'll create this
@@ -32,6 +34,7 @@ import { handleGitHubCallback } from '../controllers/githubOAuthController.js'; 
 const router = express.Router();
 
 // ─── Local Auth ─────────────────────────────────────────────
+router.get('/check-email', checkEmailAvailability);
 router.post('/register', validate(registerSchema), register);
 router.get('/activate-account', activateAccount);
 router.post('/login', validate(loginSchema), login);
