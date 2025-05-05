@@ -382,41 +382,34 @@ export const resetPassword = asyncHandler(async (req, res) => {
 });
 
 
+// controllers/authController.js
+
 export const updateProfile = asyncHandler(async (req, res) => {
-  // 1) Collect all allowed fields from the parsed form body
-  const updates = {
-    name:     req.body.name,
-    phone:    req.body.phone,
-    location: req.body.location,
-    bio:      req.body.bio,
-    // any others you support, e.g. website, linkedin, etc.
-  };
+  // 1) Destructure only the fields you want to allow updating
+  const { name, phone, location, bio } = req.body;
 
-  // 2) If you have multer in place and want to store file URLs:
-  if (req.files?.avatar?.[0]) {
-    // e.g. you saved it somewhere and have a URL in req.files.avatar[0].path
-    updates.avatar = req.files.avatar[0].path;
-  }
-  if (req.files?.resume?.[0]) {
-    updates.resume = req.files.resume[0].path;
-  }
+  // 2) Build your updates object
+  const updates = { name, phone, location, bio };
 
-  // 3) Perform the update
+  // 3) Run the update by the authenticated user's ID
   const user = await User.findByIdAndUpdate(
-    // use the authenticated user's ID
-    req.user.userId,
+    req.user.userId,   // <-- the correct order: (id, updates, options)
     updates,
     {
-      new: true,            // return the updated doc
-      runValidators: true,  // enforce schema validation
+      new: true,            // return the updated document
+      runValidators: true,  // enforce your schema validators
     }
   )
-  .select('-password');    // never send back the hash
+  .select('-password');    // hide the password field
 
-  // 4) Return the updated user
+  // 4) If no user was found, return a 404
+  if (!user) {
+    return res.status(404).json({ message: 'User not found.' });
+  }
+
+  // 5) Send back the updated user
   res.status(200).json({ message: 'Profile updated.', user });
 });
-
 
 
 // ─── Check Email Availability ─────────────────────────────────────────────
