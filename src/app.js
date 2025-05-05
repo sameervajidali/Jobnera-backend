@@ -68,6 +68,10 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
+    domain: process.env.NODE_ENV === 'production'
+    ? '.jobneura.tech'    // ← this bit
+    : 'localhost',
+  path: '/',
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production', // true in prod
     sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
