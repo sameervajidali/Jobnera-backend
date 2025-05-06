@@ -79,44 +79,28 @@ export const activateAccount = asyncHandler(async (req, res) => {
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  // Check if the user exists with the provided email
+  // Check if user exists
   const user = await User.findOne({ email }).select('+password');
-  
-  // If user doesn't exist or password doesn't match, return invalid credentials error
   if (!user || !(await bcrypt.compare(password, user.password))) {
-    return res.status(401).json({ message: 'Invalid credentials.' });  // Invalid email or password
+    return res.status(401).json({ message: 'Invalid credentials' });
   }
 
-  // If the user is not verified, return a 403 error
   if (!user.isVerified) {
-    return res.status(403).json({ message: 'Verify your email first.' });  // Email not verified
+    return res.status(403).json({ message: 'Please verify your email first' });
   }
 
-  // Create access and refresh tokens
+  // Generate JWT tokens if login successful
   const accessToken = createAccessToken({ userId: user._id, role: user.role });
   const refreshToken = createRefreshToken({ userId: user._id });
 
-  // Set tokens in cookies
+  // Send cookies with the tokens
   res
-    .cookie('accessToken', accessToken, {
-      ...cookieOptions,
-      maxAge: 15 * 60 * 1000,  // 15 minutes
-    })
-    .cookie('refreshToken', refreshToken, {
-      ...cookieOptions,
-      maxAge: 7 * 24 * 60 * 60 * 1000,  // 7 days
-    })
+    .cookie('accessToken', accessToken, { ...cookieOptions, maxAge: 15 * 60 * 1000 })
+    .cookie('refreshToken', refreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 })
     .status(200)
-    .json({
-      message: 'Login successful',
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role.toUpperCase(),
-      },
-    });
+    .json({ message: 'Login successful', user: { id: user._id, name: user.name, email: user.email, role: user.role.toUpperCase() } });
 });
+
 
 // ─── Logout ───────────────────────────────────────────────────────────────────
 export const logout = (req, res) => {
