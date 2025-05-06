@@ -15,6 +15,8 @@ import User from './models/User.js';
 import { protect, requireRole } from './middlewares/authMiddleware.js';
 import multer from 'multer';
 
+import path from 'path';
+import { fileURLToPath } from 'url';
 // ========== ROUTES ==========
 import authRoutes from './routes/authRoutes.js';
 import resumeRoutes from './routes/resumeRoutes.js';
@@ -158,6 +160,12 @@ app.use((err, _req, res, _next) => {
   });
 });
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// Serve files under /uploads as static
+app.use(
+  '/uploads',
+  express.static(path.join(__dirname, '../uploads'))
+);
 
 const PORT = process.env.PORT || 5000;
 

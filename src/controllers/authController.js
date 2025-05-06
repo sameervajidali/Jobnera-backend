@@ -386,71 +386,25 @@ export const resetPassword = asyncHandler(async (req, res) => {
 
 // controllers/authController.js
 
-// export const updateProfile = asyncHandler(async (req, res) => {
-//     const { name, phone, location, bio } = req.body;
-//     const updates = { name, phone, location, bio };
+export const updateProfile = asyncHandler(async (req, res) => {
+    const { name, phone, location, bio } = req.body;
+    const updates = { name, phone, location, bio };
   
-//     // use the actual _id from the loaded user document
-//     const user = await User.findByIdAndUpdate(
-//       req.user._id,       // ← fixed
-//       updates,
-//       { new: true, runValidators: true }
-//     ).select('-password');
+    // use the actual _id from the loaded user document
+    const user = await User.findByIdAndUpdate(
+      req.user._id,       // ← fixed
+      updates,
+      { new: true, runValidators: true }
+    ).select('-password');
    
-//      if (!user) {
-//        return res.status(404).json({ message: 'User not found.' });
-//      }
+     if (!user) {
+       return res.status(404).json({ message: 'User not found.' });
+     }
    
-//      res.status(200).json({ message: 'Profile updated.', user });
-//    });
+     res.status(200).json({ message: 'Profile updated.', user });
+   });
 
 // ─── Check Email Availability ─────────────────────────────────────────────
-
-export const updateProfile = asyncHandler(async (req, res) => {
-  const {
-    name,
-    phone,
-    location,
-    bio,
-    skills,     // expect JSON-array strings
-    languages,  // same
-    experience, // JSON-array of objects
-    education,  // JSON-array of objects
-  } = req.body;
-
-  // parse arrays if they came in as JSON strings
-  const updates = {
-    name,
-    phone,
-    location,
-    bio,
-    skills:     skills     ? JSON.parse(skills)     : [],
-    languages:  languages  ? JSON.parse(languages)  : [],
-    experience: experience ? JSON.parse(experience) : [],
-    education:  education  ? JSON.parse(education)  : [],
-  };
-
-  // avatar/resume handling (if using multer + diskStorage)
-  if (req.files.avatar) {
-    updates.avatar = `/uploads/${req.files.avatar[0].filename}`;
-  }
-  if (req.files.resume) {
-    updates.resume = `/uploads/${req.files.resume[0].filename}`;
-  }
-
-  const user = await User.findByIdAndUpdate(
-    req.user._id,
-    updates,
-    { new: true, runValidators: true }
-  ).select('-password');
-
-  if (!user) throw new Error('User not found.');
-
-  res.status(200).json({ message: 'Profile updated.', user });
-});
-
-
-
 export const checkEmailAvailability = async (req, res) => {
   const { email } = req.query;
 
