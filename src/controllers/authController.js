@@ -385,14 +385,10 @@ export const resetPassword = asyncHandler(async (req, res) => {
 
 
 // controllers/authController.js
-
 export const updateProfile = asyncHandler(async (req, res) => {
-  // parse JSON arrays if sent as strings
-  const {
-    name, phone, location, bio,
-    skills, languages, experience, education
-  } = req.body;
+  const { name, phone, location, bio, skills, languages, experience, education } = req.body;
 
+  // Parse JSON arrays if they came as strings
   const updates = {
     name, phone, location, bio,
     skills:     skills     ? JSON.parse(skills)     : [],
@@ -401,7 +397,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
     education:  education  ? JSON.parse(education)  : [],
   };
 
-  // Multer diskStorage wrote to backend/uploads:
+  // Multer wrote to src/uploads
   if (req.files?.avatar?.[0]) {
     updates.avatar = `/uploads/${req.files.avatar[0].filename}`;
   }
@@ -415,9 +411,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
     { new:true, runValidators:true }
   ).select('-password');
 
-  if (!user) {
-    return res.status(404).json({ message: 'User not found.' });
-  }
+  if (!user) return res.status(404).json({ message:'User not found' });
   res.json({ message:'Profile updated.', user });
 });
 

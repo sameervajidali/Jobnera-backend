@@ -75,7 +75,7 @@ router.put(
   protect,
   upload.fields([
     { name: 'avatar', maxCount: 1 },
-    { name: 'resume', maxCount: 1 }
+    { name: 'resume', maxCount: 1 },
   ]),
   updateProfile
 );

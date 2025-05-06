@@ -93,8 +93,7 @@ import path    from 'path';
 import { fileURLToPath } from 'url';
 import cors    from 'cors';
 import morgan  from 'morgan';
-import mongoose from 'mongoose';
-import session  from 'express-session';
+import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import passport     from './config/passport.js';
 import authRoutes   from './routes/authRoutes.js';
@@ -106,10 +105,13 @@ import { protect }  from './middlewares/authMiddleware.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 
-// ─── Serve uploads folder as static assets ─────────────────
-app.use('/uploads', express.static(path.resolve(__dirname, '..', 'uploads')));
+// 1️⃣ Serve uploaded files from /uploads
+app.use(
+  '/uploads',
+  express.static(path.resolve(__dirname, 'uploads'))
+);
 
-// ─── CORS & JSON & Logging ──────────────────────────────────
+// 2️⃣ Basic middleware
 app.use(cookieParser());
 app.use(cors({
   origin: ['https://www.jobneura.tech','https://jobneura.tech','http://localhost:5173'],
@@ -117,8 +119,6 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(morgan('dev'));
-
-// ─── Session & Passport ────────────────────────────────────
 app.use(session({
   secret:            process.env.SESSION_SECRET,
   resave:            false,
@@ -134,26 +134,27 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// ─── Healthcheck ───────────────────────────────────────────
-app.get('/api/test', (_req, res) =>
-  res.json({ success:true, message:'API is live', time: new Date().toISOString() })
-);
+// 3️⃣ Healthcheck
+app.get('/api/test', (_req, res) => {
+  res.json({ success:true, message:'API is up', time:new Date().toISOString() });
+});
 
-// ─── Mount Routes ───────────────────────────────────────────
+// 4️⃣ Mount routes
 app.use('/api/auth',   authRoutes);
 app.use('/api/admin',  adminRoutes);
 app.use('/api/resumes', protect, resumeRoutes);
 app.use('/api/public', publicRoutes);
 
-// ─── 404 & Error Handler ───────────────────────────────────
-app.use((req, res, next)=>{
+// 5️⃣ 404 + error handler
+app.use((req, res, next) => {
   res.status(404);
-  next(new Error(`Not Found: ${req.originalUrl}`));
+  next(new Error(`Not Found - ${req.originalUrl}`));
 });
-app.use((err, _req, res, _next)=>{
+app.use((err, _req, res, _next) => {
   console.error(err.stack);
   const status = res.statusCode===200?500:res.statusCode;
   res.status(status).json({ message: err.message });
 });
 
 export default app;
+
