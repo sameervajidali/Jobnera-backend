@@ -385,23 +385,23 @@ export const resetPassword = asyncHandler(async (req, res) => {
 
 
 // controllers/authController.js
+
 export const updateProfile = asyncHandler(async (req, res) => {
   const {
     name, phone, location, bio,
     skills, languages, experience, education
-  } = req.body
+  } = req.body;
 
   const updates = {
     name, phone, location, bio,
-    // parse JSON arrays if needed:
+    // Parse JSON arrays if needed:
     skills: skills ? JSON.parse(skills) : [],
     languages: languages ? JSON.parse(languages) : [],
     experience: experience ? JSON.parse(experience) : [],
     education: education ? JSON.parse(education) : [],
-  }
+  };
 
-  // multer.fields([...]) sets req.files.avatar and req.files.resume
-  // inside your updateProfile controller, after multer has written file:
+  // Handle avatar and resume uploads
   if (req.files.avatar) {
     const relPath = `/uploads/${req.files.avatar[0].filename}`;
     updates.avatar = `${req.protocol}://${req.get("host")}${relPath}`;
@@ -413,16 +413,29 @@ export const updateProfile = asyncHandler(async (req, res) => {
     updates.resume = url;
   }
 
-  const user = await User.findByIdAndUpdate(
-    req.user._id,
-    updates,
-    { new: true, runValidators: true }
-  ).select('-password')
+  try {
+    // Update the user in the database
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      updates,
+      { new: true, runValidators: true }
+    ).select('-password');
 
-  if (!user) throw new Error('User not found.')
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
 
-  res.status(200).json({ message: 'Profile updated.', user })
-})
+    // Log the updated user data
+    console.log('Updated user data:', user);
+
+    // Respond with the updated user object
+    res.status(200).json({ message: 'Profile updated.', user });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ message: 'Error updating profile', error: error.message });
+  }
+});
+
 
 
 // ─── Check Email Availability ─────────────────────────────────────────────
