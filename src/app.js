@@ -160,11 +160,14 @@ app.use((err, _req, res, _next) => {
   });
 });
 
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-// Serve files under /uploads as static
+
+
+// Serve uploaded files
 app.use(
   '/uploads',
-  express.static(path.join(__dirname, '../uploads'))
+  express.static(path.resolve(__dirname, '..', 'uploads'))
 );
 
 const PORT = process.env.PORT || 5000;
