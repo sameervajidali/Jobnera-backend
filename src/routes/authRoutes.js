@@ -1,5 +1,6 @@
 import express from 'express';
 import passport from 'passport';
+import upload from '../config/multer.js';
 import {
   register,
   activateAccount,
@@ -25,7 +26,7 @@ import {
   passwordResetRequestSchema,
   passwordResetSchema,
 } from '../validators/authValidator.js';
-import upload from '../config/multer.js';
+
 import { handleGitHubCallback } from '../controllers/githubOAuthController.js';
 
 const router = express.Router();
@@ -74,7 +75,7 @@ router.put(
   protect,
   upload.fields([
     { name: 'avatar', maxCount: 1 },
-    { name: 'resume', maxCount: 1 },
+    { name: 'resume', maxCount: 1 }
   ]),
   updateProfile
 );

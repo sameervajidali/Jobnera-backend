@@ -387,22 +387,40 @@ export const resetPassword = asyncHandler(async (req, res) => {
 // controllers/authController.js
 
 export const updateProfile = asyncHandler(async (req, res) => {
-    const { name, phone, location, bio } = req.body;
-    const updates = { name, phone, location, bio };
-  
-    // use the actual _id from the loaded user document
-    const user = await User.findByIdAndUpdate(
-      req.user._id,       // ← fixed
-      updates,
-      { new: true, runValidators: true }
-    ).select('-password');
-   
-     if (!user) {
-       return res.status(404).json({ message: 'User not found.' });
-     }
-   
-     res.status(200).json({ message: 'Profile updated.', user });
-   });
+  // parse JSON arrays if sent as strings
+  const {
+    name, phone, location, bio,
+    skills, languages, experience, education
+  } = req.body;
+
+  const updates = {
+    name, phone, location, bio,
+    skills:     skills     ? JSON.parse(skills)     : [],
+    languages:  languages  ? JSON.parse(languages)  : [],
+    experience: experience ? JSON.parse(experience) : [],
+    education:  education  ? JSON.parse(education)  : [],
+  };
+
+  // Multer diskStorage wrote to backend/uploads:
+  if (req.files?.avatar?.[0]) {
+    updates.avatar = `/uploads/${req.files.avatar[0].filename}`;
+  }
+  if (req.files?.resume?.[0]) {
+    updates.resume = `/uploads/${req.files.resume[0].filename}`;
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    updates,
+    { new:true, runValidators:true }
+  ).select('-password');
+
+  if (!user) {
+    return res.status(404).json({ message: 'User not found.' });
+  }
+  res.json({ message:'Profile updated.', user });
+});
+
 
 // ─── Check Email Availability ─────────────────────────────────────────────
 export const checkEmailAvailability = async (req, res) => {

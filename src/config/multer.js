@@ -1,16 +1,12 @@
-// src/config/multer.js
+// backend/src/config/multer.js
 import multer from 'multer';
-import path from 'path';
+import path   from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-// __dirname === /opt/render/project/backend/src/config
-// one level up from src/config → src
-// another up → /opt/render/project/backend
-// then into uploads → /opt/render/project/backend/uploads
+// Resolve to /opt/render/project/backend/uploads
 const uploadDir = path.resolve(__dirname, '..', '..', 'uploads');
-console.log('⬆️ Multer will write to:', uploadDir);
+console.log('⬆️ Multer writing files to:', uploadDir);
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
