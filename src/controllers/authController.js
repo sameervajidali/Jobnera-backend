@@ -57,23 +57,65 @@ export const activateAccount = asyncHandler(async (req, res) => {
   res.status(200).json({ message: 'Account activated.' });
 });
 
-// ─── Login ───────────────────────────────────────────────────────────────────
+// // ─── Login ───────────────────────────────────────────────────────────────────
+// export const login = asyncHandler(async (req, res) => {
+//   const { email, password } = req.body;
+//   const user = await User.findOne({ email }).select('+password');
+//   if (!user || !(await bcrypt.compare(password, user.password))) {
+//     return res.status(401).json({ message: 'Invalid credentials.' });
+//   }
+//   if (!user.isVerified) return res.status(403).json({ message: 'Verify your email first.' });
+
+//   const accessToken = createAccessToken({ userId: user._id, role: user.role });
+//   const refreshToken = createRefreshToken({ userId: user._id });
+
+//   res
+//     .cookie('accessToken', accessToken, { ...cookieOptions, maxAge: 15 * 60 * 1000 })
+//     .cookie('refreshToken', refreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 })
+//     .status(200)
+//     .json({ message: 'Login successful', user: { id: user._id, name: user.name, email: user.email, role: user.role.toUpperCase() } });
+// });
+
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+
+  // Check if the user exists with the provided email
   const user = await User.findOne({ email }).select('+password');
+  
+  // If user doesn't exist or password doesn't match, return invalid credentials error
   if (!user || !(await bcrypt.compare(password, user.password))) {
     return res.status(401).json({ message: 'Invalid credentials.' });
   }
-  if (!user.isVerified) return res.status(403).json({ message: 'Verify your email first.' });
 
+  // If the user is not verified, return a 403 error
+  if (!user.isVerified) {
+    return res.status(403).json({ message: 'Verify your email first.' });
+  }
+
+  // Create tokens (access and refresh)
   const accessToken = createAccessToken({ userId: user._id, role: user.role });
   const refreshToken = createRefreshToken({ userId: user._id });
 
+  // Set cookies with the tokens
   res
-    .cookie('accessToken', accessToken, { ...cookieOptions, maxAge: 15 * 60 * 1000 })
-    .cookie('refreshToken', refreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 })
+    .cookie('accessToken', accessToken, {
+      ...cookieOptions,
+      maxAge: 15 * 60 * 1000,  // 15 minutes
+    })
+    .cookie('refreshToken', refreshToken, {
+      ...cookieOptions,
+      maxAge: 7 * 24 * 60 * 60 * 1000,  // 7 days
+    })
     .status(200)
-    .json({ message: 'Login successful', user: { id: user._id, name: user.name, email: user.email, role: user.role.toUpperCase() } });
+    .json({
+      message: 'Login successful',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role.toUpperCase(), // Ensure role is uppercase
+      },
+    });
 });
 
 // ─── Logout ───────────────────────────────────────────────────────────────────
