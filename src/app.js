@@ -13,8 +13,6 @@ import cookieParser from 'cookie-parser';
 import passport from './config/passport.js'; // GitHub Strategy configured here
 import User from './models/User.js';
 import { protect, requireRole } from './middlewares/authMiddleware.js';
-import multer from 'multer';
-
 import path from 'path';
 import { fileURLToPath } from 'url';
 // ========== ROUTES ==========
@@ -48,10 +46,6 @@ const corsOptions = {
 // apply CORS to all routes
 app.use(cors(corsOptions));
 
-
-// simple in-memory (or disk) storage; adjust as you like:
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
 
 app.use(express.json());
 app.use(morgan('dev'));
