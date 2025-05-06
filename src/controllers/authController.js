@@ -386,34 +386,38 @@ export const resetPassword = asyncHandler(async (req, res) => {
 
 // controllers/authController.js
 export const updateProfile = asyncHandler(async (req, res) => {
-  const { name, phone, location, bio, skills, languages, experience, education } = req.body;
+  const {
+    name, phone, location, bio,
+    skills, languages, experience, education
+  } = req.body
 
-  // Parse JSON arrays if they came as strings
   const updates = {
     name, phone, location, bio,
+    // parse JSON arrays if needed:
     skills:     skills     ? JSON.parse(skills)     : [],
     languages:  languages  ? JSON.parse(languages)  : [],
     experience: experience ? JSON.parse(experience) : [],
     education:  education  ? JSON.parse(education)  : [],
-  };
-
-  // Multer wrote to src/uploads
-  if (req.files?.avatar?.[0]) {
-    updates.avatar = `/uploads/${req.files.avatar[0].filename}`;
   }
-  if (req.files?.resume?.[0]) {
-    updates.resume = `/uploads/${req.files.resume[0].filename}`;
+
+  // multer.fields([...]) sets req.files.avatar and req.files.resume
+  if (req.files.avatar?.[0]) {
+    updates.avatar = `/uploads/${req.files.avatar[0].filename}`
+  }
+  if (req.files.resume?.[0]) {
+    updates.resume = `/uploads/${req.files.resume[0].filename}`
   }
 
   const user = await User.findByIdAndUpdate(
     req.user._id,
     updates,
-    { new:true, runValidators:true }
-  ).select('-password');
+    { new: true, runValidators: true }
+  ).select('-password')
 
-  if (!user) return res.status(404).json({ message:'User not found' });
-  res.json({ message:'Profile updated.', user });
-});
+  if (!user) throw new Error('User not found.')
+
+  res.status(200).json({ message: 'Profile updated.', user })
+})
 
 
 // ─── Check Email Availability ─────────────────────────────────────────────

@@ -107,9 +107,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 
 // 1) Serve uploads
-app.use('/uploads',
-  express.static(path.resolve(__dirname, '..', 'uploads'))
-);
+// in your app.js, after you define __dirname:
+app.use('/uploads', express.static(path.resolve(__dirname, 'uploads')))
+
 
 // 2) Base middleware
 app.use(cookieParser());
