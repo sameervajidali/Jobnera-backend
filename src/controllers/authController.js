@@ -84,23 +84,33 @@ export const login = asyncHandler(async (req, res) => {
   // Check if user exists
   const user = await User.findOne({ email }).select('+password');
   if (!user || !(await bcrypt.compare(password, user.password))) {
+    // Invalid credentials, do not create a refresh token
     return res.status(401).json({ message: 'Invalid credentials' });
   }
 
   if (!user.isVerified) {
+    // If the user is not verified, do not allow login
     return res.status(403).json({ message: 'Please verify your email first' });
   }
 
-  // Generate JWT tokens if login successful
+  // Generate JWT tokens after validating credentials
   const accessToken = createAccessToken({ userId: user._id, role: user.role });
   const refreshToken = createRefreshToken({ userId: user._id });
 
-  // Send cookies with the tokens
+  // Send cookies with the tokens only if login is successful
   res
     .cookie('accessToken', accessToken, { ...cookieOptions, maxAge: 15 * 60 * 1000 })
     .cookie('refreshToken', refreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 })
     .status(200)
-    .json({ message: 'Login successful', user: { id: user._id, name: user.name, email: user.email, role: user.role.toUpperCase() } });
+    .json({
+      message: 'Login successful',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role.toUpperCase(),
+      },
+    });
 });
 
 
