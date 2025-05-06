@@ -394,21 +394,23 @@ export const updateProfile = asyncHandler(async (req, res) => {
   const updates = {
     name, phone, location, bio,
     // parse JSON arrays if needed:
-    skills:     skills     ? JSON.parse(skills)     : [],
-    languages:  languages  ? JSON.parse(languages)  : [],
+    skills: skills ? JSON.parse(skills) : [],
+    languages: languages ? JSON.parse(languages) : [],
     experience: experience ? JSON.parse(experience) : [],
-    education:  education  ? JSON.parse(education)  : [],
+    education: education ? JSON.parse(education) : [],
   }
 
   // multer.fields([...]) sets req.files.avatar and req.files.resume
- // inside your updateProfile controller, after multer has written file:
-if (req.files.avatar) {
-  const relPath = `/uploads/${req.files.avatar[0].filename}`;
-  updates.avatar = `${req.protocol}://${req.get("host")}${relPath}`;
-}
+  // inside your updateProfile controller, after multer has written file:
+  if (req.files.avatar) {
+    const relPath = `/uploads/${req.files.avatar[0].filename}`;
+    updates.avatar = `${req.protocol}://${req.get("host")}${relPath}`;
+  }
 
-  if (req.files.resume?.[0]) {
-    updates.resume = `/uploads/${req.files.resume[0].filename}`
+  if (req.files.resume) {
+    const filename = req.files.resume[0].filename;
+    const url = `${req.protocol}://${req.get("host")}/uploads/${filename}`;
+    updates.resume = url;
   }
 
   const user = await User.findByIdAndUpdate(
