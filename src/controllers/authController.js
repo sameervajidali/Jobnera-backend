@@ -84,19 +84,19 @@ export const login = asyncHandler(async (req, res) => {
   
   // If user doesn't exist or password doesn't match, return invalid credentials error
   if (!user || !(await bcrypt.compare(password, user.password))) {
-    return res.status(401).json({ message: 'Invalid credentials.' });
+    return res.status(401).json({ message: 'Invalid credentials.' });  // Invalid email or password
   }
 
   // If the user is not verified, return a 403 error
   if (!user.isVerified) {
-    return res.status(403).json({ message: 'Verify your email first.' });
+    return res.status(403).json({ message: 'Verify your email first.' });  // Email not verified
   }
 
-  // Create tokens (access and refresh)
+  // Create access and refresh tokens
   const accessToken = createAccessToken({ userId: user._id, role: user.role });
   const refreshToken = createRefreshToken({ userId: user._id });
 
-  // Set cookies with the tokens
+  // Set tokens in cookies
   res
     .cookie('accessToken', accessToken, {
       ...cookieOptions,
@@ -113,7 +113,7 @@ export const login = asyncHandler(async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role.toUpperCase(), // Ensure role is uppercase
+        role: user.role.toUpperCase(),
       },
     });
 });
