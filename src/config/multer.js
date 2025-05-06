@@ -4,7 +4,8 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // We keep an `uploads/` folder at the same level as `src/`
-const uploadDir = path.resolve(__dirname, '..', 'uploads');
+//const uploadDir = path.resolve(__dirname, '..', 'uploads');
+const uploadDir = path.resolve(__dirname, '..', '..', 'uploads');
 console.log('⬆️ Multer will write files to:', uploadDir);
 
 const storage = multer.diskStorage({
