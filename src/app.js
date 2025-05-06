@@ -84,7 +84,8 @@
 //   });
 
 
-// backend/src/app.js
+
+// backend/src/app.js  (only one copy of this file, not in src/src!)
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -105,16 +106,15 @@ import { protect }  from './middlewares/authMiddleware.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 
-// 1️⃣ Serve uploaded files from /uploads
-app.use(
-  '/uploads',
-  express.static(path.resolve(__dirname, 'uploads'))
+// 1) Serve uploads
+app.use('/uploads',
+  express.static(path.resolve(__dirname, '..', 'uploads'))
 );
 
-// 2️⃣ Basic middleware
+// 2) Base middleware
 app.use(cookieParser());
 app.use(cors({
-  origin: ['https://www.jobneura.tech','https://jobneura.tech','http://localhost:5173'],
+  origin: ['https://jobneura.tech','https://www.jobneura.tech','http://localhost:5173'],
   credentials: true
 }));
 app.use(express.json());
@@ -134,27 +134,31 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// 3️⃣ Healthcheck
-app.get('/api/test', (_req, res) => {
-  res.json({ success:true, message:'API is up', time:new Date().toISOString() });
-});
+// 3) Healthcheck + root
+app.get('/api/test', (_req, res) =>
+  res.json({ success:true, message:'API up!', time:new Date().toISOString() })
+);
+app.get('/', (_req, res) =>
+  res.send('✅ API is running...')
+);
 
-// 4️⃣ Mount routes
+// 4) API routes
 app.use('/api/auth',   authRoutes);
 app.use('/api/admin',  adminRoutes);
 app.use('/api/resumes', protect, resumeRoutes);
 app.use('/api/public', publicRoutes);
 
-// 5️⃣ 404 + error handler
+// 5) 404 & error handler
 app.use((req, res, next) => {
   res.status(404);
   next(new Error(`Not Found - ${req.originalUrl}`));
 });
 app.use((err, _req, res, _next) => {
   console.error(err.stack);
-  const status = res.statusCode===200?500:res.statusCode;
-  res.status(status).json({ message: err.message });
+  const code = res.statusCode === 200 ? 500 : res.statusCode;
+  res.status(code).json({ message: err.message });
 });
 
 export default app;
+
 
