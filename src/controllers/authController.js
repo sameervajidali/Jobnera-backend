@@ -401,9 +401,12 @@ export const updateProfile = asyncHandler(async (req, res) => {
   }
 
   // multer.fields([...]) sets req.files.avatar and req.files.resume
-  if (req.files.avatar?.[0]) {
-    updates.avatar = `/uploads/${req.files.avatar[0].filename}`
-  }
+ // inside your updateProfile controller, after multer has written file:
+if (req.files.avatar) {
+  const relPath = `/uploads/${req.files.avatar[0].filename}`;
+  updates.avatar = `${req.protocol}://${req.get("host")}${relPath}`;
+}
+
   if (req.files.resume?.[0]) {
     updates.resume = `/uploads/${req.files.resume[0].filename}`
   }
