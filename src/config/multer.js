@@ -5,19 +5,18 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// We know our repo layout on Render is:
-// /opt/render/project/
-// ├─ backend/
-// │  ├─ src/
-// │  ├─ uploads/      ← this is where we committed your uploads folder
-// └─ frontend/
+// __dirname === /opt/render/project/backend/src/config
+// one level up from src/config → src
+// another up → /opt/render/project/backend
+// then into uploads → /opt/render/project/backend/uploads
 const uploadDir = path.resolve(__dirname, '..', '..', 'uploads');
+console.log('⬆️ Multer will write to:', uploadDir);
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination(req, file, cb) {
     cb(null, uploadDir);
   },
-  filename: (req, file, cb) => {
+  filename(req, file, cb) {
     const ext  = path.extname(file.originalname);
     const base = path.basename(file.originalname, ext).replace(/\s+/g, '-');
     cb(null, `${base}-${Date.now()}${ext}`);
