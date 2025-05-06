@@ -444,13 +444,16 @@ export const updateProfile = asyncHandler(async (req, res) => {
     const relPath = `/uploads/${req.files.avatar[0].filename}`;
     updates.avatar = `${req.protocol}://${req.get("host")}${relPath}`;
   }
-
+  
   if (req.files.resume) {
     const filename = req.files.resume[0].filename;
     const url = `${req.protocol}://${req.get("host")}/uploads/${filename}`;
     updates.resume = url;
   }
+  console.log('Avatar URL:', updates.avatar);
+console.log('Resume URL:', updates.resume);
 
+  
   try {
     // Update the user in the database
     const user = await User.findByIdAndUpdate(

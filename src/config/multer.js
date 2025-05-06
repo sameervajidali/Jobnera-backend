@@ -9,6 +9,7 @@ const uploadDir = path.resolve(__dirname, '..', 'uploads')
 
 // ensure the folder exists
 fs.mkdirSync(uploadDir, { recursive: true })
+console.log('Uploads directory:', uploadDir); // Add this line to check the upload path
 
 const storage = multer.diskStorage({
   destination: (_, __, cb) => cb(null, uploadDir),
