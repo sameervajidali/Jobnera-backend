@@ -390,34 +390,35 @@ export const unassignQuiz = asyncHandler(async (req, res) => {
 });
 
 // 📚 Public: List / Filter Active Quizzes
-export const getPublicQuizzes = asyncHandler(async (req, res) => {
-  const { category, topic, level, page = 1, limit = 10 } = req.query;
+// ── controllers/quizController.js ──
 
-  // Build filter
+/**
+ * Public: list quizzes (with pagination + filters)
+ */
+export const getPublicQuizzes = asyncHandler(async (req, res) => {
+  const { category, topic, level, page = 1, limit = 12 } = req.query;
   const filter = { isActive: true };
   if (category) filter.category = category;
   if (topic)    filter.topic    = topic;
   if (level)    filter.level    = level;
 
-  // Pagination
-  const skip = (Number(page) - 1) * Number(limit);
-
-  const [items, total] = await Promise.all([
+  const skip = (page - 1) * limit;
+  const [quizzes, total] = await Promise.all([
     Quiz.find(filter)
-      .populate('questions')
-      .sort({ createdAt: -1 })
+      .select('title duration totalMarks')    // ← include totalMarks
       .skip(skip)
       .limit(Number(limit)),
     Quiz.countDocuments(filter)
   ]);
 
   res.json({
-    items,
+    quizzes,
     total,
     page: Number(page),
     limit: Number(limit)
   });
 });
+
 
 
 // 📊 Get distinct values for a field
