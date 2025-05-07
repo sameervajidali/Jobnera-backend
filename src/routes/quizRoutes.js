@@ -1,5 +1,7 @@
-// routes/quizRoutes.js
+// src/routes/quizRoutes.js
+
 import express from 'express';
+import multer from 'multer';
 import {
   submitQuizAttempt,
   getLeaderboard,
@@ -9,40 +11,60 @@ import {
   getQuizById,
   updateQuiz,
   addQuestionToQuiz,
-  getUserAttempts
+  getUserAttempts,
+  createQuiz
 } from '../controllers/quizController.js';
-import { protect } from '../middlewares/authMiddleware.js';
-import multer from 'multer';
+import { protect, requireRole } from '../middlewares/authMiddleware.js';
 
-const upload = multer(); // Memory storage for CSV/XLSX
-
+const upload = multer();  // memory storage for CSV uploads
 const router = express.Router();
 
-// 📤 Submit a quiz attempt
-router.post('/submit', protect, submitQuizAttempt);
+// ─── Public ───────────────────────────────────────────────────────────────────
 
-// 🏆 Leaderboard
+// 🏆 Public Leaderboard
 router.get('/leaderboard', getLeaderboard);
 
-// 🧪 View user quiz attempts
-router.get('/my-attempts', protect, getUserAttempts);
+// ─── Protected User Routes (any authenticated user) ─────────────────────────
 
-// 📚 Admin: All quizzes
-router.get('/admin/quizzes', protect, getAllQuizzes);
+router.use(protect);
 
-// 📝 Admin: Get specific quiz
-router.get('/admin/quizzes/:quizId', protect, getQuizById);
+router.post('/submit', submitQuizAttempt);
+router.get('/my-attempts', getUserAttempts);
 
-// 🛠️ Admin: Update quiz
-router.put('/admin/quizzes/:quizId', protect, updateQuiz);
+// ─── Admin/Creator Routes (SUPERADMIN, ADMIN, CREATER only) ─────────────────
 
-// ➕ Admin: Add one question
-router.post('/admin/quizzes/:quizId/questions', protect, addQuestionToQuiz);
+router.use('/admin', requireRole(['SUPERADMIN', 'ADMIN', 'CREATER']));
 
-// 📥 Admin: Upload JSON questions
-router.post('/admin/quizzes/:quizId/bulk-upload', protect, bulkUploadQuestions);
 
-// 📤 Admin: Upload CSV/XLSX
-router.post('/admin/quizzes/:quizId/bulk-upload-file', protect, upload.single('file'), bulkUploadFromFile);
+// Create a new quiz
+router.post('/admin/quizzes', createQuiz);
+
+// 📚 Get all quizzes
+router.get('/admin/quizzes', getAllQuizzes);
+
+// 📝 Get or update a specific quiz
+router
+  .route('/admin/quizzes/:quizId')
+  .get(getQuizById)
+  .patch(updateQuiz);
+
+// ➕ Add a single question to a quiz
+router.post(
+  '/admin/quizzes/:quizId/questions',
+  addQuestionToQuiz
+);
+
+// 📥 Bulk upload via JSON
+router.post(
+  '/admin/quizzes/:quizId/bulk-upload',
+  bulkUploadQuestions
+);
+
+// 📤 Bulk upload via CSV file
+router.post(
+  '/admin/quizzes/:quizId/bulk-upload-file',
+  upload.single('file'),
+  bulkUploadFromFile
+);
 
 export default router;
