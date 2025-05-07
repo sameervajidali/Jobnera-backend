@@ -13,6 +13,10 @@ import {
   downloadQuestionsTemplate,
   addQuestionToQuiz,
   getUserAttempts,
+  getQuestionsByQuiz,
+  createQuestion,
+  updateQuestion,
+  deleteQuestion,
   createQuiz
 } from '../controllers/quizController.js';
 import { protect, requireRole } from '../middlewares/authMiddleware.js';
@@ -73,5 +77,33 @@ router.post(
   upload.single('file'),
   bulkUploadFromFile
 );
+
+
+
+
+// under your admin/quizzes/:quizId block:
+router.get(
+  '/admin/quizzes/:quizId/questions',
+  protect, requireRole(['SUPERADMIN','ADMIN','CREATOR']),
+  getQuestionsByQuiz
+);
+router.post(
+  '/admin/quizzes/:quizId/questions',
+  protect, requireRole(['SUPERADMIN','ADMIN','CREATOR']),
+  createQuestion
+);
+router.patch(
+  '/admin/quizzes/:quizId/questions/:questionId',
+  protect, requireRole(['SUPERADMIN','ADMIN','CREATOR']),
+  updateQuestion
+);
+router.delete(
+  '/admin/quizzes/:quizId/questions/:questionId',
+  protect, requireRole(['SUPERADMIN','ADMIN','CREATOR']),
+  deleteQuestion
+);
+
+
+
 
 export default router;

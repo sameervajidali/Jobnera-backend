@@ -297,3 +297,48 @@ export const downloadQuestionsTemplate = asyncHandler(async (req, res) => {
   // 5️⃣ Send the file
   res.send(csvContent);
 });
+
+
+// GET all questions for a quiz
+export const getQuestionsByQuiz = asyncHandler(async (req, res) => {
+  const { quizId } = idParamSchema.parse(req.params);
+  const questions = await Question.find({ quiz: quizId });
+  res.json(questions);
+});
+
+// POST new question
+export const createQuestion = asyncHandler(async (req, res) => {
+  const { quizId } = idParamSchema.parse(req.params);
+  const payload = addQuestionSchema.parse(req.body);
+  const q = await Question.create({ ...payload, quiz: quizId });
+  await Quiz.findByIdAndUpdate(quizId, {
+    $push: { questions: q._id },
+    $inc: { totalMarks: 1 }
+  });
+  res.status(201).json(q);
+});
+
+// PATCH update an existing question
+export const updateQuestion = asyncHandler(async (req, res) => {
+  const { quizId, questionId } = req.params;
+  const payload = addQuestionSchema.parse(req.body);
+  const q = await Question.findOneAndUpdate(
+    { _id: questionId, quiz: quizId },
+    payload,
+    { new: true }
+  );
+  if (!q) return res.status(404).json({ message: 'Question not found' });
+  res.json(q);
+});
+
+// DELETE a question
+export const deleteQuestion = asyncHandler(async (req, res) => {
+  const { quizId, questionId } = req.params;
+  const q = await Question.findOneAndDelete({ _id: questionId, quiz: quizId });
+  if (!q) return res.status(404).json({ message: 'Question not found' });
+  await Quiz.findByIdAndUpdate(quizId, {
+    $pull: { questions: questionId },
+    $inc: { totalMarks: -1 }
+  });
+  res.json({ message: 'Deleted' });
+});
