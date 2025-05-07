@@ -138,32 +138,33 @@ export const getUserAttempts = asyncHandler(async (req, res) => {
 // 📚 Get All Quizzes (Admin) with caching
 export const getAllQuizzes = asyncHandler(async (_req, res) => {
   const cacheKey = 'quizzes:all';
-  const cached = await redis.get(cacheKey);
-  if (cached) {
-    return res.status(200).json(JSON.parse(cached));
+
+  // 1️⃣ Try to serve from cache, if redis client is available
+  if (redis) {
+    try {
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        return res.status(200).json(JSON.parse(cached));
+      }
+    } catch (err) {
+      console.warn('⚠️ Redis GET failed:', err.message);
+      // fall through to DB fetch
+    }
   }
 
+  // 2️⃣ Fetch from Mongo
   const quizzes = await Quiz.find().populate('questions');
-  await redis.set(cacheKey, JSON.stringify(quizzes), 'EX', 3600);
+
+  // 3️⃣ Populate cache (best‐effort, non‐blocking)
+  if (redis) {
+    redis.set(cacheKey, JSON.stringify(quizzes), 'EX', 3600)
+      .catch(err => console.warn('⚠️ Redis SET failed:', err.message));
+  }
+
+  // 4️⃣ Return the fresh data
   res.status(200).json(quizzes);
 });
 
-// 📝 Get Quiz By ID (Admin) with caching
-// export const getQuizById = asyncHandler(async (req, res) => {
-//   const { quizId } = idParamSchema.parse(req.params);
-//   const cacheKey = `quiz:${quizId}`;
-
-//   const cached = await redis.get(cacheKey);
-//   if (cached) {
-//     return res.status(200).json(JSON.parse(cached));
-//   }
-
-//   const quiz = await Quiz.findById(quizId).populate('questions');
-//   if (!quiz) return res.status(404).json({ message: 'Quiz not found' });
-
-//   await redis.set(cacheKey, JSON.stringify(quiz), 'EX', 3600);
-//   res.status(200).json(quiz);
-// });
 
 // 📝 Get Quiz By ID (Admin) with caching
 export const getQuizById = asyncHandler(async (req, res) => {
