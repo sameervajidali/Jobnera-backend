@@ -368,12 +368,19 @@ export const assignQuiz = asyncHandler(async (req, res) => {
 });
 
 // 📖 List users assigned to this quiz
+// src/controllers/quizController.js
 export const getQuizAssignments = asyncHandler(async (req, res) => {
   const { quizId } = idParamSchema.parse(req.params);
-  const assignments = await QuizAssignment.find({ quiz: quizId })
+
+  // Fetch the full list of assignments
+  const assignments = await QuizAssignment
+    .find({ quiz: quizId })
     .populate('user', 'name email');
-  res.json(assignments);
+
+  // Return the array, not its length
+  return res.status(200).json(assignments);
 });
+
 
 // 🗑️ Unassign one user from quiz
 export const unassignQuiz = asyncHandler(async (req, res) => {
