@@ -109,22 +109,14 @@ router
   .delete(deleteQuestion);
 
 // List who’s assigned to this quiz
-router.get(
-  '/admin/quizzes/:quizId/assignments',
-  getQuizAssignments
-);
+// POST   /api/quizzes/admin/quizzes/:quizId/assign
+router.post('/admin/quizzes/:quizId/assign', assignQuiz);
 
-// Assign one or more users
-router.post(
-  '/admin/quizzes/:quizId/assign',
-  assignQuiz
-);
+// GET    /api/quizzes/admin/quizzes/:quizId/assignments
+router.get('/admin/quizzes/:quizId/assignments', getQuizAssignments);
 
-// Remove a single user assignment
-router.delete(
-  '/admin/quizzes/:quizId/assign/:userId',
-  unassignQuiz
-);
+// DELETE /api/quizzes/admin/quizzes/:quizId/assign/:userId
+router.delete('/admin/quizzes/:quizId/assign/:userId', unassignQuiz);
 
 
 export default router;

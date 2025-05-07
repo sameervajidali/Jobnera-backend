@@ -345,16 +345,15 @@ export const deleteQuestion = asyncHandler(async (req, res) => {
 });
 
 
+
 // ➕ Assign quiz to one or more users
 export const assignQuiz = asyncHandler(async (req, res) => {
   const { quizId } = idParamSchema.parse(req.params);
-  const { userIds } = z.object({ userIds: z.array(z.string().regex(/^[0-9a-fA-F]{24}$/)).min(1) }).parse(req.body);
+  const { userIds } = z
+    .object({ userIds: z.array(z.string().regex(/^[0-9a-fA-F]{24}$/)).min(1) })
+    .parse(req.body);
 
-  // ensure quiz exists
-  const quiz = await Quiz.findById(quizId);
-  if (!quiz) return res.status(404).json({ message: 'Quiz not found' });
-
-  // upsert assignments
+  // Bulk upsert so duplicates are ignored
   const ops = userIds.map(uid => ({
     updateOne: {
       filter: { quiz: quizId, user: uid },
@@ -367,24 +366,21 @@ export const assignQuiz = asyncHandler(async (req, res) => {
   res.status(200).json({ message: `Assigned to ${userIds.length} user(s)` });
 });
 
-// 📖 List users assigned to this quiz
-// src/controllers/quizController.js
+
+
+// 📖 List all assignments for this quiz
 export const getQuizAssignments = asyncHandler(async (req, res) => {
   const { quizId } = idParamSchema.parse(req.params);
-
-  // Fetch the full list of assignments
-  const assignments = await QuizAssignment
-    .find({ quiz: quizId })
+  const assignments = await QuizAssignment.find({ quiz: quizId })
     .populate('user', 'name email');
-
-  // Return the array, not its length
-  return res.status(200).json(assignments);
+  res.status(200).json(assignments);
 });
 
 
-// 🗑️ Unassign one user from quiz
+
+// 🗑️ Unassign one user from a quiz
 export const unassignQuiz = asyncHandler(async (req, res) => {
   const { quizId, userId } = req.params;
   await QuizAssignment.deleteOne({ quiz: quizId, user: userId });
-  res.json({ message: 'Unassigned' });
+  res.status(200).json({ message: 'Unassigned' });
 });
