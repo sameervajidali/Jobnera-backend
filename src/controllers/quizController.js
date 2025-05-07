@@ -6,6 +6,7 @@ import QuizAttempt from '../models/QuizAttempt.js';
 import LeaderboardEntry from '../models/LeaderboardEntry.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import csv from 'csvtojson';
+import { z } from 'zod';
 import {
   submitAttemptSchema,
   bulkQuestionsSchema,
@@ -349,11 +350,14 @@ export const deleteQuestion = asyncHandler(async (req, res) => {
 // ➕ Assign quiz to one or more users
 export const assignQuiz = asyncHandler(async (req, res) => {
   const { quizId } = idParamSchema.parse(req.params);
+
+  // Validate body with Zod
   const { userIds } = z
-    .object({ userIds: z.array(z.string().regex(/^[0-9a-fA-F]{24}$/)).min(1) })
+    .object({
+      userIds: z.array(z.string().regex(/^[0-9a-fA-F]{24}$/)).min(1)
+    })
     .parse(req.body);
 
-  // Bulk upsert so duplicates are ignored
   const ops = userIds.map(uid => ({
     updateOne: {
       filter: { quiz: quizId, user: uid },
