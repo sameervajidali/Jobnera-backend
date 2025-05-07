@@ -41,7 +41,7 @@ export const bulkQuestionsSchema = z.object({
 
 // ─── Leaderboard Query Params ─────────────────────────────────────────────────
 export const getLeaderboardSchema = z.object({
-  category:   z.string().min(1, 'Category is required'),
+  category: z.string().optional(),    // now optional
   topic:      z.string().optional(),
   level:      z.enum(['Beginner','Intermediate','Expert']).optional(),
   timePeriod: z.enum(['week','month','all-time']).default('all-time'),
