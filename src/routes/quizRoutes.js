@@ -19,7 +19,7 @@ import {
   updateQuestion,
   deleteQuestion,
 } from '../controllers/quizController.js';
-import { protect, requireRole } from '../middleware/authMiddleware.js';
+import { protect, requireRole } from '../middlewares/authMiddleware.js';
 
 const upload = multer();  // memory storage for CSV uploads
 const router = express.Router();
