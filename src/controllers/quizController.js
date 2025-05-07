@@ -11,85 +11,61 @@ import {
   bulkQuestionsSchema,
   addQuestionSchema,
   getLeaderboardSchema,
+  createQuizSchema,
   updateQuizSchema,
-  idParamSchema,
-  createQuizSchema
+  idParamSchema
 } from '../validators/quizValidator.js';
 
-// Initialize Redis client for caching
-
-
-
-let redis;
+// ─── Redis client (optional caching) ─────────────────────────────────────────
+let redis = null;
 if (process.env.REDIS_URL) {
-  redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+  redis = new Redis(process.env.REDIS_URL);
+  redis.on('error', err => console.warn('⚠️ Redis error:', err.message));
 } else {
-  // Fallback to null so we can check ‘if (redis)’ later
-  console.warn('⚠️  No REDIS_URL supplied: caching disabled');
-  redis = null;
+  console.warn('⚠️ No REDIS_URL: caching disabled');
 }
 
-// Attach a no-op error handler so ioredis doesn’t emit unhandled errors
-if (redis) {
-  redis.on('error', (err) => {
-    console.warn('⚠️  Redis connection error:', err.message);
-    // optionally: redis.disconnect();
-  });
-}
-
-
-
-
-// 📤 Submit Quiz Attempt
+// ─── Submit Quiz Attempt ─────────────────────────────────────────────────────
 export const submitQuizAttempt = asyncHandler(async (req, res) => {
   const { quizId, answers, timeTaken } = submitAttemptSchema.parse(req.body);
-
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
     const quiz = await Quiz.findById(quizId).populate('questions').session(session);
     if (!quiz) throw { status: 404, message: 'Quiz not found' };
 
-    if (!Array.isArray(answers) || answers.length !== quiz.questions.length) {
+    if (!answers || Object.keys(answers).length !== quiz.questions.length) {
       return res.status(400).json({ message: 'Invalid number of answers' });
     }
 
-    let correctAnswersCount = 0;
-    const processedAnswers = quiz.questions.map(q => {
-      const selectedIndex = answers[q._id] ?? null;
-      const isCorrect = selectedIndex === q.correctIndex;
-      if (isCorrect) correctAnswersCount++;
-      return { question: q._id, selectedIndex, isCorrect };
+    let correctCount = 0;
+    const processed = quiz.questions.map(q => {
+      const sel = answers[q._id] ?? null;
+      const correct = sel === q.correctIndex;
+      if (correct) correctCount++;
+      return { question: q._id, selectedIndex: sel, isCorrect: correct };
     });
 
     const [attempt] = await QuizAttempt.create([
       {
         user: req.user._id,
         quiz: quizId,
-        score: correctAnswersCount,
+        score: correctCount,
         totalQuestions: quiz.questions.length,
-        correctAnswers: correctAnswersCount,
-        answers: processedAnswers,
+        correctAnswers: correctCount,
+        answers: processed,
         timeTaken
       }
     ], { session });
 
     await LeaderboardEntry.findOneAndUpdate(
-      {
-        user: req.user._id,
-        category: quiz.category,
-        topic: quiz.topic,
-        level: quiz.level
-      },
-      {
-        $inc: { score: correctAnswersCount, attempts: 1 },
-        lastUpdated: new Date()
-      },
+      { user: req.user._id, category: quiz.category, topic: quiz.topic, level: quiz.level },
+      { $inc: { score: correctCount, attempts: 1 }, lastUpdated: new Date() },
       { upsert: true, new: true, session }
     );
 
     await session.commitTransaction();
-    res.status(200).json({ message: 'Quiz submitted', attempt });
+    return res.status(200).json({ message: 'Quiz submitted', attempt });
   } catch (err) {
     await session.abortTransaction();
     throw err;
@@ -98,210 +74,184 @@ export const submitQuizAttempt = asyncHandler(async (req, res) => {
   }
 });
 
-// 🏆 Leaderboard with caching
+// ─── Leaderboard ──────────────────────────────────────────────────────────────
 export const getLeaderboard = asyncHandler(async (req, res) => {
   const { category, topic, level, timePeriod } = getLeaderboardSchema.parse(req.query);
-  const cacheKey = `leaderboard:${category}:${topic || 'all'}:${level || 'all'}:${timePeriod}`;
+  const key = `leaderboard:${category}:${topic||'all'}:${level||'all'}:${timePeriod}`;
 
-  // Try cache
-  const cached = await redis.get(cacheKey);
-  if (cached) {
-    return res.status(200).json(JSON.parse(cached));
+  // cache read
+  if (redis) {
+    try {
+      const c = await redis.get(key);
+      if (c) return res.json(JSON.parse(c));
+    } catch (e) {
+      console.warn('⚠️ Redis GET failed:', e.message);
+    }
   }
 
-  // Fetch from DB
   const filter = { category };
   if (topic) filter.topic = topic;
   if (level) filter.level = level;
-  if (timePeriod === 'week') {
-    filter.lastUpdated = { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) };
-  }
+  if (timePeriod === 'week') filter.lastUpdated = { $gte: new Date(Date.now() - 7*24*60*60*1000) };
 
   const entries = await LeaderboardEntry.find(filter)
     .sort({ score: -1 })
     .limit(100)
     .populate('user', 'name avatar');
 
-  // Cache & respond
-  await redis.set(cacheKey, JSON.stringify(entries), 'EX', 3600);
-  res.status(200).json(entries);
+  // cache write
+  if (redis) {
+    redis.set(key, JSON.stringify(entries), 'EX', 3600)
+         .catch(err => console.warn('⚠️ Redis SET failed:', err.message));
+  }
+
+  res.json(entries);
 });
 
-// 📥 Get Quiz Attempt History for User
+// ─── User Attempts ────────────────────────────────────────────────────────────
 export const getUserAttempts = asyncHandler(async (req, res) => {
-  const attempts = await QuizAttempt.find({ user: req.user._id })
+  const atts = await QuizAttempt.find({ user: req.user._id })
     .populate('quiz', 'title category level')
     .sort({ createdAt: -1 });
-  res.status(200).json(attempts);
+  res.json(atts);
 });
 
-// 📚 Get All Quizzes (Admin) with caching
+// ─── Quiz CRUD: Admin ─────────────────────────────────────────────────────────
 export const getAllQuizzes = asyncHandler(async (_req, res) => {
-  const cacheKey = 'quizzes:all';
-
-  // 1️⃣ Try to serve from cache, if redis client is available
+  const key = 'quizzes:all';
   if (redis) {
     try {
-      const cached = await redis.get(cacheKey);
-      if (cached) {
-        return res.status(200).json(JSON.parse(cached));
-      }
-    } catch (err) {
-      console.warn('⚠️ Redis GET failed:', err.message);
-      // fall through to DB fetch
-    }
+      const c = await redis.get(key);
+      if (c) return res.json(JSON.parse(c));
+    } catch (e) { console.warn('⚠️ Redis GET failed:', e.message); }
   }
 
-  // 2️⃣ Fetch from Mongo
   const quizzes = await Quiz.find().populate('questions');
-
-  // 3️⃣ Populate cache (best‐effort, non‐blocking)
   if (redis) {
-    redis.set(cacheKey, JSON.stringify(quizzes), 'EX', 3600)
-      .catch(err => console.warn('⚠️ Redis SET failed:', err.message));
+    redis.set(key, JSON.stringify(quizzes), 'EX', 3600)
+         .catch(err => console.warn('⚠️ Redis SET failed:', err.message));
   }
-
-  // 4️⃣ Return the fresh data
-  res.status(200).json(quizzes);
+  res.json(quizzes);
 });
 
-
-// 📝 Get Quiz By ID (Admin) with caching
 export const getQuizById = asyncHandler(async (req, res) => {
   const { quizId } = idParamSchema.parse(req.params);
-  const cacheKey = `quiz:${quizId}`;
-
-  // -  // Try cache
-  // const cached = await redis.get(cacheKey);
-  // if (cached) {
-  //   return res.status(200).json(JSON.parse(cached));
-  // }
-  // Try cache (only if redis is configured)
-  let cached = null;
+  const key = `quiz:${quizId}`;
+  let c = null;
   if (redis) {
-    try {
-      cached = await redis.get(cacheKey);
-    } catch (err) {
-      console.warn('⚠️ Redis GET failed:', err.message);
-    }
-  }
-  if (cached) {
-    return res.status(200).json(JSON.parse(cached));
+    try { c = await redis.get(key); } catch (e) { console.warn('⚠️ Redis GET failed:', e.message); }
+    if (c) return res.json(JSON.parse(c));
   }
 
   const quiz = await Quiz.findById(quizId).populate('questions');
   if (!quiz) return res.status(404).json({ message: 'Quiz not found' });
 
-  // -  // Cache & respond
-  // -  await redis.set(cacheKey, JSON.stringify(quiz), 'EX', 3600);
-  // Cache (best‐effort) & respond
   if (redis) {
-    redis.set(cacheKey, JSON.stringify(quiz), 'EX', 3600)
-      .catch(err => console.warn('⚠️ Redis SET failed:', err.message));
+    redis.set(key, JSON.stringify(quiz), 'EX', 3600)
+         .catch(err => console.warn('⚠️ Redis SET failed:', err.message));
   }
-
-  res.status(200).json(quiz);
+  res.json(quiz);
 });
 
+export const createQuiz = asyncHandler(async (req, res) => {
+  const data = createQuizSchema.parse(req.body);
+  const quiz = await Quiz.create(data);
+  if (redis) redis.del('quizzes:all').catch(() => {});
+  res.status(201).json(quiz);
+});
 
-
-
-
-
-
-// 🛠️ Update Quiz (Admin)
 export const updateQuiz = asyncHandler(async (req, res) => {
   const { quizId } = idParamSchema.parse(req.params);
   const updates = updateQuizSchema.parse(req.body);
+  const quiz = await Quiz.findByIdAndUpdate(quizId, updates, { new: true });
+  if (!quiz) return res.status(404).json({ message: 'Quiz not found' });
 
-  const updated = await Quiz.findByIdAndUpdate(quizId, updates, { new: true });
-  if (!updated) return res.status(404).json({ message: 'Quiz not found' });
-
-  // Invalidate cache
-  await redis.del(`quiz:${quizId}`);
-  await redis.del('quizzes:all');
-
-  res.status(200).json(updated);
+  if (redis) {
+    redis.del(`quiz:${quizId}`).catch(() => {});
+    redis.del('quizzes:all').catch(() => {});
+  }
+  res.json(quiz);
 });
 
-// ➕ Add Single Question (Admin)
 export const addQuestionToQuiz = asyncHandler(async (req, res) => {
   const { quizId } = idParamSchema.parse(req.params);
-  const { question, options, correctAnswer, topicTag, explanation } = addQuestionSchema.parse(req.body);
-
-  const q = await Question.create({ quiz: quizId, question, options, correctAnswer, topicTag, explanation });
+  const { text, options, correctIndex, topicTag, explanation, difficulty, quiz } = addQuestionSchema.parse(req.body);
+  const q = await Question.create({ text, options, correctIndex, topicTag, explanation, difficulty, quiz: quizId });
   await Quiz.findByIdAndUpdate(quizId, { $push: { questions: q._id }, $inc: { totalMarks: 1 } });
-
-  // Invalidate cache
-  await redis.del(`quiz:${quizId}`);
-  await redis.del('quizzes:all');
-
+  if (redis) {
+    redis.del(`quiz:${quizId}`).catch(() => {});
+    redis.del('quizzes:all').catch(() => {});
+  }
   res.status(201).json(q);
 });
 
-// 📤 Admin: Bulk Upload JSON
 export const bulkUploadQuestions = asyncHandler(async (req, res) => {
-  // 1️⃣ grab the quizId from the URL
   const { quizId } = idParamSchema.parse(req.params);
-
-  // 2️⃣ validate only the questions array
   const { questions } = bulkQuestionsSchema.parse(req.body);
-
-  // 3️⃣ format & insert
-  const formatted = questions.map(q => ({
-    quiz:            quizId,
-    question:        q.text,
-    options:         q.options,
-    correctAnswer:   q.correctIndex,
-    topicTag:        q.topicTag,
-    explanation:     q.explanation
-  }));
-  // … rest of your transaction + update logic remains the same …
-});
-
-// 📤 Admin: Bulk Upload From File (CSV)
-export const bulkUploadFromFile = asyncHandler(async (req, res) => {
-  const { quizId } = idParamSchema.parse(req.params);
-  if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
-
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    const rows = await csv().fromString(req.file.buffer.toString());
-    if (!rows.length) throw { status: 400, message: 'CSV file is empty' };
-
-    const formatted = rows.map(row => ({ quiz: quizId, question: row.question, options: [row.option1, row.option2, row.option3, row.option4], correctAnswer: Number(row.correctAnswer), topicTag: row.topic || '', explanation: row.explanation || '' }));
-    const created = await Question.insertMany(formatted, { session });
-    await Quiz.findByIdAndUpdate(quizId, { $push: { questions: created.map(q => q._id) }, $inc: { totalMarks: created.length } }, { session });
+    const docs = questions.map(q => ({
+      quiz: quizId,
+      text: q.text,
+      options: q.options,
+      correctIndex: q.correctIndex,
+      topicTag: q.topicTag,
+      explanation: q.explanation,
+      difficulty: q.difficulty || 'medium'
+    }));
+    const created = await Question.insertMany(docs, { session });
+    await Quiz.findByIdAndUpdate(quizId,
+      { $push: { questions: created.map(x => x._id) }, $inc: { totalMarks: created.length } },
+      { session }
+    );
     await session.commitTransaction();
-
-    // Invalidate cache
-    await redis.del(`quiz:${quizId}`);
-    await redis.del('quizzes:all');
-
-    res.status(201).json({ message: 'Bulk upload successful', count: created.length });
-  } catch (err) {
+    if (redis) {
+      redis.del(`quiz:${quizId}`).catch(() => {});
+      redis.del('quizzes:all').catch(() => {});
+    }
+    res.status(201).json({ message: 'Questions uploaded', count: created.length });
+  } catch (e) {
     await session.abortTransaction();
-    throw err;
+    throw e;
   } finally {
     session.endSession();
   }
 });
 
-// ➕ Create new quiz (Admin/Creater only)
-export const createQuiz = asyncHandler(async (req, res) => {
-  // 1️⃣ validate input
-  const quizData = createQuizSchema.parse(req.body);
+export const bulkUploadFromFile = asyncHandler(async (req, res) => {
+  const { quizId } = idParamSchema.parse(req.params);
+  if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
 
-  // 2️⃣ persist
-  const quiz = await Quiz.create(quizData);
-
-  // 3️⃣ clear any quiz-list cache (if you’re using Redis)
-  if (typeof redis !== 'undefined' && redis) {
-    await redis.del('quizzes:all');
+  const rows = await csv().fromString(req.file.buffer.toString());
+  if (!rows.length) return res.status(400).json({ message: 'CSV is empty' });
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const docs = rows.map(r => ({
+      quiz: quizId,
+      text: r.question,
+      options: [r.option1, r.option2, r.option3, r.option4],
+      correctIndex: Number(r.correctAnswer),
+      topicTag: r.topic || '',
+      explanation: r.explanation || '',
+      difficulty: r.difficulty || 'medium'
+    }));
+    const created = await Question.insertMany(docs, { session });
+    await Quiz.findByIdAndUpdate(quizId,
+      { $push: { questions: created.map(x => x._id) }, $inc: { totalMarks: created.length } },
+      { session }
+    );
+    await session.commitTransaction();
+    if (redis) {
+      redis.del(`quiz:${quizId}`).catch(() => {});
+      redis.del('quizzes:all').catch(() => {});
+    }
+    res.status(201).json({ message: 'Bulk upload successful', count: created.length });
+  } catch (e) {
+    await session.abortTransaction();
+    throw e;
+  } finally {
+    session.endSession();
   }
-
-  // 4️⃣ respond
-  res.status(201).json(quiz);
 });
-
