@@ -21,6 +21,7 @@ import {
   assignQuiz,
   getPublicQuizzes,
   getQuizAssignments,
+  getDistinctValues,
   unassignQuiz
 } from '../controllers/quizController.js';
 import { protect, requireRole } from '../middlewares/authMiddleware.js';
@@ -29,6 +30,13 @@ const upload = multer();  // memory storage for CSV uploads
 const router = express.Router();
 
 // ─── Public Routes ────────────────────────────────────────────────────────────
+
+
+// Public distinct endpoints under /api/quizzes/distinct/…
+router.get('/distinct/category', getDistinctValues('category'));
+router.get('/distinct/topic',    getDistinctValues('topic'));
+router.get('/distinct/level', getDistinctValues('level'));
+
 router.get(
   '/',
   getPublicQuizzes

@@ -418,3 +418,17 @@ export const getPublicQuizzes = asyncHandler(async (req, res) => {
     limit: Number(limit)
   });
 });
+
+
+// 📊 Get distinct values for a field
+export const getDistinctValues = (field) =>
+  asyncHandler(async (_req, res) => {
+    // only allow certain fields:
+    const allowed = ['category', 'topic', 'level'];
+    if (!allowed.includes(field)) {
+      return res.status(400).json({ message: 'Invalid distinct field' });
+    }
+    const values = await Quiz.distinct(field, { isActive: true });
+    res.json(values);
+  });
+
