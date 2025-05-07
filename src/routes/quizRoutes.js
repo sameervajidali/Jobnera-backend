@@ -10,6 +10,7 @@ import {
   getAllQuizzes,
   getQuizById,
   updateQuiz,
+  downloadQuestionsTemplate,
   addQuestionToQuiz,
   getUserAttempts,
   createQuiz
@@ -35,7 +36,13 @@ router.get('/my-attempts', getUserAttempts);
 
 router.use('/admin', requireRole(['SUPERADMIN', 'ADMIN', 'CREATER']));
 
-
+// under your admin block:
+router.get(
+  '/admin/quizzes/:quizId/template',
+  protect,
+  requireRole(['SUPERADMIN', 'ADMIN', 'CREATOR']),
+    downloadQuestionsTemplate
+);
 // Create a new quiz
 router.post('/admin/quizzes', createQuiz);
 
