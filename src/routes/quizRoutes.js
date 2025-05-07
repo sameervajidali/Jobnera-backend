@@ -30,7 +30,7 @@ const router = express.Router();
 
 // ─── Public Routes ────────────────────────────────────────────────────────────
 router.get(
-  '/quizzes',
+  '/',
   getPublicQuizzes
 );
 
