@@ -5,59 +5,70 @@ import multer from 'multer';
 import {
   submitQuizAttempt,
   getLeaderboard,
-  bulkUploadQuestions,
-  bulkUploadFromFile,
+  getUserAttempts,
+  downloadQuestionsTemplate,
+  createQuiz,
   getAllQuizzes,
   getQuizById,
   updateQuiz,
-  downloadQuestionsTemplate,
   addQuestionToQuiz,
-  getUserAttempts,
+  bulkUploadQuestions,
+  bulkUploadFromFile,
   getQuestionsByQuiz,
   createQuestion,
   updateQuestion,
   deleteQuestion,
-  createQuiz
 } from '../controllers/quizController.js';
-import { protect, requireRole } from '../middlewares/authMiddleware.js';
+import { protect, requireRole } from '../middleware/authMiddleware.js';
 
 const upload = multer();  // memory storage for CSV uploads
 const router = express.Router();
 
-// ─── Public ───────────────────────────────────────────────────────────────────
+// ─── Public Routes ────────────────────────────────────────────────────────────
 
-// 🏆 Public Leaderboard
+// 🏆 Public leaderboard (anybody)
 router.get('/leaderboard', getLeaderboard);
 
-// ─── Protected User Routes (any authenticated user) ─────────────────────────
+// ─── Protected User Routes ────────────────────────────────────────────────────
 
-router.use(protect);
+// ✏️ Submit a quiz attempt
+router.post('/submit', protect, submitQuizAttempt);
 
-router.post('/submit', submitQuizAttempt);
-router.get('/my-attempts', getUserAttempts);
+// 📖 View your own quiz attempts
+router.get('/my-attempts', protect, getUserAttempts);
 
-// ─── Admin/Creator Routes (SUPERADMIN, ADMIN, CREATER only) ─────────────────
+// ─── Admin / Creator Routes ───────────────────────────────────────────────────
 
-router.use('/admin', requireRole(['SUPERADMIN', 'ADMIN', 'CREATER']));
+// All routes under `/admin` require authentication + one of these roles:
+router.use(
+  '/admin',
+  protect,
+  requireRole(['SUPERADMIN', 'ADMIN', 'CREATER'])
+);
 
-// under your admin block:
+// 📥 Download CSV template pre-filled with this quiz’s topic & level
 router.get(
   '/admin/quizzes/:quizId/template',
-  protect,
-  requireRole(['SUPERADMIN', 'ADMIN', 'CREATOR']),
-    downloadQuestionsTemplate
+  downloadQuestionsTemplate
 );
-// Create a new quiz
-router.post('/admin/quizzes', createQuiz);
 
-// 📚 Get all quizzes
-router.get('/admin/quizzes', getAllQuizzes);
+// ➕ Create a new quiz
+router.post(
+  '/admin/quizzes',
+  createQuiz
+);
+
+// 📚 List all quizzes
+router.get(
+  '/admin/quizzes',
+  getAllQuizzes
+);
 
 // 📝 Get or update a specific quiz
 router
   .route('/admin/quizzes/:quizId')
-  .get(getQuizById)
-  .patch(updateQuiz);
+  .get(getQuizById)    // fetch quiz metadata + questions
+  .patch(updateQuiz);  // update quiz fields (title, category, etc.)
 
 // ➕ Add a single question to a quiz
 router.post(
@@ -65,45 +76,37 @@ router.post(
   addQuestionToQuiz
 );
 
-// 📥 Bulk upload via JSON
+// 📥 Bulk-upload questions via JSON
 router.post(
   '/admin/quizzes/:quizId/bulk-upload',
   bulkUploadQuestions
 );
 
-// 📤 Bulk upload via CSV file
+// 📤 Bulk-upload questions via CSV/XLSX file
 router.post(
   '/admin/quizzes/:quizId/bulk-upload-file',
   upload.single('file'),
   bulkUploadFromFile
 );
 
+// ─── Question CRUD for a Given Quiz ──────────────────────────────────────────
 
-
-
-// under your admin/quizzes/:quizId block:
+// 📖 List all questions for this quiz
 router.get(
   '/admin/quizzes/:quizId/questions',
-  protect, requireRole(['SUPERADMIN','ADMIN','CREATOR']),
   getQuestionsByQuiz
 );
+
+// ➕ Create a new question under this quiz
 router.post(
   '/admin/quizzes/:quizId/questions',
-  protect, requireRole(['SUPERADMIN','ADMIN','CREATOR']),
   createQuestion
 );
-router.patch(
-  '/admin/quizzes/:quizId/questions/:questionId',
-  protect, requireRole(['SUPERADMIN','ADMIN','CREATOR']),
-  updateQuestion
-);
-router.delete(
-  '/admin/quizzes/:quizId/questions/:questionId',
-  protect, requireRole(['SUPERADMIN','ADMIN','CREATOR']),
-  deleteQuestion
-);
 
-
-
+// 📝 Update or delete a specific question
+router
+  .route('/admin/quizzes/:quizId/questions/:questionId')
+  .patch(updateQuestion)
+  .delete(deleteQuestion);
 
 export default router;
