@@ -388,3 +388,33 @@ export const unassignQuiz = asyncHandler(async (req, res) => {
   await QuizAssignment.deleteOne({ quiz: quizId, user: userId });
   res.status(200).json({ message: 'Unassigned' });
 });
+
+// 📚 Public: List / Filter Active Quizzes
+export const getPublicQuizzes = asyncHandler(async (req, res) => {
+  const { category, topic, level, page = 1, limit = 10 } = req.query;
+
+  // Build filter
+  const filter = { isActive: true };
+  if (category) filter.category = category;
+  if (topic)    filter.topic    = topic;
+  if (level)    filter.level    = level;
+
+  // Pagination
+  const skip = (Number(page) - 1) * Number(limit);
+
+  const [items, total] = await Promise.all([
+    Quiz.find(filter)
+      .populate('questions')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(Number(limit)),
+    Quiz.countDocuments(filter)
+  ]);
+
+  res.json({
+    items,
+    total,
+    page: Number(page),
+    limit: Number(limit)
+  });
+});

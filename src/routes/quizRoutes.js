@@ -19,6 +19,7 @@ import {
   updateQuestion,
   deleteQuestion,
   assignQuiz,
+  getPublicQuizzes,
   getQuizAssignments,
   unassignQuiz
 } from '../controllers/quizController.js';
@@ -28,6 +29,11 @@ const upload = multer();  // memory storage for CSV uploads
 const router = express.Router();
 
 // ─── Public Routes ────────────────────────────────────────────────────────────
+router.get(
+  '/quizzes',
+  getPublicQuizzes
+);
+
 
 // 🏆 Public leaderboard (anybody)
 router.get('/leaderboard', getLeaderboard);
