@@ -15,6 +15,7 @@ import {
   updateQuizSchema,
   idParamSchema
 } from '../validators/quizValidator.js';
+import QuizAssignment from '../models/QuizAssignment.js';
 
 // ─── Redis client (optional caching) ─────────────────────────────────────────
 let redis = null;
@@ -341,4 +342,42 @@ export const deleteQuestion = asyncHandler(async (req, res) => {
     $inc: { totalMarks: -1 }
   });
   res.json({ message: 'Deleted' });
+});
+
+
+// ➕ Assign quiz to one or more users
+export const assignQuiz = asyncHandler(async (req, res) => {
+  const { quizId } = idParamSchema.parse(req.params);
+  const { userIds } = z.object({ userIds: z.array(z.string().regex(/^[0-9a-fA-F]{24}$/)).min(1) }).parse(req.body);
+
+  // ensure quiz exists
+  const quiz = await Quiz.findById(quizId);
+  if (!quiz) return res.status(404).json({ message: 'Quiz not found' });
+
+  // upsert assignments
+  const ops = userIds.map(uid => ({
+    updateOne: {
+      filter: { quiz: quizId, user: uid },
+      update: { quiz: quizId, user: uid },
+      upsert: true
+    }
+  }));
+  await QuizAssignment.bulkWrite(ops);
+
+  res.status(200).json({ message: `Assigned to ${userIds.length} user(s)` });
+});
+
+// 📖 List users assigned to this quiz
+export const getQuizAssignments = asyncHandler(async (req, res) => {
+  const { quizId } = idParamSchema.parse(req.params);
+  const assignments = await QuizAssignment.find({ quiz: quizId })
+    .populate('user', 'name email');
+  res.json(assignments);
+});
+
+// 🗑️ Unassign one user from quiz
+export const unassignQuiz = asyncHandler(async (req, res) => {
+  const { quizId, userId } = req.params;
+  await QuizAssignment.deleteOne({ quiz: quizId, user: userId });
+  res.json({ message: 'Unassigned' });
 });

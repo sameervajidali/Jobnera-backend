@@ -18,6 +18,9 @@ import {
   createQuestion,
   updateQuestion,
   deleteQuestion,
+  assignQuiz,
+  getQuizAssignments,
+  unassignQuiz
 } from '../controllers/quizController.js';
 import { protect, requireRole } from '../middlewares/authMiddleware.js';
 
@@ -40,11 +43,7 @@ router.get('/my-attempts', protect, getUserAttempts);
 // ─── Admin / Creator Routes ───────────────────────────────────────────────────
 
 // All routes under `/admin` require authentication + one of these roles:
-router.use(
-  '/admin',
-  protect,
-  requireRole(['SUPERADMIN', 'ADMIN', 'CREATER'])
-);
+router.use('/admin', protect, requireRole(['SUPERADMIN', 'ADMIN', 'CREATOR']));
 
 // 📥 Download CSV template pre-filled with this quiz’s topic & level
 router.get(
@@ -108,5 +107,24 @@ router
   .route('/admin/quizzes/:quizId/questions/:questionId')
   .patch(updateQuestion)
   .delete(deleteQuestion);
+
+// List who’s assigned to this quiz
+router.get(
+  '/admin/quizzes/:quizId/assignments',
+  getQuizAssignments
+);
+
+// Assign one or more users
+router.post(
+  '/admin/quizzes/:quizId/assign',
+  assignQuiz
+);
+
+// Remove a single user assignment
+router.delete(
+  '/admin/quizzes/:quizId/assign/:userId',
+  unassignQuiz
+);
+
 
 export default router;
