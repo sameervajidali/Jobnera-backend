@@ -469,3 +469,14 @@ export const getDistinctValues = (field) =>
     res.json(values);
   });
 
+
+  // controllers/quizController.js
+export const getAttemptById = asyncHandler(async (req, res) => {
+  const { attemptId } = idParamSchema.parse(req.params);
+  const attempt = await QuizAttempt
+    .findById(attemptId)
+    .populate('quiz', 'title duration')
+    .populate('answers.question', 'text options correctIndex');
+  if (!attempt) return res.status(404).json({ message: 'Attempt not found' });
+  res.json(attempt);
+});
