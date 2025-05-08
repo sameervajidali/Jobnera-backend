@@ -16,16 +16,26 @@ export const submitAttemptSchema = z.object({
 
 // ─── Single Question Shape ────────────────────────────────────────────────────
 export const addQuestionSchema = z.object({
-  question:    z.string().min(1, 'Question text is required'),
-  options:     z.array(z.string().min(1, 'Option text is required'))
+  text:         z.string().min(1, 'Question text is required'),
+  options:      z
+                   .array(z.string().min(1), 'Option text is required')
                    .length(4, 'Exactly 4 options are required'),
-  correctIndex: z.number().int().gte(0, 'correctIndex must be between 0 and 3')
-                   .lte(3, 'correctIndex must be between 0 and 3'),
-  topicTag:    z.string().optional(),
-  explanation: z.string().optional(),
+  correctIndex: z.number().int().gte(0).lte(3),
+  topicTag:     z.string().optional(),
+  explanation:  z.string().optional(),
 });
 
-// ─── Bulk Upload Questions ────────────────────────────────────────────────────
+// For bulk upload
 export const bulkQuestionsSchema = z.object({
-  questions: z.array(addQuestionSchema).min(1, 'At least one question is required')
+  questions: z.array(
+    z.object({
+      text:         z.string().min(1),
+      options:      z.array(z.string().min(1)).length(4),
+      correctIndex: z.number().int().min(0).max(3),
+      topicTag:     z.string().optional(),
+      explanation:  z.string().optional(),
+      difficulty:   z.enum(['easy','medium','hard']).optional()
+    })
+  ).min(1),
 });
+
