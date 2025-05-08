@@ -175,21 +175,42 @@ export const logout = (req, res) => {
 };
 
 // ─── Refresh ─────────────────────────────────────────────────────────────────
+// Refresh Token Controller
 export const refreshToken = asyncHandler(async (req, res) => {
   const token = req.cookies.refreshToken;
-  if (!token) return res.status(401).json({ message: 'No refresh token.' });
+  
+  if (!token) {
+    return res.status(401).json({ message: 'No refresh token found. Please login again.' });
+  }
 
   try {
+    // Verify the refresh token
     const { userId } = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+    
+    // Find the user associated with the token
     const user = await User.findById(userId);
-    if (!user) return res.status(401).json({ message: 'Invalid token.' });
+    if (!user) {
+      return res.status(401).json({ message: 'User not found for the provided refresh token. Please login again.' });
+    }
 
+    // Generate new access token
     const newAccessToken = createAccessToken({ userId: user._id, role: user.role });
+
+    // Optionally rotate the refresh token (for additional security)
+    const newRefreshToken = createRefreshToken({ userId: user._id });
+
+    // Store the new refresh token (optional: save in DB or Redis for better security)
+    // Example: await user.update({ refreshToken: newRefreshToken });
+
+    // Send the new tokens via cookies
     res
-      .cookie('accessToken', newAccessToken, { ...cookieOptions, maxAge: 15 * 60 * 1000 })
+      .cookie('accessToken', newAccessToken, { ...cookieOptions, maxAge: 15 * 60 * 1000 })  // 15 minutes
+      .cookie('refreshToken', newRefreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 })  // 7 days
       .status(200)
       .json({ message: 'Access token refreshed.' });
+
   } catch (err) {
+    console.error('Refresh Token Error:', err); // Optional: log error for debugging (don't expose sensitive details)
     return res.status(401).json({ message: 'Invalid or expired refresh token.' });
   }
 });
@@ -475,58 +496,108 @@ export const resetPassword = asyncHandler(async (req, res) => {
 
 // controllers/authController.js
 
+// export const updateProfile = asyncHandler(async (req, res) => {
+//   const {
+//     name, phone, location, bio,
+//     skills, languages, experience, education
+//   } = req.body;
+
+//   const updates = {
+//     name, phone, location, bio,
+//     // Parse JSON arrays if needed:
+//     skills: skills ? JSON.parse(skills) : [],
+//     languages: languages ? JSON.parse(languages) : [],
+//     experience: experience ? JSON.parse(experience) : [],
+//     education: education ? JSON.parse(education) : [],
+//   };
+
+//   // Handle avatar and resume uploads
+//   if (req.files.avatar) {
+//     const relPath = `/uploads/${req.files.avatar[0].filename}`;
+//     updates.avatar = `${req.protocol}://${req.get("host")}${relPath}`;
+//   }
+  
+//   if (req.files.resume) {
+//     const filename = req.files.resume[0].filename;
+//     const url = `${req.protocol}://${req.get("host")}/uploads/${filename}`;
+//     updates.resume = url;
+//   }
+//   console.log('Avatar URL:', updates.avatar);
+// console.log('Resume URL:', updates.resume);
+
+  
+//   try {
+//     // Update the user in the database
+//     const user = await User.findByIdAndUpdate(
+//       req.user._id,
+//       updates,
+//       { new: true, runValidators: true }
+//     ).select('-password');
+
+//     if (!user) {
+//       return res.status(404).json({ message: 'User not found.' });
+//     }
+
+//     // Log the updated user data
+//     console.log('Updated user data:', user);
+
+//     // Respond with the updated user object
+//     res.status(200).json({ message: 'Profile updated.', user });
+//   } catch (error) {
+//     console.error('Error updating profile:', error);
+//     res.status(500).json({ message: 'Error updating profile', error: error.message });
+//   }
+// });
+
+
 export const updateProfile = asyncHandler(async (req, res) => {
+  // 1) Destructure expected fields from JSON body
   const {
-    name, phone, location, bio,
-    skills, languages, experience, education
+    name,
+    phone,
+    location,
+    bio,
+    website,
+    linkedin,
+    skills,
+    languages,
+    experience,
+    education,
+    avatar,
+    resume
   } = req.body;
 
+  // 2) Build an updates object, parsing arrays if they arrive as strings
   const updates = {
-    name, phone, location, bio,
-    // Parse JSON arrays if needed:
-    skills: skills ? JSON.parse(skills) : [],
-    languages: languages ? JSON.parse(languages) : [],
-    experience: experience ? JSON.parse(experience) : [],
-    education: education ? JSON.parse(education) : [],
+    ...(name      !== undefined && { name }),
+    ...(phone     !== undefined && { phone }),
+    ...(location  !== undefined && { location }),
+    ...(bio       !== undefined && { bio }),
+    ...(website   !== undefined && { website }),
+    ...(linkedin  !== undefined && { linkedin }),
+    ...(skills    !== undefined && { skills: typeof skills === 'string' ? JSON.parse(skills) : skills }),
+    ...(languages !== undefined && { languages: typeof languages === 'string' ? JSON.parse(languages) : languages }),
+    ...(experience!== undefined && { experience: typeof experience === 'string' ? JSON.parse(experience) : experience }),
+    ...(education !== undefined && { education: typeof education === 'string' ? JSON.parse(education) : education }),
+    ...(avatar    !== undefined && { avatar }),   // URL from Firebase
+    ...(resume    !== undefined && { resume })    // URL from Firebase
   };
 
-  // Handle avatar and resume uploads
-  if (req.files.avatar) {
-    const relPath = `/uploads/${req.files.avatar[0].filename}`;
-    updates.avatar = `${req.protocol}://${req.get("host")}${relPath}`;
+  // 3) Update the user document
+  const updated = await User.findByIdAndUpdate(
+    req.user._id,
+    updates,
+    { new: true, runValidators: true }
+  ).select('-password');
+
+  if (!updated) {
+    return res.status(404).json({ message: 'User not found.' });
   }
-  
-  if (req.files.resume) {
-    const filename = req.files.resume[0].filename;
-    const url = `${req.protocol}://${req.get("host")}/uploads/${filename}`;
-    updates.resume = url;
-  }
-  console.log('Avatar URL:', updates.avatar);
-console.log('Resume URL:', updates.resume);
 
-  
-  try {
-    // Update the user in the database
-    const user = await User.findByIdAndUpdate(
-      req.user._id,
-      updates,
-      { new: true, runValidators: true }
-    ).select('-password');
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found.' });
-    }
-
-    // Log the updated user data
-    console.log('Updated user data:', user);
-
-    // Respond with the updated user object
-    res.status(200).json({ message: 'Profile updated.', user });
-  } catch (error) {
-    console.error('Error updating profile:', error);
-    res.status(500).json({ message: 'Error updating profile', error: error.message });
-  }
+  // 4) Return the updated user
+  res.json({ message: 'Profile updated', user: updated });
 });
+
 
 
 
