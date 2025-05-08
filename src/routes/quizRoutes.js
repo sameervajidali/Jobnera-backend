@@ -43,8 +43,10 @@ router.get('/', getPublicQuizzes);
 
 // Public leaderboard (any visitor)
 router.get('/leaderboard', getLeaderboard);
+// Public/top-three
+router.get('/:quizId/top-three', getQuizTopThree);
 
-
+router.get('/attempts/:attemptId/stats', getAttemptStats);
 // Fetch a single quiz (requires login)
 router.get('/:quizId', protect, getQuizById);
 
@@ -55,8 +57,8 @@ router.get('/:quizId', protect, getQuizById);
 router.post('/submit',     protect, submitQuizAttempt);
 router.get('/my-attempts', protect, getUserAttempts);
 router.get('/attempts/:attemptId',             protect, getAttemptById);
-router.get('/attempts/:attemptId/stats',       protect, getAttemptStats);
-router.get('/:quizId/top-three',               protect, getQuizTopThree);
+//router.get('/attempts/:attemptId/stats',       protect, getAttemptStats);
+//router.get('/:quizId/top-three',               protect, getQuizTopThree);
 
 // ─── Admin / Creator Routes ────────────────────────────────────────────────────
 

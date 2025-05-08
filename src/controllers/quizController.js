@@ -487,21 +487,37 @@ export const getAttemptById = asyncHandler(async (req, res) => {
 
 
 // controllers/quizController.js
+// GET /api/quizzes/attempts/:attemptId
 export const getAttemptStats = asyncHandler(async (req, res) => {
-  const { attemptId } = attemptParamSchema.parse(req.params);
-  // load your attempt
-  const attempt = await QuizAttempt.findById(attemptId);
-  // count how many have strictly greater score & total attempts
-  const betterCount = await QuizAttempt.countDocuments({
-    quiz: attempt.quiz,
-    score: { $gt: attempt.score }
-  });
-  const totalCount = await QuizAttempt.countDocuments({ quiz: attempt.quiz });
-  const rank = betterCount + 1;
-  const percentile = Math.round(((totalCount - betterCount) / totalCount) * 100);
+  const { attemptId } = req.params;
+
+  // Find the attempt and populate the inner question refs
+  const attempt = await QuizAttempt.findById(attemptId)
+    .populate('quiz', 'title category topic level')
+    .populate({
+      path: 'answers.question',
+      model: 'Question',
+      select: 'text options correctIndex explanation'
+    })
+    .lean();
+
+  if (!attempt) {
+    return res.status(404).json({ message: 'Attempt not found' });
+  }
+
+  // Now compute rank & percentile
+  const allAttempts = await QuizAttempt
+    .find({ quiz: attempt.quiz._id })
+    .sort({ score: -1 })
+    .select('_id')
+    .lean();
+
+  const totalCount = allAttempts.length;
+  const rank       = allAttempts.findIndex(a => a._id.equals(attempt._id)) + 1;
+  const percentile = Math.round((1 - (rank - 1) / totalCount) * 100);
+
   res.json({ attempt, rank, totalCount, percentile });
 });
-
 
 // ─── Fetch a single attempt (with question details) ───────────────
 export const getAttemptDetails = asyncHandler(async (req, res) => {;
@@ -527,34 +543,37 @@ export const getAttemptDetails = asyncHandler(async (req, res) => {;
   });
 });
 
-// ─── Top 3 performers for a quiz in timePeriod ──────────────────
+// controllers/quizController.js
 export const getQuizTopThree = asyncHandler(async (req, res) => {
-  const { quizId } = idParamSchema.parse(req.params);
-  // default to past week
-  const since = req.query.timePeriod === 'month'
-    ? new Date(Date.now() - 30*24*60*60*1000)
-    : new Date(Date.now() - 7*24*60*60*1000);
+  const { quizId } = req.params;
+  const { timePeriod = 'week' } = req.query;
 
-  // Aggregate highest score per user in window
-  const top = await QuizAttempt.aggregate([
-    { $match: { quiz: mongoose.Types.ObjectId(quizId), createdAt: {$gte: since} }},
-    { $sort:  { score: -1, createdAt: 1 } },
-    { $group: { _id: '$user', bestScore: {$first:'$score'} } },
-    { $sort:  { bestScore: -1 } },
-    { $limit: 3 }
+  // Build time filter
+  const filter = { quiz: quizId };
+  if (timePeriod === 'week') {
+    const since = new Date(Date.now() - 7*24*60*60*1000);
+    filter.createdAt = { $gte: since };
+  } else if (timePeriod === 'month') {
+    const since = new Date(Date.now() - 30*24*60*60*1000);
+    filter.createdAt = { $gte: since };
+  }
+
+  // Aggregate top 3 scores for that quiz
+  const topThree = await QuizAttempt.aggregate([
+    { $match: filter },
+    { $sort: { score: -1, timeTaken: 1 } },
+    { $limit: 3 },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'user',
+        foreignField: '_id',
+        as: 'user'
+      }
+    },
+    { $unwind: '$user' },
+    { $project: { _id:1, score:1, 'user.name':1 } }
   ]);
 
-  // Populate user names
-  const populated = await QuizAttempt.populate(top, {
-    path: '_id',
-    select: 'name',
-    model: 'User'
-  });
-
-  // return shape { user: {...}, score }
-  res.json(populated.map(e => ({
-    _id:    e._id._id,
-    user:   { _id:e._id._id, name:e._id.name },
-    score:  e.bestScore
-  })));
+  res.json(topThree);
 });
