@@ -29,13 +29,24 @@ if (process.env.REDIS_URL) {
 }
 
 // ─── Submit Quiz Attempt ─────────────────────────────────────────────────────
-// controllers/quizController.js
+
 // controllers/quizController.js
 export const submitQuizAttempt = asyncHandler(async (req, res) => {
   // … your existing validation & transaction …
 
   // 5️⃣ Record attempt & update leaderboard
-  const [attempt] = await QuizAttempt.create(/*…*/ , { session });
+ // ✅ Replace with your actual payload + session:
+const [attempt] = await QuizAttempt.create([
+  {
+    user:            req.user._id,
+    quiz:            quizId,
+    score:           correctCount,
+    totalQuestions:  quiz.questions.length,
+    correctAnswers:  correctCount,
+    answers:         processed,
+    timeTaken
+  }
+], { session });
   const filter = { user: req.user._id, category: quiz.category, topic: quiz.topic, level: quiz.level };
   await LeaderboardEntry.findOneAndUpdate(
     filter,
