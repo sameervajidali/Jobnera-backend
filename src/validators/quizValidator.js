@@ -12,6 +12,12 @@ export const idParamSchema = z.object({
   quizId: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid quizId'),
 });
 
+
+export const attemptParamSchema = z.object({
+  attemptId: z.string()
+    .regex(/^[0-9a-fA-F]{24}$/, 'Invalid attemptId')
+});
+
 // Create Quiz
 export const createQuizSchema = z.object({
   title:      z.string().min(1, 'Title is required'),

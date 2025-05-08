@@ -5,6 +5,7 @@ import Question from '../models/Question.js';
 import QuizAttempt from '../models/QuizAttempt.js';
 import LeaderboardEntry from '../models/LeaderboardEntry.js';
 import asyncHandler from '../utils/asyncHandler.js';
+import { attemptParamSchema } from '../validators/quizValidator.js';
 import csv from 'csvtojson';
 import { z } from 'zod';
 import {
@@ -471,12 +472,16 @@ export const getDistinctValues = (field) =>
 
 
   // controllers/quizController.js
-export const getAttemptById = asyncHandler(async (req, res) => {
-  const { attemptId } = idParamSchema.parse(req.params);
-  const attempt = await QuizAttempt
-    .findById(attemptId)
-    .populate('quiz', 'title duration')
-    .populate('answers.question', 'text options correctIndex');
-  if (!attempt) return res.status(404).json({ message: 'Attempt not found' });
-  res.json(attempt);
-});
+  export const getAttemptById = asyncHandler(async (req, res) => {
+    const { attemptId } = attemptParamSchema.parse(req.params);
+  
+    const attempt = await QuizAttempt
+      .findById(attemptId)
+      .populate('quiz', 'title duration')
+      .populate('answers.question', 'text options correctIndex');
+  
+    if (!attempt) {
+      return res.status(404).json({ message: 'Attempt not found' });
+    }
+    res.json(attempt);
+  });
