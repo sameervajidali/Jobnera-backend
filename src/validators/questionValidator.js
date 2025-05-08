@@ -40,9 +40,12 @@ export const bulkQuestionsSchema = z.object({
 });
 
 // ─── Leaderboard Query Params ─────────────────────────────────────────────────
-export const getLeaderboardSchema = z.object({
-  category: z.string().optional(),    // now optional
-  topic:      z.string().optional(),
-  level:      z.enum(['Beginner','Intermediate','Expert']).optional(),
-  timePeriod: z.enum(['week','month','all-time']).default('all-time'),
+export const publicLeaderboardSchema = z.object({
+  category:    z.string().optional(),
+  topic:       z.string().optional(),
+  level:       z.enum(['Beginner','Intermediate','Expert']).optional(),
+  timePeriod:  z.enum(['week','month','all-time']).default('all-time'),
+  // pagination as strings from query → coerce to numbers
+  page:        z.string().regex(/^\d+$/).transform(Number).default('1'),
+  limit:       z.string().regex(/^\d+$/).transform(Number).default('10'),
 });

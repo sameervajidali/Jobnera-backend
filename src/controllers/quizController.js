@@ -68,38 +68,38 @@ const [attempt] = await QuizAttempt.create([
 
 
 // ─── Leaderboard ──────────────────────────────────────────────────────────────
-export const getLeaderboard = asyncHandler(async (req, res) => {
-  const { category, topic, level, timePeriod } = getLeaderboardSchema.parse(req.query);
-  const key = `leaderboard:${category}:${topic||'all'}:${level||'all'}:${timePeriod}`;
 
-  // cache read
-  if (redis) {
-    try {
-      const c = await redis.get(key);
-      if (c) return res.json(JSON.parse(c));
-    } catch (e) {
-      console.warn('⚠️ Redis GET failed:', e.message);
-    }
+export const getLeaderboard = asyncHandler(async (req, res) => {
+  // 1️⃣ Parse & validate the entire set of query params
+  const { category, topic, level, timePeriod, page, limit } =
+    publicLeaderboardSchema.parse(req.query);
+
+  // 2️⃣ Build your Mongo filter
+  const filter = {};
+  if (category) filter.category = category;
+  if (topic)    filter.topic    = topic;
+  if (level)    filter.level    = level;
+  if (timePeriod === 'week') {
+    filter.lastUpdated = { $gte: new Date(Date.now() - 7*24*60*60*1000) };
   }
 
-  const filter = { category };
-  if (topic) filter.topic = topic;
-  if (level) filter.level = level;
-  if (timePeriod === 'week') filter.lastUpdated = { $gte: new Date(Date.now() - 7*24*60*60*1000) };
-
+  // 3️⃣ Query & sort
+  const skip = (page - 1) * limit;
   const entries = await LeaderboardEntry.find(filter)
     .sort({ score: -1 })
-    .limit(100)
+    .skip(skip)
+    .limit(limit)
     .populate('user', 'name avatar');
 
-  // cache write
-  if (redis) {
-    redis.set(key, JSON.stringify(entries), 'EX', 3600)
-         .catch(err => console.warn('⚠️ Redis SET failed:', err.message));
-  }
-
-  res.json(entries);
+  // 4️⃣ Respond
+  res.json({
+    items: entries,
+    total: await LeaderboardEntry.countDocuments(filter),
+    page,
+    limit
+  });
 });
+
 
 // ─── User Attempts ────────────────────────────────────────────────────────────
 export const getUserAttempts = asyncHandler(async (req, res) => {

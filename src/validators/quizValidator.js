@@ -29,6 +29,7 @@ export const createQuizSchema = z.object({
   isActive:   z.boolean().optional(),
 });
 
+
 // Update Quiz (all fields optional)
 export const updateQuizSchema = createQuizSchema.partial();
 
