@@ -30,86 +30,29 @@ if (process.env.REDIS_URL) {
 
 // ─── Submit Quiz Attempt ─────────────────────────────────────────────────────
 // controllers/quizController.js
+// controllers/quizController.js
 export const submitQuizAttempt = asyncHandler(async (req, res) => {
-  // 1️⃣ Validation (inside try so Zod errors bubble correctly)
-  let quizId, answers, timeTaken;
-  try {
-    ({ quizId, answers, timeTaken } = submitAttemptSchema.parse(req.body));
-  } catch (zodErr) {
-    // Zod throws, asyncHandler will catch and return a 400 with details
-    throw zodErr;
+  // … your existing validation & transaction …
+
+  // 5️⃣ Record attempt & update leaderboard
+  const [attempt] = await QuizAttempt.create(/*…*/ , { session });
+  const filter = { user: req.user._id, category: quiz.category, topic: quiz.topic, level: quiz.level };
+  await LeaderboardEntry.findOneAndUpdate(
+    filter,
+    { $inc: { score: correctCount, attempts: 1 }, lastUpdated: new Date() },
+    { upsert: true, new: true, session }
+  );
+
+  // 🔥 Invalidate cache for this category/topic/level
+  if (redis) {
+    const baseKeyAllTime = `leaderboard:${quiz.category}:${quiz.topic || 'all'}:${quiz.level || 'all'}:all-time`;
+    const baseKeyWeek    = `leaderboard:${quiz.category}:${quiz.topic || 'all'}:${quiz.level || 'all'}:week`;
+    redis.del(baseKeyAllTime, baseKeyWeek)
+      .catch(err => console.warn('⚠️ Redis DEL failed:', err.message));
   }
 
-  const session = await mongoose.startSession();
-  session.startTransaction();
-  try {
-    // 2️⃣ Fetch quiz + questions
-    const quiz = await Quiz.findById(quizId)
-      .populate('questions')
-      .session(session);
-    if (!quiz) {
-      await session.abortTransaction();
-      return res.status(404).json({ message: 'Quiz not found' });
-    }
-
-    // 3️⃣ Check answer count
-    const answerCount = Object.keys(answers).length;
-    if (answerCount !== quiz.questions.length) {
-      await session.abortTransaction();
-      return res.status(400).json({ message: 'Invalid number of answers' });
-    }
-
-    // 4️⃣ Score calculation
-    let correctCount = 0;
-    const processed = quiz.questions.map(q => {
-      // use string key
-      const sel = answers[q._id.toString()] ?? null;
-      const isCorrect = sel === q.correctIndex;
-      if (isCorrect) correctCount++;
-      return {
-        question: q._id,
-        selectedIndex: sel,
-        isCorrect
-      };
-    });
-
-    // 5️⃣ Record attempt
-    const [attempt] = await QuizAttempt.create([{
-      user:            req.user._id,
-      quiz:            quizId,
-      score:           correctCount,
-      totalQuestions:  quiz.questions.length,
-      correctAnswers:  correctCount,
-      answers:         processed,
-      timeTaken
-    }], { session });
-
-    // 6️⃣ Update leaderboard
-    await LeaderboardEntry.findOneAndUpdate(
-      {
-        user:     req.user._id,
-        category: quiz.category,
-        topic:    quiz.topic,
-        level:    quiz.level
-      },
-      {
-        $inc: { score: correctCount, attempts: 1 },
-        lastUpdated: new Date()
-      },
-      { upsert: true, new: true, session }
-    );
-
-    // 7️⃣ Commit & respond
-    await session.commitTransaction();
-    return res.status(200).json({ message: 'Quiz submitted', attempt });
-
-  } catch (err) {
-    // Roll back on any error
-    await session.abortTransaction();
-    throw err;
-  } finally {
-    session.endSession();
-  }
+  await session.commitTransaction();
+  res.status(200).json({ message: 'Quiz submitted', attempt });
 });
 
 
