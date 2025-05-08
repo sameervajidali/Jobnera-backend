@@ -14,7 +14,7 @@ import {
   submitAttemptSchema,
   bulkQuestionsSchema,
   addQuestionSchema,
-   createQuizSchema,
+  createQuizSchema,
   updateQuizSchema,
   idParamSchema
 } from '../validators/quizValidator.js';
@@ -33,40 +33,84 @@ if (process.env.REDIS_URL) {
 
 // controllers/quizController.js
 export const submitQuizAttempt = asyncHandler(async (req, res) => {
-  // … your existing validation & transaction …
+  // 1️⃣ Validate & extract from the body
+  const { quizId, answers, timeTaken } = submitAttemptSchema.parse(req.body);
 
-  // 5️⃣ Record attempt & update leaderboard
- // ✅ Replace with your actual payload + session:
-const [attempt] = await QuizAttempt.create([
-  {
-    user:            req.user._id,
-    quiz:            quizId,
-    score:           correctCount,
-    totalQuestions:  quiz.questions.length,
-    correctAnswers:  correctCount,
-    answers:         processed,
-    timeTaken
+  // 2️⃣ Start a session for atomicity
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    // 3️⃣ Load the quiz with its questions
+    const quiz = await Quiz.findById(quizId)
+      .populate('questions')
+      .session(session);
+    if (!quiz) {
+      throw { status: 404, message: 'Quiz not found' };
+    }
+
+    // 4️⃣ Make sure they answered every question
+    if (Object.keys(answers).length !== quiz.questions.length) {
+      return res.status(400).json({ message: 'Invalid number of answers' });
+    }
+
+    // 5️⃣ Grade it
+    let correctCount = 0;
+    const processed = quiz.questions.map(q => {
+      const sel = answers[q._id] ?? null;
+      const isCorrect = sel === q.correctIndex;
+      if (isCorrect) correctCount++;
+      return {
+        question: q._id,
+        selectedIndex: sel,
+        isCorrect
+      };
+    });
+
+    // 6️⃣ Persist the attempt
+    const [attempt] = await QuizAttempt.create([{
+      user: req.user._id,
+      quiz: quizId,
+      score: correctCount,
+      totalQuestions: quiz.questions.length,
+      correctAnswers: correctCount,
+      answers: processed,
+      timeTaken
+    }], { session });
+
+    // 7️⃣ Update the leaderboard
+    await LeaderboardEntry.findOneAndUpdate({
+      user: req.user._id,
+      category: quiz.category,
+      topic: quiz.topic,
+      level: quiz.level
+    }, {
+      $inc: { score: correctCount, attempts: 1 },
+      lastUpdated: new Date()
+    }, {
+      upsert: true,
+      new: true,
+      session
+    });
+
+    // 8️⃣ Commit the transaction
+    await session.commitTransaction();
+
+    // 9️⃣ Invalidate any cached leaderboards/quizzes
+    if (redis) {
+      redis.del(`leaderboard:${quiz.category}:${quiz.topic || 'all'}:${quiz.level}:${'all-time'}`);
+      redis.del(`quizzes:all`);
+    }
+
+    // 10️⃣ Return the new attempt
+    return res.status(200).json({ message: 'Quiz submitted', attempt });
+
+  } catch (err) {
+    await session.abortTransaction();
+    throw err;
+  } finally {
+    session.endSession();
   }
-], { session });
-  const filter = { user: req.user._id, category: quiz.category, topic: quiz.topic, level: quiz.level };
-  await LeaderboardEntry.findOneAndUpdate(
-    filter,
-    { $inc: { score: correctCount, attempts: 1 }, lastUpdated: new Date() },
-    { upsert: true, new: true, session }
-  );
-
-  // 🔥 Invalidate cache for this category/topic/level
-  if (redis) {
-    const baseKeyAllTime = `leaderboard:${quiz.category}:${quiz.topic || 'all'}:${quiz.level || 'all'}:all-time`;
-    const baseKeyWeek    = `leaderboard:${quiz.category}:${quiz.topic || 'all'}:${quiz.level || 'all'}:week`;
-    redis.del(baseKeyAllTime, baseKeyWeek)
-      .catch(err => console.warn('⚠️ Redis DEL failed:', err.message));
-  }
-
-  await session.commitTransaction();
-  res.status(200).json({ message: 'Quiz submitted', attempt });
 });
-
 
 // ─── Leaderboard ──────────────────────────────────────────────────────────────
 
@@ -78,10 +122,10 @@ export const getLeaderboard = asyncHandler(async (req, res) => {
   // 2️⃣ Build your Mongo filter
   const filter = {};
   if (category) filter.category = category;
-  if (topic)    filter.topic    = topic;
-  if (level)    filter.level    = level;
+  if (topic) filter.topic = topic;
+  if (level) filter.level = level;
   if (timePeriod === 'week') {
-    filter.lastUpdated = { $gte: new Date(Date.now() - 7*24*60*60*1000) };
+    filter.lastUpdated = { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) };
   }
 
   // 3️⃣ Query & sort
@@ -123,7 +167,7 @@ export const getAllQuizzes = asyncHandler(async (_req, res) => {
   const quizzes = await Quiz.find().populate('questions');
   if (redis) {
     redis.set(key, JSON.stringify(quizzes), 'EX', 3600)
-         .catch(err => console.warn('⚠️ Redis SET failed:', err.message));
+      .catch(err => console.warn('⚠️ Redis SET failed:', err.message));
   }
   res.json(quizzes);
 });
@@ -142,7 +186,7 @@ export const getQuizById = asyncHandler(async (req, res) => {
 
   if (redis) {
     redis.set(key, JSON.stringify(quiz), 'EX', 3600)
-         .catch(err => console.warn('⚠️ Redis SET failed:', err.message));
+      .catch(err => console.warn('⚠️ Redis SET failed:', err.message));
   }
   res.json(quiz);
 });
@@ -150,7 +194,7 @@ export const getQuizById = asyncHandler(async (req, res) => {
 export const createQuiz = asyncHandler(async (req, res) => {
   const data = createQuizSchema.parse(req.body);
   const quiz = await Quiz.create(data);
-  if (redis) redis.del('quizzes:all').catch(() => {});
+  if (redis) redis.del('quizzes:all').catch(() => { });
   res.status(201).json(quiz);
 });
 
@@ -161,8 +205,8 @@ export const updateQuiz = asyncHandler(async (req, res) => {
   if (!quiz) return res.status(404).json({ message: 'Quiz not found' });
 
   if (redis) {
-    redis.del(`quiz:${quizId}`).catch(() => {});
-    redis.del('quizzes:all').catch(() => {});
+    redis.del(`quiz:${quizId}`).catch(() => { });
+    redis.del('quizzes:all').catch(() => { });
   }
   res.json(quiz);
 });
@@ -173,8 +217,8 @@ export const addQuestionToQuiz = asyncHandler(async (req, res) => {
   const q = await Question.create({ text, options, correctIndex, topicTag, explanation, difficulty, quiz: quizId });
   await Quiz.findByIdAndUpdate(quizId, { $push: { questions: q._id }, $inc: { totalMarks: 1 } });
   if (redis) {
-    redis.del(`quiz:${quizId}`).catch(() => {});
-    redis.del('quizzes:all').catch(() => {});
+    redis.del(`quiz:${quizId}`).catch(() => { });
+    redis.del('quizzes:all').catch(() => { });
   }
   res.status(201).json(q);
 });
@@ -201,8 +245,8 @@ export const bulkUploadQuestions = asyncHandler(async (req, res) => {
     );
     await session.commitTransaction();
     if (redis) {
-      redis.del(`quiz:${quizId}`).catch(() => {});
-      redis.del('quizzes:all').catch(() => {});
+      redis.del(`quiz:${quizId}`).catch(() => { });
+      redis.del('quizzes:all').catch(() => { });
     }
     res.status(201).json({ message: 'Questions uploaded', count: created.length });
   } catch (e) {
@@ -238,8 +282,8 @@ export const bulkUploadFromFile = asyncHandler(async (req, res) => {
     );
     await session.commitTransaction();
     if (redis) {
-      redis.del(`quiz:${quizId}`).catch(() => {});
-      redis.del('quizzes:all').catch(() => {});
+      redis.del(`quiz:${quizId}`).catch(() => { });
+      redis.del('quizzes:all').catch(() => { });
     }
     res.status(201).json({ message: 'Bulk upload successful', count: created.length });
   } catch (e) {
@@ -265,7 +309,7 @@ export const downloadQuestionsTemplate = asyncHandler(async (req, res) => {
   const level = quiz.level || 'medium';
 
   // 3️⃣ Build CSV content
-  const header = ['question','option1','option2','option3','option4','correctAnswer','topic','explanation','difficulty'];
+  const header = ['question', 'option1', 'option2', 'option3', 'option4', 'correctAnswer', 'topic', 'explanation', 'difficulty'];
   const sampleRows = [
     [
       'Sample question text?',
@@ -280,11 +324,11 @@ export const downloadQuestionsTemplate = asyncHandler(async (req, res) => {
     ]
   ];
   const csvContent = [header, ...sampleRows]
-    .map(row => row.map(cell => `"${String(cell).replace(/"/g,'""')}"`).join(','))
+    .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
     .join('\n');
 
   // 4️⃣ Set headers to force download
-  const filename = `questions_template_${topic.replace(/\s+/g,'_')}.csv`;
+  const filename = `questions_template_${topic.replace(/\s+/g, '_')}.csv`;
   res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
 
@@ -391,8 +435,8 @@ export const getPublicQuizzes = asyncHandler(async (req, res) => {
   const { category, topic, level, page = 1, limit = 12 } = req.query;
   const filter = { isActive: true };
   if (category) filter.category = category;
-  if (topic)    filter.topic    = topic;
-  if (level)    filter.level    = level;
+  if (topic) filter.topic = topic;
+  if (level) filter.level = level;
 
   const skip = (page - 1) * limit;
   const [quizzes, total] = await Promise.all([
@@ -426,17 +470,17 @@ export const getDistinctValues = (field) =>
   });
 
 
-  // controllers/quizController.js
-  export const getAttemptById = asyncHandler(async (req, res) => {
-    const { attemptId } = attemptParamSchema.parse(req.params);
-  
-    const attempt = await QuizAttempt
-      .findById(attemptId)
-      .populate('quiz', 'title duration')
-      .populate('answers.question', 'text options correctIndex');
-  
-    if (!attempt) {
-      return res.status(404).json({ message: 'Attempt not found' });
-    }
-    res.json(attempt);
-  });
+// controllers/quizController.js
+export const getAttemptById = asyncHandler(async (req, res) => {
+  const { attemptId } = attemptParamSchema.parse(req.params);
+
+  const attempt = await QuizAttempt
+    .findById(attemptId)
+    .populate('quiz', 'title duration')
+    .populate('answers.question', 'text options correctIndex');
+
+  if (!attempt) {
+    return res.status(404).json({ message: 'Attempt not found' });
+  }
+  res.json(attempt);
+});
