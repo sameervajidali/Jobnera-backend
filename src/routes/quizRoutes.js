@@ -42,6 +42,7 @@ router.get(
   getPublicQuizzes
 );
 
+router.get('/:quizId', getQuizById);
 
 // 🏆 Public leaderboard (anybody)
 router.get('/leaderboard', getLeaderboard);
