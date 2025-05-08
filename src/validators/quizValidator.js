@@ -138,3 +138,4 @@ export const publicLeaderboardSchema = z.object({
   page:  z.string().regex(/^\d+$/).transform(Number).default('1'),
   limit: z.string().regex(/^\d+$/).transform(Number).default('10'),
 });
+

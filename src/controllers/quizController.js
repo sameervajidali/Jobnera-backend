@@ -484,3 +484,77 @@ export const getAttemptById = asyncHandler(async (req, res) => {
   }
   res.json(attempt);
 });
+
+
+// controllers/quizController.js
+export const getAttemptStats = asyncHandler(async (req, res) => {
+  const { attemptId } = attemptParamSchema.parse(req.params);
+  // load your attempt
+  const attempt = await QuizAttempt.findById(attemptId);
+  // count how many have strictly greater score & total attempts
+  const betterCount = await QuizAttempt.countDocuments({
+    quiz: attempt.quiz,
+    score: { $gt: attempt.score }
+  });
+  const totalCount = await QuizAttempt.countDocuments({ quiz: attempt.quiz });
+  const rank = betterCount + 1;
+  const percentile = Math.round(((totalCount - betterCount) / totalCount) * 100);
+  res.json({ attempt, rank, totalCount, percentile });
+});
+
+
+// ─── Fetch a single attempt (with question details) ───────────────
+export const getAttemptDetails = asyncHandler(async (req, res) => {;
+
+  const rank = higherCount + 1;
+  const percentile = Math.round((1 - (rank - 1) / totalCount) * 100);
+
+  // re-populate detailed attempt for client
+  const full = await QuizAttempt
+    .findById(attemptId)
+    .populate({
+      path:'answers.question',
+      select:'text options correctIndex explanation'
+    })
+    .populate('quiz', 'title category topic level')
+    .lean();
+
+  res.json({ 
+    attempt: full,
+    rank,
+    totalCount,
+    percentile
+  });
+});
+
+// ─── Top 3 performers for a quiz in timePeriod ──────────────────
+export const getQuizTopThree = asyncHandler(async (req, res) => {
+  const { quizId } = idParamSchema.parse(req.params);
+  // default to past week
+  const since = req.query.timePeriod === 'month'
+    ? new Date(Date.now() - 30*24*60*60*1000)
+    : new Date(Date.now() - 7*24*60*60*1000);
+
+  // Aggregate highest score per user in window
+  const top = await QuizAttempt.aggregate([
+    { $match: { quiz: mongoose.Types.ObjectId(quizId), createdAt: {$gte: since} }},
+    { $sort:  { score: -1, createdAt: 1 } },
+    { $group: { _id: '$user', bestScore: {$first:'$score'} } },
+    { $sort:  { bestScore: -1 } },
+    { $limit: 3 }
+  ]);
+
+  // Populate user names
+  const populated = await QuizAttempt.populate(top, {
+    path: '_id',
+    select: 'name',
+    model: 'User'
+  });
+
+  // return shape { user: {...}, score }
+  res.json(populated.map(e => ({
+    _id:    e._id._id,
+    user:   { _id:e._id._id, name:e._id.name },
+    score:  e.bestScore
+  })));
+});

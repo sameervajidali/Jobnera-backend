@@ -20,6 +20,8 @@ import {
   updateQuestion,
   deleteQuestion,
   assignQuiz,
+  getQuizTopThree,
+  getAttemptStats,
   getQuizAssignments,
   getDistinctValues,
   unassignQuiz
@@ -50,12 +52,11 @@ router.get('/:quizId', protect, getQuizById);
 // ─── Protected User Routes ────────────────────────────────────────────────────
 
 // Submit a quiz attempt
-router.post('/submit', protect, submitQuizAttempt);
-
-// View your own quiz attempt history
+router.post('/submit',     protect, submitQuizAttempt);
 router.get('/my-attempts', protect, getUserAttempts);
-
-router.get('/attempts/:attemptId',protect, getAttemptById);
+router.get('/attempts/:attemptId',             protect, getAttemptById);
+router.get('/attempts/:attemptId/stats',       protect, getAttemptStats);
+router.get('/:quizId/top-three',               protect, getQuizTopThree);
 
 // ─── Admin / Creator Routes ────────────────────────────────────────────────────
 
