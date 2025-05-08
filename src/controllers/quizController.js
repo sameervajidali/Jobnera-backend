@@ -6,6 +6,8 @@ import QuizAttempt from '../models/QuizAttempt.js';
 import LeaderboardEntry from '../models/LeaderboardEntry.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import { attemptParamSchema } from '../validators/quizValidator.js';
+import { publicLeaderboardSchema } from '../validators/quizValidator.js';
+
 import csv from 'csvtojson';
 import { z } from 'zod';
 import {
