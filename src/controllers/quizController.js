@@ -12,8 +12,7 @@ import {
   submitAttemptSchema,
   bulkQuestionsSchema,
   addQuestionSchema,
-  getLeaderboardSchema,
-  createQuizSchema,
+   createQuizSchema,
   updateQuizSchema,
   idParamSchema
 } from '../validators/quizValidator.js';
