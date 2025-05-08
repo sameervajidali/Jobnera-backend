@@ -58,61 +58,112 @@ export const activateAccount = asyncHandler(async (req, res) => {
 });
 
 // // ─── Login ───────────────────────────────────────────────────────────────────
+
 // export const login = asyncHandler(async (req, res) => {
 //   const { email, password } = req.body;
+
+//   console.log("Received login request with:", { email, password });
+
+//   // Check if user exists
 //   const user = await User.findOne({ email }).select('+password');
 //   if (!user || !(await bcrypt.compare(password, user.password))) {
-//     return res.status(401).json({ message: 'Invalid credentials.' });
+//     // Invalid credentials, do not create a refresh token
+//     return res.status(401).json({ message: 'Invalid credentials' });
 //   }
-//   if (!user.isVerified) return res.status(403).json({ message: 'Verify your email first.' });
 
+//   if (!user.isVerified) {
+//     // If the user is not verified, do not allow login
+//     return res.status(403).json({ message: 'Please verify your email first' });
+//   }
+
+//   // Generate JWT tokens after validating credentials
 //   const accessToken = createAccessToken({ userId: user._id, role: user.role });
 //   const refreshToken = createRefreshToken({ userId: user._id });
 
+//   // Send cookies with the tokens only if login is successful
 //   res
 //     .cookie('accessToken', accessToken, { ...cookieOptions, maxAge: 15 * 60 * 1000 })
 //     .cookie('refreshToken', refreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 })
 //     .status(200)
-//     .json({ message: 'Login successful', user: { id: user._id, name: user.name, email: user.email, role: user.role.toUpperCase() } });
+//     .json({
+//       message: 'Login successful',
+//       user: {
+//         id: user._id,
+//         name: user.name,
+//         email: user.email,
+//         role: user.role.toUpperCase(),
+//       },
+//     });
 // });
+
+
+
 
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  console.log("Received login request with:", { email, password });
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email and password are required.' });
+  }
 
-  // Check if user exists
+  console.log("🔐 Login attempt:", { email });
+
+  // Step 1: Check if user exists
   const user = await User.findOne({ email }).select('+password');
-  if (!user || !(await bcrypt.compare(password, user.password))) {
-    // Invalid credentials, do not create a refresh token
-    return res.status(401).json({ message: 'Invalid credentials' });
+
+  if (!user) {
+    return res.status(404).json({
+      message: 'No account found with this email. Please sign up.',
+    });
   }
 
+  // Step 2: Check if user is verified
   if (!user.isVerified) {
-    // If the user is not verified, do not allow login
-    return res.status(403).json({ message: 'Please verify your email first' });
+    return res.status(403).json({
+      message: 'Your account is not verified. Please verify your email.',
+    });
   }
 
-  // Generate JWT tokens after validating credentials
+  // Step 3: Validate password
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    return res.status(401).json({
+      message: 'Incorrect password. Please try again.',
+    });
+  }
+
+  // Step 4: Generate tokens
   const accessToken = createAccessToken({ userId: user._id, role: user.role });
   const refreshToken = createRefreshToken({ userId: user._id });
 
-  // Send cookies with the tokens only if login is successful
-  res
-    .cookie('accessToken', accessToken, { ...cookieOptions, maxAge: 15 * 60 * 1000 })
-    .cookie('refreshToken', refreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 })
-    .status(200)
-    .json({
-      message: 'Login successful',
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role.toUpperCase(),
-      },
-    });
-});
+  // Step 5: Set cookies
+  res.cookie('accessToken', accessToken, {
+    ...cookieOptions,
+    maxAge: 15 * 60 * 1000, // 15 minutes
+    httpOnly: true,
+    secure: true,
+    sameSite: 'Strict',
+  });
 
+  res.cookie('refreshToken', refreshToken, {
+    ...cookieOptions,
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    httpOnly: true,
+    secure: true,
+    sameSite: 'Strict',
+  });
+
+  // Step 6: Send response
+  return res.status(200).json({
+    message: 'Login successful',
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role.toUpperCase(),
+    },
+  });
+});
 
 // ─── Logout ───────────────────────────────────────────────────────────────────
 export const logout = (req, res) => {
