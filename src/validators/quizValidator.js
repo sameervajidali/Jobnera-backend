@@ -125,16 +125,16 @@ export const updateQuizSchema = createQuizSchema.partial();
 export const publicLeaderboardSchema = z.object({
   category:   z.string().optional(),
   topic:      z.string().optional(),
-  level:      z.enum(['Beginner', 'Intermediate', 'Expert']).optional(),
-  timePeriod: z.enum(['week', 'month', 'all-time']).default('all-time'),
-  page:       z
-                .string()
-                .regex(/^\d+$/, 'page must be a number')
-                .transform(Number)
-                .default('1'),
-  limit:      z
-                .string()
-                .regex(/^\d+$/, 'limit must be a number')
-                .transform(Number)
-                .default('10'),
+
+  // Level: allow "" → undefined, otherwise must match the enum
+  level: z
+    .union([z.enum(['Beginner','Intermediate','Expert']), z.literal('')])
+    .transform(val => val === '' ? undefined : val)
+    .optional(),
+
+  timePeriod: z.enum(['week','month','all-time']).default('all-time'),
+
+  // pagination as strings from query → coerce to numbers
+  page:  z.string().regex(/^\d+$/).transform(Number).default('1'),
+  limit: z.string().regex(/^\d+$/).transform(Number).default('10'),
 });
