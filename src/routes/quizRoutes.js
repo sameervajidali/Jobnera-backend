@@ -24,6 +24,7 @@ import {
   getAttemptStats,
   getQuizAssignments,
   getDistinctValues,
+  bulkUploadQuizzesFile,
   unassignQuiz
 } from '../controllers/quizController.js';
 import { protect, requireRole } from '../middlewares/authMiddleware.js';
@@ -69,6 +70,12 @@ router.use('/admin', protect, requireRole(['SUPERADMIN', 'ADMIN', 'CREATOR']));
 router.get(
   '/admin/quizzes/:quizId/template',
   downloadQuestionsTemplate
+);
+
+router.post(
+  '/quizzes/bulk-upload',
+  upload.single('file'),
+  bulkUploadQuizzesFile
 );
 
 // Create a new quiz

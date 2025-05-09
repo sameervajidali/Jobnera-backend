@@ -18,6 +18,7 @@ import publicRoutes from './routes/publicRoutes.js';
 import { protect } from './middlewares/authMiddleware.js';
 import quizRoutes from './routes/quizRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
+import ticketRoutes from './routes/ticketRoutes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -60,6 +61,7 @@ app.get('/', (_req, res) =>
 );
 
 // 4) API routes
+app.use('/api/ticket', ticketRoutes);
 app.use('/api/auth',   authRoutes);
 app.use('/api/admin',  adminRoutes);
 app.use('/api/resumes', protect, resumeRoutes);

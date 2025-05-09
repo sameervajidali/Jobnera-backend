@@ -577,3 +577,46 @@ export const getQuizTopThree = asyncHandler(async (req, res) => {
 
   res.json(topThree);
 });
+
+
+export const bulkUploadQuizzesFile = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file provided.' });
+  }
+
+  // parse CSV buffer
+  let rows;
+  try {
+    rows = await csv().fromString(req.file.buffer.toString());
+  } catch (err) {
+    return res.status(400).json({ message: 'Invalid CSV format.' });
+  }
+
+  if (!rows.length) {
+    return res.status(400).json({ message: 'CSV is empty.' });
+  }
+
+  // expecting columns: title,category,topic,level,duration,totalMarks,isActive
+  const toCreate = rows.map(r => ({
+    title:       r.title,
+    category:    r.category,
+    topic:       r.topic,
+    level:       r.level,
+    duration:    Number(r.duration)    || 0,
+    totalMarks:  Number(r.totalMarks)  || 0,
+    isActive:    String(r.isActive).toLowerCase() === 'true',
+  }));
+
+  let created;
+  try {
+    created = await Quiz.insertMany(toCreate);
+  } catch (err) {
+    console.error('Bulk upload quizzes error:', err);
+    return res.status(500).json({ message: 'Failed to save quizzes.' });
+  }
+
+  res.status(201).json({
+    message: `Imported ${created.length} quizzes successfully.`,
+    count:   created.length
+  });
+};
