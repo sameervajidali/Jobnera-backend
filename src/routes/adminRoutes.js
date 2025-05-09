@@ -22,6 +22,7 @@ import {
   createRoleSchema,
   updateRoleSchema,
 } from '../validators/adminValidator.js';
+import { getUserHistory } from '../controllers/adminUserController.js';
 
 const router = express.Router();
 
@@ -35,6 +36,14 @@ router.post(
   requireRole(['ADMIN', 'SUPERADMIN']),
   validate(createUserSchema),
   createUser
+);
+
+
+// GET full history
+router.get(
+  '/admin/users/:id/history',
+  requireRole(['ADMIN', 'SUPERADMIN']),
+  getUserHistory
 );
 
 // List users
