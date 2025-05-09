@@ -14,10 +14,10 @@ export const getUserHistory = asyncHandler(async (req, res) => {
   if (!user) return res.status(404).json({ message: 'User not found.' });
 
   // 2) Load quiz attempts
-  const quizAttempts = await QuizAttempt.find({ user: id })
-    .populate('quiz', 'title category level')
-    .sort({ createdAt: -1 })
-    .lean();
+   const quizAttempts = await QuizAttempt
+    .find({ user: id })
+    .populate('quiz', 'title totalQuestions')
+    .sort({ createdAt: -1 });
 
   // 3) Load login history
   const loginHistory = await LoginHistory.find({ user: id })
