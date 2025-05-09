@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import { OAuth2Client } from 'google-auth-library';
 import asyncHandler from '../utils/asyncHandler.js';
 import User from '../models/User.js';
+import LoginHistory from '../models/LoginHistory.js';
 import {
   sendActivationEmail,
   sendPasswordChangedEmail,
@@ -102,6 +103,9 @@ export const activateAccount = asyncHandler(async (req, res) => {
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
+  const ip        = req.ip;
+  const ua = req.get('User-Agent');
+  
   if (!email || !password) {
     return res.status(400).json({ message: 'Email and password are required.' });
   }
@@ -112,6 +116,7 @@ export const login = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email }).select('+password');
 
   if (!user) {
+    await LoginHistory.create({ user: null, ip, userAgent: ua, success: false });
     return res.status(404).json({
       message: 'No account found with this email. Please sign up.',
     });
@@ -119,6 +124,7 @@ export const login = asyncHandler(async (req, res) => {
 
   // Step 2: Check if user is verified
   if (!user.isVerified) {
+    await LoginHistory.create({ user: user._id, ip, userAgent: ua, success: true });
     return res.status(403).json({
       message: 'Your account is not verified. Please verify your email.',
     });
@@ -127,6 +133,7 @@ export const login = asyncHandler(async (req, res) => {
   // Step 3: Validate password
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
+    await LoginHistory.create({ user: user._id, ip, userAgent: ua, success: false });
     return res.status(401).json({
       message: 'Incorrect password. Please try again.',
     });
