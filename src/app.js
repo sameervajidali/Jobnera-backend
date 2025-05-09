@@ -17,7 +17,7 @@ import resumeRoutes from './routes/resumeRoutes.js';
 import publicRoutes from './routes/publicRoutes.js';
 import { protect } from './middlewares/authMiddleware.js';
 import quizRoutes from './routes/quizRoutes.js';
-import dashboardRoutes from './dashboardRoutes.js';
+import dashboardRoutes from './routes/dashboardRoutes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
