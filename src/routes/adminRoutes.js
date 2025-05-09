@@ -22,7 +22,7 @@ import {
   createRoleSchema,
   updateRoleSchema,
 } from '../validators/adminValidator.js';
-import { getUserHistory } from '../controllers/adminUserController.js';
+import { getUserHistory } from '../controllers/admin/adminUserController.js';
 
 const router = express.Router();
 

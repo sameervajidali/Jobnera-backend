@@ -1,8 +1,8 @@
 // src/controllers/adminUserController.js
-import asyncHandler   from '../utils/asyncHandler.js';
-import User           from '../models/User.js';
-import QuizAttempt    from '../models/QuizAttempt.js';
-import LoginHistory   from '../models/LoginHistory.js';
+import asyncHandler   from '../../utils/asyncHandler.js';
+import User           from '../../models/User.js';
+import QuizAttempt    from '../../models/QuizAttempt.js';
+import LoginHistory   from '../../models/LoginHistory.js';
 
 export const getUserHistory = asyncHandler(async (req, res) => {
   const { id } = req.params;

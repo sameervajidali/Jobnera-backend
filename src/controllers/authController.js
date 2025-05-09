@@ -100,75 +100,139 @@ export const activateAccount = asyncHandler(async (req, res) => {
 
 
 
+// export const login = asyncHandler(async (req, res) => {
+//   const { email, password } = req.body;
+
+//   const ip        = req.ip;
+//   const ua = req.get('User-Agent');
+  
+//   if (!email || !password) {
+//     return res.status(400).json({ message: 'Email and password are required.' });
+//   }
+
+//   console.log("🔐 Login attempt:", { email });
+
+//   // Step 1: Check if user exists
+//   const user = await User.findOne({ email }).select('+password');
+
+//   if (!user) {
+//     await LoginHistory.create({ user: null, ip, userAgent: ua, success: false });
+//     return res.status(404).json({
+//       message: 'No account found with this email. Please sign up.',
+//     });
+//   }
+
+//   // Step 2: Check if user is verified
+//   if (!user.isVerified) {
+//     await LoginHistory.create({ user: user._id, ip, userAgent: ua, success: true });
+//     return res.status(403).json({
+//       message: 'Your account is not verified. Please verify your email.',
+//     });
+//   }
+
+//   // Step 3: Validate password
+//   const isMatch = await bcrypt.compare(password, user.password);
+//   if (!isMatch) {
+//     await LoginHistory.create({ user: user._id, ip, userAgent: ua, success: false });
+//     return res.status(401).json({
+//       message: 'Incorrect password. Please try again.',
+//     });
+//   }
+
+//   // Step 4: Generate tokens
+//   const accessToken = createAccessToken({ userId: user._id, role: user.role });
+//   const refreshToken = createRefreshToken({ userId: user._id });
+
+//   // Step 5: Set cookies
+//   res.cookie('accessToken', accessToken, {
+//     ...cookieOptions,
+//     maxAge: 15 * 60 * 1000, // 15 minutes
+//     httpOnly: true,
+//     secure: true,
+//     sameSite: 'Strict',
+//   });
+
+//   res.cookie('refreshToken', refreshToken, {
+//     ...cookieOptions,
+//     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+//     httpOnly: true,
+//     secure: true,
+//     sameSite: 'Strict',
+//   });
+
+//   // Step 6: Send response
+//   return res.status(200).json({
+//     message: 'Login successful',
+//     user: {
+//       id: user._id,
+//       name: user.name,
+//       email: user.email,
+//       role: user.role.toUpperCase(),
+//     },
+//   });
+// });
+
+
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+  const ip  = req.ip;
+  const ua  = req.get('User-Agent');
 
-  const ip        = req.ip;
-  const ua = req.get('User-Agent');
-  
+  // 1) Missing fields
   if (!email || !password) {
+    await LoginHistory.create({ user: null, ip, userAgent: ua, success: false });
     return res.status(400).json({ message: 'Email and password are required.' });
   }
 
-  console.log("🔐 Login attempt:", { email });
-
-  // Step 1: Check if user exists
+  // 2) Find user
   const user = await User.findOne({ email }).select('+password');
-
   if (!user) {
     await LoginHistory.create({ user: null, ip, userAgent: ua, success: false });
-    return res.status(404).json({
-      message: 'No account found with this email. Please sign up.',
-    });
+    return res.status(404).json({ message: 'No account found with this email.' });
   }
 
-  // Step 2: Check if user is verified
+  // 3) Verified?
   if (!user.isVerified) {
-    await LoginHistory.create({ user: user._id, ip, userAgent: ua, success: true });
-    return res.status(403).json({
-      message: 'Your account is not verified. Please verify your email.',
-    });
+    await LoginHistory.create({ user: user._id, ip, userAgent: ua, success: false });
+    return res.status(403).json({ message: 'Please verify your email first.' });
   }
 
-  // Step 3: Validate password
+  // 4) Password check
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
     await LoginHistory.create({ user: user._id, ip, userAgent: ua, success: false });
-    return res.status(401).json({
-      message: 'Incorrect password. Please try again.',
-    });
+    return res.status(401).json({ message: 'Incorrect password.' });
   }
 
-  // Step 4: Generate tokens
-  const accessToken = createAccessToken({ userId: user._id, role: user.role });
+  // 5) Success — update lastLogin & record history
+  user.lastLogin = new Date();
+  await user.save({ validateBeforeSave: false });
+  await LoginHistory.create({ user: user._id, ip, userAgent: ua, success: true });
+
+  // 6) Generate tokens
+  const accessToken  = createAccessToken({ userId: user._id, role: user.role });
   const refreshToken = createRefreshToken({ userId: user._id });
 
-  // Step 5: Set cookies
-  res.cookie('accessToken', accessToken, {
-    ...cookieOptions,
-    maxAge: 15 * 60 * 1000, // 15 minutes
-    httpOnly: true,
-    secure: true,
-    sameSite: 'Strict',
-  });
+  res
+    .cookie('accessToken', accessToken, {
+      ...cookieOptions,
+      maxAge:  15 * 60 * 1000, // 15m
+      sameSite: 'Strict'
+    })
+    .cookie('refreshToken', refreshToken, {
+      ...cookieOptions,
+      maxAge:  7 * 24 * 60 * 60 * 1000, // 7d
+      sameSite: 'Strict'
+    });
 
-  res.cookie('refreshToken', refreshToken, {
-    ...cookieOptions,
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    httpOnly: true,
-    secure: true,
-    sameSite: 'Strict',
-  });
+  // 7) Return full user (minus sensitive fields)
+  const publicUser = await User.findById(user._id)
+    .select('-password -refreshTokens -resetToken -activationToken')
+    .lean();
 
-  // Step 6: Send response
-  return res.status(200).json({
+  res.status(200).json({
     message: 'Login successful',
-    user: {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role.toUpperCase(),
-    },
+    user: publicUser
   });
 });
 
