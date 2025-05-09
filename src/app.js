@@ -17,6 +17,7 @@ import resumeRoutes from './routes/resumeRoutes.js';
 import publicRoutes from './routes/publicRoutes.js';
 import { protect } from './middlewares/authMiddleware.js';
 import quizRoutes from './routes/quizRoutes.js';
+import dashboardRoutes from './dashboardRoutes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -64,7 +65,7 @@ app.use('/api/admin',  adminRoutes);
 app.use('/api/resumes', protect, resumeRoutes);
 app.use('/api/public', publicRoutes);
 app.use('/api/quizzes', quizRoutes);  // all quiz endpoints live under /api/quizzes
-
+app.use('/api/dashboard', dashboardRoutes);
 // 5) 404 & error handler
 app.use((req, res, next) => {
   res.status(404);
