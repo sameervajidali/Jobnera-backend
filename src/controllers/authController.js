@@ -209,6 +209,29 @@ export const login = asyncHandler(async (req, res) => {
   await user.save({ validateBeforeSave: false });
   await LoginHistory.create({ user: user._id, ip, userAgent: ua, success: true });
 
+    // After successful login, do a geo lookup:
+  let geo = {};
+  try {
+    const geoRes = await fetch(`http://ip-api.com/json/${ip}?fields=country,regionName,city`);
+    const geoJson = await geoRes.json();
+    if (geoJson.status === 'success') {
+      geo = {
+        country: geoJson.country,
+        region:  geoJson.regionName,
+        city:    geoJson.city
+      };
+    }
+  } catch (_) { /* swallow */ }
+
+   // record into login history
+  await LoginHistory.create({
+    user: user._id,
+    ip,
+    userAgent: ua,
+    success: true,
+    ...geo
+  });
+
   // 6) Generate tokens
   const accessToken  = createAccessToken({ userId: user._id, role: user.role });
   const refreshToken = createRefreshToken({ userId: user._id });
