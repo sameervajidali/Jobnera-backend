@@ -441,25 +441,46 @@ export const getPublicQuizzes = asyncHandler(async (req, res) => {
 
   const skip = (page - 1) * limit;
 
-  // Only select what you need for listing (lightweight)
-  const [quizzes, total] = await Promise.all([
-  Quiz.find(filter)
-    .select('title duration totalMarks attempts questions') // include questions
-    .skip(skip)
-    .limit(Number(limit))
-    .lean()
-    .then(results => results.map(q => ({
-      ...q,
-      questionCount: Array.isArray(q.questions) ? q.questions.length : 0
-    }))),
-  Quiz.countDocuments(filter)
-]);
+  // Step 1: Get paginated quizzes with question count
+  const quizzes = await Quiz.aggregate([
+    { $match: filter },
+    {
+      $project: {
+        title: 1,
+        duration: 1,
+        totalMarks: 1,
+        createdAt: 1,
+        questionCount: { $size: { $ifNull: ['$questions', []] } },
+      },
+    },
+    { $sort: { createdAt: -1 } },
+    { $skip: skip },
+    { $limit: Number(limit) },
+  ]);
+
+  // Step 2: Get attempt counts from QuizAttempt model
+  const attemptData = await QuizAttempt.aggregate([
+    { $match: { quiz: { $in: quizzes.map(q => q._id) } } },
+    { $group: { _id: '$quiz', count: { $sum: 1 } } },
+  ]);
+
+  const attemptMap = Object.fromEntries(
+    attemptData.map(a => [a._id.toString(), a.count])
+  );
+
+  // Step 3: Merge attempt counts into quiz list
+  const finalQuizzes = quizzes.map(q => ({
+    ...q,
+    attemptCount: attemptMap[q._id.toString()] || 0,
+  }));
+
+  const total = await Quiz.countDocuments(filter);
 
   res.json({
-    quizzes,
+    quizzes: finalQuizzes,
     total,
     page: Number(page),
-    limit: Number(limit)
+    limit: Number(limit),
   });
 });
 
