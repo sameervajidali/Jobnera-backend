@@ -649,3 +649,22 @@ export const bulkUploadQuizzesFile = async (req, res) => {
     count:   created.length
   });
 };
+
+
+// GET /api/quizzes/grouped-topics
+export const getGroupedTopics = asyncHandler(async (_req, res) => {
+  const quizzes = await Quiz.find({ isActive: true }).select('category topic -_id');
+  const grouped = {};
+
+  quizzes.forEach(({ category, topic }) => {
+    if (!grouped[category]) grouped[category] = new Set();
+    grouped[category].add(topic);
+  });
+
+  const result = Object.entries(grouped).map(([category, topicSet]) => ({
+    category,
+    topics: Array.from(topicSet)
+  }));
+
+  res.json(result);
+});

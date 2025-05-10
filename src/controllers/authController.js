@@ -128,9 +128,7 @@ export const login = asyncHandler(async (req, res) => {
   const accessToken  = createAccessToken({ userId: user._id, role: user.role });
   const refreshToken = createRefreshToken({ userId: user._id });
 
-  // res
-  //   .cookie('accessToken',  accessToken,  { ...COOKIE_OPTS, maxAge: 15*60*1000  })
-  //   .cookie('refreshToken', refreshToken, { ...COOKIE_OPTS, maxAge: 7*24*60*60*1000 });
+ 
     res
     .cookie('accessToken', accessToken, {
       ...cookieOptions,
@@ -204,13 +202,6 @@ export const refreshToken = asyncHandler(async (req, res) => {
 });
 
 // ─── Get Current User ────────────────────────────────────────────────────────
-// export const getCurrentUser = asyncHandler(async (req, res) => {
-//   // const user = await User.findById(req.user.userId).select('-password');
-//   const user = await User.findById(req.user._id).select('-password');
-
-//   if (!user) return res.status(404).json({ message: 'User not found' });
-//   res.status(200).json(user);
-// });
 
 export const getCurrentUser = async (req, res) => {
   console.log("🧁 Cookies:", req.cookies);

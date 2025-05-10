@@ -24,6 +24,7 @@ import {
   getAttemptStats,
   getQuizAssignments,
   getDistinctValues,
+  getGroupedTopics,
   bulkUploadQuizzesFile,
   unassignQuiz
 } from '../controllers/quizController.js';
@@ -38,6 +39,7 @@ const router = express.Router();
 router.get('/distinct/category', getDistinctValues('category'));
 router.get('/distinct/topic', getDistinctValues('topic'));
 router.get('/distinct/level', getDistinctValues('level'));
+router.get('/grouped-topics', getGroupedTopics);
 
 // List all active quizzes (paginated + filterable)
 router.get('/', getPublicQuizzes);
