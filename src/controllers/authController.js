@@ -128,9 +128,18 @@ export const login = asyncHandler(async (req, res) => {
   const accessToken  = createAccessToken({ userId: user._id, role: user.role });
   const refreshToken = createRefreshToken({ userId: user._id });
 
-  res
-    .cookie('accessToken',  accessToken,  { ...COOKIE_OPTS, maxAge: 15*60*1000  })
-    .cookie('refreshToken', refreshToken, { ...COOKIE_OPTS, maxAge: 7*24*60*60*1000 });
+  // res
+  //   .cookie('accessToken',  accessToken,  { ...COOKIE_OPTS, maxAge: 15*60*1000  })
+  //   .cookie('refreshToken', refreshToken, { ...COOKIE_OPTS, maxAge: 7*24*60*60*1000 });
+    res
+    .cookie('accessToken', accessToken, {
+      ...cookieOptions,
+      maxAge: 15 * 60 * 1000, // 15 minutes
+    })
+    .cookie('refreshToken', refreshToken, {
+      ...cookieOptions,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
 
   // 9️⃣ Return the safe user object
   const safeUser = await User.findById(user._id)
