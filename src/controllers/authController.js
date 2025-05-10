@@ -60,204 +60,93 @@ export const activateAccount = asyncHandler(async (req, res) => {
 
 // // ─── Login ───────────────────────────────────────────────────────────────────
 
-// export const login = asyncHandler(async (req, res) => {
-//   const { email, password } = req.body;
-
-//   console.log("Received login request with:", { email, password });
-
-//   // Check if user exists
-//   const user = await User.findOne({ email }).select('+password');
-//   if (!user || !(await bcrypt.compare(password, user.password))) {
-//     // Invalid credentials, do not create a refresh token
-//     return res.status(401).json({ message: 'Invalid credentials' });
-//   }
-
-//   if (!user.isVerified) {
-//     // If the user is not verified, do not allow login
-//     return res.status(403).json({ message: 'Please verify your email first' });
-//   }
-
-//   // Generate JWT tokens after validating credentials
-//   const accessToken = createAccessToken({ userId: user._id, role: user.role });
-//   const refreshToken = createRefreshToken({ userId: user._id });
-
-//   // Send cookies with the tokens only if login is successful
-//   res
-//     .cookie('accessToken', accessToken, { ...cookieOptions, maxAge: 15 * 60 * 1000 })
-//     .cookie('refreshToken', refreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 })
-//     .status(200)
-//     .json({
-//       message: 'Login successful',
-//       user: {
-//         id: user._id,
-//         name: user.name,
-//         email: user.email,
-//         role: user.role.toUpperCase(),
-//       },
-//     });
-// });
-
-
-
-
-// export const login = asyncHandler(async (req, res) => {
-//   const { email, password } = req.body;
-
-//   const ip        = req.ip;
-//   const ua = req.get('User-Agent');
-  
-//   if (!email || !password) {
-//     return res.status(400).json({ message: 'Email and password are required.' });
-//   }
-
-//   console.log("🔐 Login attempt:", { email });
-
-//   // Step 1: Check if user exists
-//   const user = await User.findOne({ email }).select('+password');
-
-//   if (!user) {
-//     await LoginHistory.create({ user: null, ip, userAgent: ua, success: false });
-//     return res.status(404).json({
-//       message: 'No account found with this email. Please sign up.',
-//     });
-//   }
-
-//   // Step 2: Check if user is verified
-//   if (!user.isVerified) {
-//     await LoginHistory.create({ user: user._id, ip, userAgent: ua, success: true });
-//     return res.status(403).json({
-//       message: 'Your account is not verified. Please verify your email.',
-//     });
-//   }
-
-//   // Step 3: Validate password
-//   const isMatch = await bcrypt.compare(password, user.password);
-//   if (!isMatch) {
-//     await LoginHistory.create({ user: user._id, ip, userAgent: ua, success: false });
-//     return res.status(401).json({
-//       message: 'Incorrect password. Please try again.',
-//     });
-//   }
-
-//   // Step 4: Generate tokens
-//   const accessToken = createAccessToken({ userId: user._id, role: user.role });
-//   const refreshToken = createRefreshToken({ userId: user._id });
-
-//   // Step 5: Set cookies
-//   res.cookie('accessToken', accessToken, {
-//     ...cookieOptions,
-//     maxAge: 15 * 60 * 1000, // 15 minutes
-//     httpOnly: true,
-//     secure: true,
-//     sameSite: 'Strict',
-//   });
-
-//   res.cookie('refreshToken', refreshToken, {
-//     ...cookieOptions,
-//     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-//     httpOnly: true,
-//     secure: true,
-//     sameSite: 'Strict',
-//   });
-
-//   // Step 6: Send response
-//   return res.status(200).json({
-//     message: 'Login successful',
-//     user: {
-//       id: user._id,
-//       name: user.name,
-//       email: user.email,
-//       role: user.role.toUpperCase(),
-//     },
-//   });
-// });
-
 
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  const ip  = req.ip;
-  const ua  = req.get('User-Agent');
+  // behind proxies you'll want X-Forwarded-For
+  const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '')
+             .split(',')[0].trim();
+  const ua = req.get('User-Agent') || 'unknown';
 
-  // 1) Missing fields
+  // 1) Validate
   if (!email || !password) {
     await LoginHistory.create({ user: null, ip, userAgent: ua, success: false });
     return res.status(400).json({ message: 'Email and password are required.' });
   }
 
-  // 2) Find user
+  // 2) Lookup
   const user = await User.findOne({ email }).select('+password');
   if (!user) {
     await LoginHistory.create({ user: null, ip, userAgent: ua, success: false });
     return res.status(404).json({ message: 'No account found with this email.' });
   }
 
-  // 3) Verified?
+  // 3) Verify
   if (!user.isVerified) {
     await LoginHistory.create({ user: user._id, ip, userAgent: ua, success: false });
     return res.status(403).json({ message: 'Please verify your email first.' });
   }
 
-  // 4) Password check
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) {
+  // 4) Password
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) {
     await LoginHistory.create({ user: user._id, ip, userAgent: ua, success: false });
     return res.status(401).json({ message: 'Incorrect password.' });
   }
 
-  // 5) Success — update lastLogin & record history
-  user.lastLogin = new Date();
+  // 5) Update lastLogin
+  user.lastLogin = Date.now();
   await user.save({ validateBeforeSave: false });
-  await LoginHistory.create({ user: user._id, ip, userAgent: ua, success: true });
 
-    // After successful login, do a geo lookup:
+  // 6) Geo‐lookup (if you need it)
   let geo = {};
   try {
-    const geoRes = await fetch(`http://ip-api.com/json/${ip}?fields=country,regionName,city`);
+    const geoRes  = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,regionName,city`);
     const geoJson = await geoRes.json();
     if (geoJson.status === 'success') {
       geo = {
         country: geoJson.country,
         region:  geoJson.regionName,
-        city:    geoJson.city
+        city:    geoJson.city,
       };
     }
-  } catch (_) { /* swallow */ }
+  } catch (e) {
+    console.warn('Geo lookup failed', e);
+  }
 
-   // record into login history
+  // 7) Record a single history entry
   await LoginHistory.create({
-    user: user._id,
+    user:      user._id,
     ip,
     userAgent: ua,
-    success: true,
-    ...geo
+    success:   true,
+    ...geo,
   });
 
-  // 6) Generate tokens
+  // 8) Tokens
   const accessToken  = createAccessToken({ userId: user._id, role: user.role });
   const refreshToken = createRefreshToken({ userId: user._id });
 
   res
     .cookie('accessToken', accessToken, {
       ...cookieOptions,
-      maxAge:  15 * 60 * 1000, // 15m
-      sameSite: 'Strict'
+      maxAge:  15 * 60 * 1000,  // 15m
+      sameSite: 'Strict',
     })
     .cookie('refreshToken', refreshToken, {
       ...cookieOptions,
       maxAge:  7 * 24 * 60 * 60 * 1000, // 7d
-      sameSite: 'Strict'
+      sameSite: 'Strict',
     });
 
-  // 7) Return full user (minus sensitive fields)
-  const publicUser = await User.findById(user._id)
+  // 9) Return user payload
+  const safeUser = await User.findById(user._id)
     .select('-password -refreshTokens -resetToken -activationToken')
     .lean();
 
-  res.status(200).json({
-    message: 'Login successful',
-    user: publicUser
-  });
+  res.status(200).json({ message: 'Login successful', user: safeUser });
 });
+
 
 // ─── Logout ───────────────────────────────────────────────────────────────────
 export const logout = (req, res) => {

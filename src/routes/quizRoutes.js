@@ -73,7 +73,7 @@ router.get(
 );
 
 router.post(
-  '/quizzes/bulk-upload',
+  '/admin/quizzes/bulk-upload',
   upload.single('file'),
   bulkUploadQuizzesFile
 );
