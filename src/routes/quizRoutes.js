@@ -74,8 +74,9 @@ router.get(
 
 // **Bulk‐upload an entire CSV of quizzes:**
 // POST /api/quizzes/admin/quizzes/bulk-upload-file
+// Bulk-create *quizzes* via CSV/XLSX:
 router.post(
-  '/admin/quizzes/bulk-upload-file',
+  '/admin/quizzes/bulk-upload-file',    // <-- note the “-file”
   upload.single('file'),
   bulkUploadQuizzesFile
 )

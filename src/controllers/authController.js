@@ -63,42 +63,43 @@ export const activateAccount = asyncHandler(async (req, res) => {
 
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  // behind proxies you'll want X-Forwarded-For
+  // Derive client IP (supports proxies)
   const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '')
-             .split(',')[0].trim();
+    .split(',')[0]
+    .trim();
   const ua = req.get('User-Agent') || 'unknown';
 
-  // 1) Validate
+  // 1️⃣ Validate inputs
   if (!email || !password) {
     await LoginHistory.create({ user: null, ip, userAgent: ua, success: false });
     return res.status(400).json({ message: 'Email and password are required.' });
   }
 
-  // 2) Lookup
+  // 2️⃣ Find user
   const user = await User.findOne({ email }).select('+password');
   if (!user) {
     await LoginHistory.create({ user: null, ip, userAgent: ua, success: false });
     return res.status(404).json({ message: 'No account found with this email.' });
   }
 
-  // 3) Verify
+  // 3️⃣ Check verification
   if (!user.isVerified) {
     await LoginHistory.create({ user: user._id, ip, userAgent: ua, success: false });
     return res.status(403).json({ message: 'Please verify your email first.' });
   }
 
-  // 4) Password
+  // 4️⃣ Verify password
   const match = await bcrypt.compare(password, user.password);
   if (!match) {
     await LoginHistory.create({ user: user._id, ip, userAgent: ua, success: false });
     return res.status(401).json({ message: 'Incorrect password.' });
   }
 
-  // 5) Update lastLogin
+  // 5️⃣ Record last login
   user.lastLogin = Date.now();
   await user.save({ validateBeforeSave: false });
 
-  // 6) Geo‐lookup (if you need it)
+  // 6️⃣ Geo-lookup (optional)
   let geo = {};
   try {
     const geoRes  = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,regionName,city`);
@@ -110,11 +111,11 @@ export const login = asyncHandler(async (req, res) => {
         city:    geoJson.city,
       };
     }
-  } catch (e) {
-    console.warn('Geo lookup failed', e);
+  } catch (err) {
+    console.warn('Geo lookup error:', err);
   }
 
-  // 7) Record a single history entry
+  // 7️⃣ Log a single history entry
   await LoginHistory.create({
     user:      user._id,
     ip,
@@ -123,30 +124,23 @@ export const login = asyncHandler(async (req, res) => {
     ...geo,
   });
 
-  // 8) Tokens
+  // 8️⃣ Generate & set tokens
   const accessToken  = createAccessToken({ userId: user._id, role: user.role });
   const refreshToken = createRefreshToken({ userId: user._id });
 
   res
-    .cookie('accessToken', accessToken, {
-      ...cookieOptions,
-      maxAge:  15 * 60 * 1000,  // 15m
-      sameSite: 'None',
-      secure: process.env.NODE_ENV === 'production',
-    })
-    .cookie('refreshToken', refreshToken, {
-      ...cookieOptions,
-      maxAge:  7 * 24 * 60 * 60 * 1000, // 7d
-      sameSite: 'None',
-      secure: process.env.NODE_ENV === 'production',
-    });
+    .cookie('accessToken',  accessToken,  { ...COOKIE_OPTS, maxAge: 15*60*1000  })
+    .cookie('refreshToken', refreshToken, { ...COOKIE_OPTS, maxAge: 7*24*60*60*1000 });
 
-  // 9) Return user payload
+  // 9️⃣ Return the safe user object
   const safeUser = await User.findById(user._id)
     .select('-password -refreshTokens -resetToken -activationToken')
     .lean();
 
-  res.status(200).json({ message: 'Login successful', user: safeUser });
+  res.status(200).json({
+    message: 'Login successful',
+    user:    safeUser
+  });
 });
 
 

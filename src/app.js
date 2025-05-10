@@ -19,6 +19,7 @@ import { protect } from './middlewares/authMiddleware.js';
 import quizRoutes from './routes/quizRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
 import ticketRoutes from './routes/ticketRoutes.js';
+import adminStatsRoutes from './routes/adminStatsRoutes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -68,6 +69,7 @@ app.use('/api/resumes', protect, resumeRoutes);
 app.use('/api/public', publicRoutes);
 app.use('/api/quizzes', quizRoutes);  // all quiz endpoints live under /api/quizzes
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/admin', adminStatsRoutes);
 // 5) 404 & error handler
 app.use((req, res, next) => {
   res.status(404);
