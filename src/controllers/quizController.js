@@ -431,6 +431,7 @@ export const unassignQuiz = asyncHandler(async (req, res) => {
 /**
  * Public: list quizzes (with pagination + filters)
  */
+// src/controllers/quizController.js
 export const getPublicQuizzes = asyncHandler(async (req, res) => {
   const { category, topic, level, page = 1, limit = 12 } = req.query;
   const filter = { isActive: true };
@@ -439,9 +440,11 @@ export const getPublicQuizzes = asyncHandler(async (req, res) => {
   if (level) filter.level = level;
 
   const skip = (page - 1) * limit;
+
+  // Only select what you need for listing (lightweight)
   const [quizzes, total] = await Promise.all([
     Quiz.find(filter)
-      .select('title duration totalMarks')    // ← include totalMarks
+      .select('title duration totalMarks attempts')  // ✅ added 'attempts'
       .skip(skip)
       .limit(Number(limit)),
     Quiz.countDocuments(filter)
