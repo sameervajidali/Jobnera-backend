@@ -443,12 +443,17 @@ export const getPublicQuizzes = asyncHandler(async (req, res) => {
 
   // Only select what you need for listing (lightweight)
   const [quizzes, total] = await Promise.all([
-    Quiz.find(filter)
-      .select('title duration totalMarks attempts')  // ✅ added 'attempts'
-      .skip(skip)
-      .limit(Number(limit)),
-    Quiz.countDocuments(filter)
-  ]);
+  Quiz.find(filter)
+    .select('title duration totalMarks attempts questions') // include questions
+    .skip(skip)
+    .limit(Number(limit))
+    .lean()
+    .then(results => results.map(q => ({
+      ...q,
+      questionCount: Array.isArray(q.questions) ? q.questions.length : 0
+    }))),
+  Quiz.countDocuments(filter)
+]);
 
   res.json({
     quizzes,
