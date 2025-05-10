@@ -131,12 +131,14 @@ export const login = asyncHandler(async (req, res) => {
     .cookie('accessToken', accessToken, {
       ...cookieOptions,
       maxAge:  15 * 60 * 1000,  // 15m
-      sameSite: 'Strict',
+      sameSite: 'None',
+      secure: process.env.NODE_ENV === 'production',
     })
     .cookie('refreshToken', refreshToken, {
       ...cookieOptions,
       maxAge:  7 * 24 * 60 * 60 * 1000, // 7d
-      sameSite: 'Strict',
+      sameSite: 'None',
+      secure: process.env.NODE_ENV === 'production',
     });
 
   // 9) Return user payload

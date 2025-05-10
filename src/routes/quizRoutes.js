@@ -72,11 +72,13 @@ router.get(
   downloadQuestionsTemplate
 );
 
+// **Bulk‐upload an entire CSV of quizzes:**
+// POST /api/quizzes/admin/quizzes/bulk-upload-file
 router.post(
-  '/admin/quizzes/bulk-upload',
+  '/admin/quizzes/bulk-upload-file',
   upload.single('file'),
   bulkUploadQuizzesFile
-);
+)
 
 // Create a new quiz
 router.post('/admin/quizzes', createQuiz);
