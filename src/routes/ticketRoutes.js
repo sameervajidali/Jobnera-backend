@@ -21,9 +21,9 @@ const router = express.Router();
 
 // Anyone logged in can open a ticket
 router.post(
-  '/tickets',
- validate(createTicketSchema),
-  createTicket
+  '/ticket',
+  protect,
+   createTicket
 );
 
 // Admins/support can list & manage
