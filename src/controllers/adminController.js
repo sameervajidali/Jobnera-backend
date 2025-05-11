@@ -80,38 +80,37 @@ export const createUser = asyncHandler(async (req, res) => {
 
 
 
+
+// ─── List users (with SUPERADMIN excluded for non-SUPERADMIN callers) ───
 export const getAllUsers = asyncHandler(async (req, res) => {
-  // 1) Pagination params
-  const page  = Math.max(1, parseInt(req.query.page, 10)  || 1);
-  const limit = Math.max(1, parseInt(req.query.limit, 10) || 10);
+  // pagination
+  const page  = Math.max(1, parseInt(req.query.page)  || 1);
+  const limit = Math.max(1, parseInt(req.query.limit) || 10);
   const skip  = (page - 1) * limit;
 
-  // 2) Lookup the ROLE ID for USER
-  const userRole = await Role.findOne({ name: 'USER' });
-  if (!userRole) {
-    return res.status(500).json({ message: 'USER role not seeded in database.' });
+  // find the SUPERADMIN role doc
+  const superRole = await Role.findOne({ name: 'SUPERADMIN' }).select('_id');
+  const superId   = superRole ? superRole._id : null;
+
+  // build filter object
+  const filter = {};
+  // if the caller is _not_ a SUPERADMIN, exclude SUPERADMIN users
+  if (req.user.role.name.toUpperCase() !== 'SUPERADMIN' && superId) {
+    filter.role = { $ne: superId };
   }
 
-  // 3) Build filter & counts
-  const filter = { role: userRole._id };
-  const total  = await User.countDocuments(filter);
-
-  // 4) Fetch users with pagination, sorting, and populated role name
+  // get total & paginated users
+  const total = await User.countDocuments(filter);
   const users = await User.find(filter)
     .select('name email role provider isVerified createdAt updatedAt')
-    .populate('role', 'name')           // <— no semicolon here!
+    .populate('role', 'name')    // bring back role.name
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit);
 
-  // 5) Return wrapped result
-  res.status(200).json({
-    total,
-    page,
-    limit,
-    users
-  });
+  res.status(200).json({ total, page, limit, users });
 });
+
 
 
 export const getUserById = asyncHandler(async (req, res) => {
