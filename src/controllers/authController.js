@@ -141,8 +141,10 @@ export const login = asyncHandler(async (req, res) => {
 
   // 9️⃣ Return the safe user object
   const safeUser = await User.findById(user._id)
-    .select('-password -refreshTokens -resetToken -activationToken')
-    .lean();
+  .select('-password -refreshTokens -resetToken -activationToken')
+  .populate('role', 'name')   // ← add this
+  .lean();
+
 
   res.status(200).json({
     message: 'Login successful',
@@ -206,11 +208,17 @@ export const refreshToken = asyncHandler(async (req, res) => {
 export const getCurrentUser = async (req, res) => {
   console.log("🧁 Cookies:", req.cookies);
 
-  const user = await User.findById(req.user._id).select('-password');
-  if (!user) return res.status(404).json({ message: 'User not found' });
+  const user = await User.findById(req.user._id)
+    .select('-password')
+    .populate('role', 'name');    // ← populate role.name here
+
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
 
   res.status(200).json({ user });
 };
+
 
 
 

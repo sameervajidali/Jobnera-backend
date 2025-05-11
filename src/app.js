@@ -2,8 +2,11 @@
 // backend/src/app.js  (only one copy of this file, not in src/src!)
 import dotenv from 'dotenv';
 dotenv.config();
-
+import bcrypt from 'bcrypt';
+import User   from './models/User.js';
+import Role   from './models/Role.js'; 
 import express from 'express';
+import mongoose from 'mongoose';
 import path    from 'path';
 import { fileURLToPath } from 'url';
 import cors    from 'cors';
@@ -71,6 +74,54 @@ app.use('/api/quizzes', quizRoutes);  // all quiz endpoints live under /api/quiz
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/admin', adminStatsRoutes);
 // 5) 404 & error handler
+
+async function seedSuperAdmin() {
+  const email    = process.env.SUPERADMIN_EMAIL;
+  const password = process.env.SUPERADMIN_PASSWORD;
+  if (!email || !password) {
+    console.warn('⚠️ SUPERADMIN_EMAIL/PASSWORD not set — skipping seed.');
+    return;
+  }
+
+  // 1) Hash the password
+  const hashed = await bcrypt.hash(password, 12);
+
+  // 2) Look up the Role document
+  const superRole = await Role.findOne({ name: 'SUPERADMIN' });
+  if (!superRole) {
+    console.error('❌ No SUPERADMIN role found! Did you seed roles already?');
+    return;
+  }
+
+  // 3) Upsert the user, setting role to superRole._id
+  const result = await User.updateOne(
+    { email },
+    {
+      $setOnInsert: {
+        name:       'Super Admin',
+        provider:   'local',
+        isVerified: true,
+      },
+      $set: {
+        password: hashed,
+        role:     superRole._id,        // ← use the ObjectId, not a string
+      },
+    },
+    { upsert: true }
+  );
+
+  if (result.upsertedCount > 0) {
+    console.log(`🛡️ Created SUPERADMIN (${email})`);
+  } else {
+    console.log(`🔄 Updated SUPERADMIN (${email}) password`);
+  }
+}
+
+// … after you connect to MongoDB, invoke it:
+mongoose.connect(process.env.MONGO_URI, {/*…*/})
+  .then(() => seedSuperAdmin())
+  .catch(console.error);
+
 app.use((req, res, next) => {
   res.status(404);
   next(new Error(`Not Found - ${req.originalUrl}`));

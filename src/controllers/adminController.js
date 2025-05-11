@@ -56,21 +56,40 @@ export const createUser = asyncHandler(async (req, res) => {
   });
 });
 
-export const getAllUsers = asyncHandler(async (req, res) => {
-  const page = Math.max(1, parseInt(req.query.page) || 1);
-  const limit = Math.max(1, parseInt(req.query.limit) || 10);
-  const skip = (page - 1) * limit;
 
-  const total = await User.countDocuments();
-  const users = await User.find()
-    .find({ role: "USER" })
+export const getAllUsers = asyncHandler(async (req, res) => {
+  // 1) Pagination params
+  const page  = Math.max(1, parseInt(req.query.page, 10)  || 1);
+  const limit = Math.max(1, parseInt(req.query.limit, 10) || 10);
+  const skip  = (page - 1) * limit;
+
+  // 2) Lookup the ROLE ID for USER
+  const userRole = await Role.findOne({ name: 'USER' });
+  if (!userRole) {
+    return res.status(500).json({ message: 'USER role not seeded in database.' });
+  }
+
+  // 3) Build filter & counts
+  const filter = { role: userRole._id };
+  const total  = await User.countDocuments(filter);
+
+  // 4) Fetch users with pagination, sorting, and populated role name
+  const users = await User.find(filter)
     .select('name email role provider isVerified createdAt updatedAt')
+    .populate('role', 'name')           // <— no semicolon here!
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit);
 
-  res.status(200).json({ total, page, limit, users });
+  // 5) Return wrapped result
+  res.status(200).json({
+    total,
+    page,
+    limit,
+    users
+  });
 });
+
 
 export const getUserById = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id)

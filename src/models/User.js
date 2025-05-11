@@ -64,9 +64,12 @@ const userSchema = new Schema({
   ],
 
   // ─ Roles & Brute-Force Protection ────────────────────────────────
-  role:         { type: String,
-                  enum: ['USER','MODERATOR','CREATOR','SUPPORT','ADMIN','SUPERADMIN'],
-                  default: 'USER', uppercase: true },
+  role: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Role',
+    required: true,
+    default: null,         // we’ll backfill this in step 2
+  },
   loginAttempts:{ type: Number, default: 0, select: false },
   lockUntil:    { type: Date,   select: false },
 
