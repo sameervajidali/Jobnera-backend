@@ -41,18 +41,48 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(morgan('dev'));
-app.use(session({
-  secret:            process.env.SESSION_SECRET,
-  resave:            false,
-  saveUninitialized: false,
-  cookie: {
-    domain:   process.env.NODE_ENV==='production'?'.jobneura.tech':'localhost',
-    httpOnly: true,
-    secure:   process.env.NODE_ENV==='production',
-    sameSite: process.env.NODE_ENV==='production'?'None':'Lax',
-    maxAge:   7*24*60*60*1000
-  }
-}));
+// app.use(
+//   session({
+//     secret:            process.env.SESSION_SECRET,
+//     resave:            false,
+//     saveUninitialized: false,
+//     cookie: {
+//       // ── only set `domain` in production ──────────────────────────────
+//       ...(process.env.NODE_ENV === 'production'
+//         ? { domain: '.jobneura.tech' }    // for both jobneura.tech & www.jobneura.tech
+//         : {}),                             // host-only on localhost
+
+//       httpOnly: true,
+//       secure:   process.env.NODE_ENV === 'production',
+//       sameSite:
+//         process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+//       maxAge: 7 * 24 * 60 * 60 * 1000,
+//       path:   '/',   // optional, but explicit
+//     },
+//   })
+// );
+app.use(
+  session({
+    secret:            process.env.SESSION_SECRET,
+    resave:            false,
+    saveUninitialized: false,
+    cookie: {
+      // ❌ DO NOT set `domain` in dev—let it default to host-only
+      ...(process.env.NODE_ENV === 'production'
+        ? { domain: '.jobneura.tech' }    // only in prod
+        : {}),
+
+      httpOnly: true,
+      secure:   process.env.NODE_ENV === 'production',
+      sameSite:
+        process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path:   '/',
+    },
+  })
+);
+
+
 app.use(passport.initialize());
 app.use(passport.session());
 
