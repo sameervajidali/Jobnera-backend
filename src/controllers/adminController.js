@@ -10,51 +10,74 @@ const VALID_ROLES = [
 
 const PROTECTED_ROLES = ['ADMIN', 'SUPERADMIN', 'MODERATOR', 'CREATOR', 'SUPPORT'];
 
+// export const createUser = asyncHandler(async (req, res) => {
+//   const { name, email, password, role } = req.body;
+
+//   if (!name || !email || !password) {
+//     return res.status(400).json({ message: 'Name, email, and password are required.' });
+//   }
+
+//   const normalizedRole = (role || 'USER').toUpperCase();
+
+//   if (!VALID_ROLES.includes(normalizedRole)) {
+//     return res.status(400).json({ message: `Invalid role '${role}'.` });
+//   }
+
+//   const currentUserRole = req.user?.role?.toUpperCase();
+//   if (PROTECTED_ROLES.includes(normalizedRole) && currentUserRole !== 'SUPERADMIN') {
+//     return res.status(403).json({ message: 'Insufficient rights to assign that elevated role.' });
+//   }
+
+//   if (await User.exists({ email })) {
+//     return res.status(409).json({ message: 'Email already in use.' });
+//   }
+
+//   const user = await User.create({
+//     name,
+//     email,
+//     password,
+//     role: normalizedRole,
+//     isVerified: true,
+//     provider: 'local',
+//   });
+
+//   sendUserCredentialsEmail(email, name, password)
+//     .then(() => console.log(`✉️ Sent credentials to ${email}`))
+//     .catch(err => console.error(`❌ Failed to send credentials:`, err));
+
+//   res.status(201).json({
+//     message: 'User created successfully and credentials sent via email.',
+//     user: {
+//       id: user._id,
+//       name: user.name,
+//       email: user.email,
+//       role: user.role,
+//     },
+//   });
+// });
+
+
 export const createUser = asyncHandler(async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { role: roleName, ...rest } = req.body;
 
-  if (!name || !email || !password) {
-    return res.status(400).json({ message: 'Name, email, and password are required.' });
+  // 1) Find the role document by name
+  const roleDoc = await Role.findOne({ name: roleName.toUpperCase() });
+  if (!roleDoc) {
+    return res.status(400).json({
+      message: `Invalid role "${roleName}". Must be one of: USER, ADMIN, …`
+    });
   }
 
-  const normalizedRole = (role || 'USER').toUpperCase();
-
-  if (!VALID_ROLES.includes(normalizedRole)) {
-    return res.status(400).json({ message: `Invalid role '${role}'.` });
-  }
-
-  const currentUserRole = req.user?.role?.toUpperCase();
-  if (PROTECTED_ROLES.includes(normalizedRole) && currentUserRole !== 'SUPERADMIN') {
-    return res.status(403).json({ message: 'Insufficient rights to assign that elevated role.' });
-  }
-
-  if (await User.exists({ email })) {
-    return res.status(409).json({ message: 'Email already in use.' });
-  }
-
-  const user = await User.create({
-    name,
-    email,
-    password,
-    role: normalizedRole,
-    isVerified: true,
-    provider: 'local',
+  // 2) Use the ObjectId
+  const user = new User({
+    ...rest,
+    role: roleDoc._id,
   });
 
-  sendUserCredentialsEmail(email, name, password)
-    .then(() => console.log(`✉️ Sent credentials to ${email}`))
-    .catch(err => console.error(`❌ Failed to send credentials:`, err));
-
-  res.status(201).json({
-    message: 'User created successfully and credentials sent via email.',
-    user: {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-    },
-  });
+  await user.save();
+  res.status(201).json({ user });
 });
+
 
 
 export const getAllUsers = asyncHandler(async (req, res) => {
@@ -99,36 +122,58 @@ export const getUserById = asyncHandler(async (req, res) => {
   res.status(200).json({ user });
 });
 
+// export const updateUser = asyncHandler(async (req, res) => {
+//   const { name, email, role, isVerified } = req.body;
+
+//   const updates = {};
+//   if (name) updates.name = name;
+//   if (email) updates.email = email;
+
+//   if (role) {
+//     const normalizedRole = role.toUpperCase();
+//     const currentUserRole = req.user?.role?.toUpperCase();
+
+//     if (PROTECTED_ROLES.includes(normalizedRole) && currentUserRole !== 'SUPERADMIN') {
+//       return res.status(403).json({ message: 'Insufficient rights to assign that role.' });
+//     }
+
+//     updates.role = normalizedRole;
+//   }
+
+//   if (typeof isVerified === 'boolean') updates.isVerified = isVerified;
+
+//   const user = await User.findByIdAndUpdate(req.params.id, updates, {
+//     new: true,
+//     runValidators: true,
+//   })
+//     .select('-password -refreshTokens -resetToken* -activationToken*')
+//     .lean();
+
+//   if (!user) return res.status(404).json({ message: 'User not found.' });
+//   res.status(200).json({ message: 'User updated.', user });
+// });
+
+// src/controllers/adminController.js
 export const updateUser = asyncHandler(async (req, res) => {
-  const { name, email, role, isVerified } = req.body;
+  const { role: roleName, ...rest } = req.body;
 
-  const updates = {};
-  if (name) updates.name = name;
-  if (email) updates.email = email;
-
-  if (role) {
-    const normalizedRole = role.toUpperCase();
-    const currentUserRole = req.user?.role?.toUpperCase();
-
-    if (PROTECTED_ROLES.includes(normalizedRole) && currentUserRole !== 'SUPERADMIN') {
-      return res.status(403).json({ message: 'Insufficient rights to assign that role.' });
+  // build the update payload
+  const update = { ...rest };
+  if (roleName) {
+    const roleDoc = await Role.findOne({ name: roleName.toUpperCase() });
+    if (!roleDoc) {
+      return res.status(400).json({
+        message: `Invalid role "${roleName}". Must be one of: USER, ADMIN, …`
+      });
     }
-
-    updates.role = normalizedRole;
+    update.role = roleDoc._id;
   }
 
-  if (typeof isVerified === 'boolean') updates.isVerified = isVerified;
-
-  const user = await User.findByIdAndUpdate(req.params.id, updates, {
-    new: true,
-    runValidators: true,
-  })
-    .select('-password -refreshTokens -resetToken* -activationToken*')
-    .lean();
-
-  if (!user) return res.status(404).json({ message: 'User not found.' });
-  res.status(200).json({ message: 'User updated.', user });
+  const user = await User.findByIdAndUpdate(req.params.id, update, { new: true });
+  res.json({ user });
 });
+
+
 
 export const deleteUser = asyncHandler(async (req, res) => {
   const deleted = await User.findByIdAndDelete(req.params.id).lean();

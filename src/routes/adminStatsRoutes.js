@@ -1,12 +1,28 @@
+// src/routes/adminStatsRoutes.js
 import express from 'express';
-import { getDailyActiveUsers } from '../controllers/adminStatsController.js';
 import { protect, requireRole } from '../middlewares/authMiddleware.js';
+import {
+  getDAU,
+  getCategoryStats,
+  getUserGrowth,
+  getTicketStats
+} from '../controllers/adminStatsController.js';
 
 const router = express.Router();
 
-// protect + restrict to admins/creators:
-router.use(protect, requireRole(['SUPERADMIN','ADMIN','CREATOR']));
+// All stats endpoints require at least ADMIN
+router.use(protect, requireRole('ADMIN', 'SUPERADMIN'));
 
-router.get('/stats/dau', getDailyActiveUsers);
+// DAU: GET /api/admin/stats/dau
+router.get('/stats/dau', getDAU);
+
+// Category: GET /api/admin/stats/categories
+router.get('/stats/categories', getCategoryStats);
+
+// New users: GET /api/admin/stats/users-growth
+router.get('/stats/users-growth', getUserGrowth);
+
+// Tickets summary: GET /api/admin/stats/tickets
+router.get('/stats/tickets', getTicketStats);
 
 export default router;
