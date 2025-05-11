@@ -63,6 +63,7 @@ export const getAllUsers = asyncHandler(async (req, res) => {
 
   const total = await User.countDocuments();
   const users = await User.find()
+    .find({ role: "USER" })
     .select('name email role provider isVerified createdAt updatedAt')
     .sort({ createdAt: -1 })
     .skip(skip)
