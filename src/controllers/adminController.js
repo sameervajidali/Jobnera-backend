@@ -95,7 +95,7 @@ export const getAllUsers = asyncHandler(async (req, res) => {
   // build filter object
   const filter = {};
   // if the caller is _not_ a SUPERADMIN, exclude SUPERADMIN users
-  if (req.user.role.name.toUpperCase() !== 'SUPERADMIN' && superId) {
+  if (req.user.role.name !== 'SUPERADMIN' && superId) {
     filter.role = { $ne: superId };
   }
 
