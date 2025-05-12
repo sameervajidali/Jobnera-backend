@@ -171,9 +171,9 @@ export const getAllQuizzes = asyncHandler(async (_req, res) => {
 
   // populate questions *and* category & topic names
   const quizzes = await Quiz.find()
-    .populate('questions')                    // your existing populate
-    .populate('category', 'name')             // <-- add this
-    .populate('topic',    'name');            // <-- and this
+    .populate("category", "name")
+  .populate("topic",    "name")
+  .populate("questions");           // <-- and this
 
   // cache in Redis
   if (redis) {
