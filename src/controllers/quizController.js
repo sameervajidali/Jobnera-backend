@@ -447,48 +447,97 @@ export const unassignQuiz = asyncHandler(async (req, res) => {
  */
 // src/controllers/quizController.js
 export const getPublicQuizzes = asyncHandler(async (req, res) => {
-  const { category, topic, level, page = 1, limit = 12 } = req.query;
-  const filter = { isActive: true };
-  if (category) filter.category = category;
-  if (topic) filter.topic = topic;
-  if (level) filter.level = level;
+  const {
+    category,
+    topic,
+    level,
+    page = 1,
+    limit = 12,
+  } = req.query;
 
-  const skip = (page - 1) * limit;
+  // Build a match stage based on the filters
+  const match = { isActive: true };
+  if (category && mongoose.isValidObjectId(category)) match.category = mongoose.Types.ObjectId(category);
+  if (topic    && mongoose.isValidObjectId(topic))    match.topic    = mongoose.Types.ObjectId(topic);
+  if (level) match.level = level;
 
-  // Step 1: Get paginated quizzes with question count
-  const quizzes = await Quiz.aggregate([
-    { $match: filter },
+  const skip = (Number(page) - 1) * Number(limit);
+
+  // Aggregate pipeline
+  const pipeline = [
+    { $match: match },
+
+    // Lookup category
     {
-      $project: {
-        title: 1,
-        duration: 1,
-        totalMarks: 1,
-        createdAt: 1,
-        questionCount: { $size: { $ifNull: ['$questions', []] } },
+      $lookup: {
+        from: "categories",
+        localField: "category",
+        foreignField: "_id",
+        as: "categoryDoc",
       },
     },
+    { $unwind: { path: "$categoryDoc", preserveNullAndEmptyArrays: true } },
+
+    // Lookup topic
+    {
+      $lookup: {
+        from: "topics",
+        localField: "topic",
+        foreignField: "_id",
+        as: "topicDoc",
+      },
+    },
+    { $unwind: { path: "$topicDoc", preserveNullAndEmptyArrays: true } },
+
+    // Compute question count
+    {
+      $addFields: {
+        questionCount: { $size: { $ifNull: ["$questions", []] } },
+      },
+    },
+
+    // Sort, skip & limit for pagination
     { $sort: { createdAt: -1 } },
     { $skip: skip },
     { $limit: Number(limit) },
-  ]);
 
-  // Step 2: Get attempt counts from QuizAttempt model
-  const attemptData = await QuizAttempt.aggregate([
-    { $match: { quiz: { $in: quizzes.map(q => q._id) } } },
-    { $group: { _id: '$quiz', count: { $sum: 1 } } },
-  ]);
+    // Project only the fields we want
+    {
+      $project: {
+        title: 1,
+        level: 1,
+        duration: 1,
+        totalMarks: 1,
+        createdAt: 1,
+        questionCount: 1,
+        "category._id":   "$categoryDoc._id",
+        "category.name":  "$categoryDoc.name",
+        "topic._id":      "$topicDoc._id",
+        "topic.name":     "$topicDoc.name",
+      },
+    },
+  ];
 
+  // 1) Fetch paginated quizzes
+  const quizzes = await Quiz.aggregate(pipeline);
+
+  // 2) Fetch attempt counts in bulk
+  const attemptCounts = await QuizAttempt.aggregate([
+    { $match: { quiz: { $in: quizzes.map((q) => q._id) } } },
+    { $group: { _id: "$quiz", count: { $sum: 1 } } },
+  ]);
   const attemptMap = Object.fromEntries(
-    attemptData.map(a => [a._id.toString(), a.count])
+    attemptCounts.map((a) => [a._id.toString(), a.count])
   );
 
-  // Step 3: Merge attempt counts into quiz list
-  const finalQuizzes = quizzes.map(q => ({
+  // 3) Merge attemptCount into each quiz
+  const finalQuizzes = quizzes.map((q) => ({
     ...q,
     attemptCount: attemptMap[q._id.toString()] || 0,
   }));
 
-  const total = await Quiz.countDocuments(filter);
+  // 4) Total count for pagination metadata
+  const total = await Quiz.countDocuments(match);
 
   res.json({
     quizzes: finalQuizzes,
@@ -497,7 +546,6 @@ export const getPublicQuizzes = asyncHandler(async (req, res) => {
     limit: Number(limit),
   });
 });
-
 
 
 // 📊 Get distinct values for a field
