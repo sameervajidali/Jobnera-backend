@@ -155,22 +155,36 @@ export const getUserAttempts = asyncHandler(async (req, res) => {
 });
 
 // ─── Quiz CRUD: Admin ─────────────────────────────────────────────────────────
+// ─── Quiz CRUD: Admin ─────────────────────────────────────────────────────────
 export const getAllQuizzes = asyncHandler(async (_req, res) => {
   const key = 'quizzes:all';
+
+  // try Redis cache first…
   if (redis) {
     try {
-      const c = await redis.get(key);
-      if (c) return res.json(JSON.parse(c));
-    } catch (e) { console.warn('⚠️ Redis GET failed:', e.message); }
+      const cached = await redis.get(key);
+      if (cached) return res.json(JSON.parse(cached));
+    } catch (e) {
+      console.warn('⚠️ Redis GET failed:', e.message);
+    }
   }
 
-  const quizzes = await Quiz.find().populate('questions');
+  // populate questions *and* category & topic names
+  const quizzes = await Quiz.find()
+    .populate('questions')                    // your existing populate
+    .populate('category', 'name')             // <-- add this
+    .populate('topic',    'name');            // <-- and this
+
+  // cache in Redis
   if (redis) {
-    redis.set(key, JSON.stringify(quizzes), 'EX', 3600)
+    redis
+      .set(key, JSON.stringify(quizzes), 'EX', 3600)
       .catch(err => console.warn('⚠️ Redis SET failed:', err.message));
   }
+
   res.json(quizzes);
 });
+
 
 export const getQuizById = asyncHandler(async (req, res) => {
   const { quizId } = idParamSchema.parse(req.params);
