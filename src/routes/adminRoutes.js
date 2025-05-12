@@ -149,6 +149,8 @@ import {
   updateRoleSchema,
 } from '../validators/adminValidator.js';
 import { getUserHistory } from '../controllers/admin/adminUserController.js';
+import categoryRoutes from '../categoryRoutes.js';  
+import topicRoutes    from '../topicRoutes.js';
 
 const router = express.Router();
 
@@ -186,6 +188,10 @@ router.get(
   validate(userIdParamSchema, 'params'),
   getUserById
 );
+
+// ... after user & role routes:
+router.use('/categories', categoryRoutes);
+router.use('/topics',     topicRoutes);
 
 // Update user
 router.put(
