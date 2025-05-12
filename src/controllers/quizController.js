@@ -175,6 +175,7 @@ export const getAllQuizzes = asyncHandler(async (_req, res) => {
   .populate("topic",    "name")
   .populate("questions");           // <-- and this
 
+  console.log('Fetched Quizzes:', quizzes);  // Check the structure of quizzes here
   // cache in Redis
   if (redis) {
     redis
@@ -446,97 +447,39 @@ export const unassignQuiz = asyncHandler(async (req, res) => {
  * Public: list quizzes (with pagination + filters)
  */
 // src/controllers/quizController.js
-export const getPublicQuizzes = asyncHandler(async (req, res) => {
-  const {
-    category,
-    topic,
-    level,
-    page = 1,
-    limit = 12,
-  } = req.query;
 
-  // Build a match stage based on the filters
+
+export const getPublicQuizzes = asyncHandler(async (req, res) => {
+  const { category, topic, level, page = 1, limit = 12 } = req.query;
+
   const match = { isActive: true };
   if (category && mongoose.isValidObjectId(category)) match.category = mongoose.Types.ObjectId(category);
-  if (topic    && mongoose.isValidObjectId(topic))    match.topic    = mongoose.Types.ObjectId(topic);
+  if (topic && mongoose.isValidObjectId(topic)) match.topic = mongoose.Types.ObjectId(topic);
   if (level) match.level = level;
 
   const skip = (Number(page) - 1) * Number(limit);
 
-  // Aggregate pipeline
-  const pipeline = [
-    { $match: match },
+  const quizzes = await Quiz.find(match)
+    .populate("category", "name")  // Populate the category name
+    .populate("topic", "name")     // Populate the topic name
+    .populate("questions")         // Populate questions if needed
+    .skip(skip)
+    .limit(limit)
+    .sort({ createdAt: -1 });
 
-    // Lookup category
-    {
-      $lookup: {
-        from: "categories",
-        localField: "category",
-        foreignField: "_id",
-        as: "categoryDoc",
-      },
-    },
-    { $unwind: { path: "$categoryDoc", preserveNullAndEmptyArrays: true } },
-
-    // Lookup topic
-    {
-      $lookup: {
-        from: "topics",
-        localField: "topic",
-        foreignField: "_id",
-        as: "topicDoc",
-      },
-    },
-    { $unwind: { path: "$topicDoc", preserveNullAndEmptyArrays: true } },
-
-    // Compute question count
-    {
-      $addFields: {
-        questionCount: { $size: { $ifNull: ["$questions", []] } },
-      },
-    },
-
-    // Sort, skip & limit for pagination
-    { $sort: { createdAt: -1 } },
-    { $skip: skip },
-    { $limit: Number(limit) },
-
-    // Project only the fields we want
-    {
-      $project: {
-        title: 1,
-        level: 1,
-        duration: 1,
-        totalMarks: 1,
-        createdAt: 1,
-        questionCount: 1,
-        "category._id":   "$categoryDoc._id",
-        "category.name":  "$categoryDoc.name",
-        "topic._id":      "$topicDoc._id",
-        "topic.name":     "$topicDoc.name",
-      },
-    },
-  ];
-
-  // 1) Fetch paginated quizzes
-  const quizzes = await Quiz.aggregate(pipeline);
-
-  // 2) Fetch attempt counts in bulk
+  // Attempt counts
   const attemptCounts = await QuizAttempt.aggregate([
     { $match: { quiz: { $in: quizzes.map((q) => q._id) } } },
-    { $group: { _id: "$quiz", count: { $sum: 1 } } },
+    { $group: { _id: '$quiz', count: { $sum: 1 } } },
   ]);
-  const attemptMap = Object.fromEntries(
-    attemptCounts.map((a) => [a._id.toString(), a.count])
-  );
+  const attemptMap = Object.fromEntries(attemptCounts.map((a) => [a._id.toString(), a.count]));
 
-  // 3) Merge attemptCount into each quiz
+  // Merge attempt counts with quizzes
   const finalQuizzes = quizzes.map((q) => ({
-    ...q,
+    ...q.toObject(),
     attemptCount: attemptMap[q._id.toString()] || 0,
   }));
 
-  // 4) Total count for pagination metadata
   const total = await Quiz.countDocuments(match);
 
   res.json({
@@ -546,6 +489,8 @@ export const getPublicQuizzes = asyncHandler(async (req, res) => {
     limit: Number(limit),
   });
 });
+
+
 
 
 // 📊 Get distinct values for a field
