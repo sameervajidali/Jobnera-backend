@@ -7,6 +7,8 @@ import LeaderboardEntry from '../models/LeaderboardEntry.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import { attemptParamSchema } from '../validators/quizValidator.js';
 import { publicLeaderboardSchema } from '../validators/quizValidator.js';
+import Topic from '../models/Topic.js';  // Make sure this points to your Topic model file
+
 
 import csv from 'csvtojson';
 import { z } from 'zod';
@@ -658,20 +660,60 @@ export const bulkUploadQuizzesFile = async (req, res) => {
 };
 
 
-// GET /api/quizzes/grouped-topics
+// // GET /api/quizzes/grouped-topics
+// export const getGroupedTopics = asyncHandler(async (_req, res) => {
+//   const quizzes = await Quiz.find({ isActive: true }).select('category topic -_id')
+//     .populate('category', 'name')  // Populate the category name
+//     .populate('topic', 'name');    // Populate the topic name
+
+//   const grouped = {};
+
+//   quizzes.forEach(({ category, topic }) => {
+//     // Ensure category and topic are not null before accessing their properties
+//     if (category && category.name) {
+//       if (!grouped[category._id]) grouped[category._id] = { category: category.name, topics: [] };
+//       if (topic && topic.name) {
+//         grouped[category._id].topics.push(topic.name);
+//       }
+//     }
+//   });
+
+//   const result = Object.values(grouped).map(item => ({
+//     category: item.category,
+//     topics: item.topics
+//   }));
+
+//   res.json(result);
+// });
+
 export const getGroupedTopics = asyncHandler(async (_req, res) => {
-  const quizzes = await Quiz.find({ isActive: true }).select('category topic -_id');
-  const grouped = {};
+  try {
+    // Fetch all topics and populate their associated category
+    const topics = await Topic.find().populate('category', 'name');  // Populate category name
 
-  quizzes.forEach(({ category, topic }) => {
-    if (!grouped[category]) grouped[category] = new Set();
-    grouped[category].add(topic);
-  });
+    // Create a map to store topics by category name
+    const grouped = {};
 
-  const result = Object.entries(grouped).map(([category, topicSet]) => ({
-    category,
-    topics: Array.from(topicSet)
-  }));
+    // Group topics by category name
+    topics.forEach(topic => {
+      const categoryName = topic.category?.name; // Safely access category name
+      if (categoryName) {
+        if (!grouped[categoryName]) {
+          grouped[categoryName] = [];
+        }
+        grouped[categoryName].push(topic.name);  // Add the topic to the respective category
+      }
+    });
 
-  res.json(result);
+    // Convert grouped object to array of { category, topics }
+    const groupedArray = Object.keys(grouped).map(category => ({
+      category,
+      topics: grouped[category]
+    }));
+
+    res.json(groupedArray);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error while fetching grouped topics." });
+  }
 });
