@@ -149,8 +149,8 @@ import {
   updateRoleSchema,
 } from '../validators/adminValidator.js';
 import { getUserHistory } from '../controllers/admin/adminUserController.js';
-import categoryRoutes from '../categoryRoutes.js';  
-import topicRoutes    from '../topicRoutes.js';
+import categoryRoutes from './admin/categoryRoutes.js';  
+import topicRoutes    from './admin/topicRoutes.js';
 
 const router = express.Router();
 

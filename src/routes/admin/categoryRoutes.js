@@ -1,13 +1,13 @@
 // src/routes/admin/categoryRoutes.js
 import express from 'express';
-import { protect, requireRole } from '../middlewares/authMiddleware.js';
+import { protect, requireRole } from '../../middlewares/authMiddleware.js';
 import {
   getAllCategories,
   getCategoryById,
   createCategory,
   updateCategory,
   deleteCategory,
-} from '../controllers/admin/categoryController.js';
+} from '../../controllers/admin/categoryController.js';
 
 const router = express.Router();
 router.use(protect, requireRole('SUPERADMIN','ADMIN'));
