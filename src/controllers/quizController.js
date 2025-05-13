@@ -8,11 +8,7 @@ import asyncHandler from '../utils/asyncHandler.js';
 import { attemptParamSchema } from '../validators/quizValidator.js';
 import { publicLeaderboardSchema } from '../validators/quizValidator.js';
 import Topic    from '../models/Topic.js';
-import Quiz     from '../models/Quiz.js';
 import csv      from 'csvtojson';
-
-
-
 import { z } from 'zod';
 import {
   submitAttemptSchema,
