@@ -8,6 +8,8 @@ import asyncHandler from '../utils/asyncHandler.js';
 import { attemptParamSchema } from '../validators/quizValidator.js';
 import { publicLeaderboardSchema } from '../validators/quizValidator.js';
 import Topic from '../models/Topic.js';  // Make sure this points to your Topic model file
+// src/controllers/quizController.js
+import Category from '../models/Category.js';
 
 
 import csv from 'csvtojson';
@@ -451,62 +453,102 @@ export const unassignQuiz = asyncHandler(async (req, res) => {
 // src/controllers/quizController.js
 
 
+/**
+ * GET /api/quizzes
+ * Public: list quizzes with filters, pagination, questionCount, attemptCount
+ */
+// controllers/quizController.js
+
 export const getPublicQuizzes = asyncHandler(async (req, res) => {
   const { category, topic, level, page = 1, limit = 12 } = req.query;
-
   const match = { isActive: true };
-  if (category && mongoose.isValidObjectId(category)) match.category = mongoose.Types.ObjectId(category);
-  if (topic && mongoose.isValidObjectId(topic)) match.topic = mongoose.Types.ObjectId(topic);
-  if (level) match.level = level;
+
+  if (category && mongoose.isValidObjectId(category))
+    match.category = category;
+  if (topic && mongoose.isValidObjectId(topic))
+    match.topic = topic;
+  if (level)
+    match.level = level;
 
   const skip = (Number(page) - 1) * Number(limit);
 
+  // 1) Fetch the page of quizzes, with populated category & topic
   const quizzes = await Quiz.find(match)
-    .populate("category", "name")  // Populate the category name
-    .populate("topic", "name")     // Populate the topic name
-    .populate("questions")         // Populate questions if needed
+    .populate('category','name')
+    .populate('topic','name')
+    .populate('questions','_id')     // only need _id for counting
     .skip(skip)
-    .limit(limit)
+    .limit(Number(limit))
     .sort({ createdAt: -1 });
 
-  // Attempt counts
-  const attemptCounts = await QuizAttempt.aggregate([
-    { $match: { quiz: { $in: quizzes.map((q) => q._id) } } },
-    { $group: { _id: '$quiz', count: { $sum: 1 } } },
-  ]);
-  const attemptMap = Object.fromEntries(attemptCounts.map((a) => [a._id.toString(), a.count]));
-
-  // Merge attempt counts with quizzes
-  const finalQuizzes = quizzes.map((q) => ({
+  // 2) Compute questionCount
+  const withCounts = quizzes.map(q => ({
     ...q.toObject(),
-    attemptCount: attemptMap[q._id.toString()] || 0,
+    questionCount: q.questions?.length || 0
   }));
 
+  // 3) Compute attemptCount in one aggregate
+  const attemptCounts = await QuizAttempt.aggregate([
+    { $match: { quiz: { $in: quizzes.map(q => q._id) } } },
+    { $group: { _id: '$quiz', count: { $sum: 1 } } }
+  ]);
+  const attemptMap = Object.fromEntries(
+    attemptCounts.map(a => [a._id.toString(), a.count])
+  );
+
+  // 4) Merge attemptCount
+  const finalQuizzes = withCounts.map(q => ({
+    ...q,
+    attemptCount: attemptMap[q._id.toString()] || 0
+  }));
+
+  // 5) Total for pagination
   const total = await Quiz.countDocuments(match);
 
   res.json({
     quizzes: finalQuizzes,
     total,
-    page: Number(page),
-    limit: Number(limit),
+    page:  Number(page),
+    limit: Number(limit)
   });
 });
 
 
+/**
+ * GET /api/quizzes/distinct/category
+ * Public: return active categories (id + name) for sidebar
+ */
+// Return [{ _id, name }] for active categories
+export const getDistinctCategories = asyncHandler(async (_req, res) => {
+  const ids = await Quiz.distinct('category', { isActive: true });
+  const cats = await Category.find({ _id: { $in: ids } }, 'name').lean();
+  res.json(cats.map(c => ({ _id: c._id, name: c.name })));
+});
 
 
 // 📊 Get distinct values for a field
+// Keep the generic factory only for levels
 export const getDistinctValues = (field) =>
   asyncHandler(async (_req, res) => {
-    // only allow certain fields:
-    const allowed = ['category', 'topic', 'level'];
+    const allowed = ['category','topic','level'];
     if (!allowed.includes(field)) {
-      return res.status(400).json({ message: 'Invalid distinct field' });
+      return res.status(400).json({ message: 'Invalid field' });
     }
-    const values = await Quiz.distinct(field, { isActive: true });
-    res.json(values);
-  });
 
+    // LEVELS can stay a simple string array:
+    if (field === 'level') {
+      const levels = await Quiz.distinct('level', { isActive: true });
+      return res.json(levels);
+    }
+
+    // For category/topic, first pull the distinct ObjectIds…
+    const ids = await Quiz.distinct(field, { isActive: true });
+
+    // …then fetch full docs so you get {_id,name} back:
+    const Model = field === 'category' ? Category : Topic;
+    const docs  = await Model.find({ _id: { $in: ids } }).select('name');
+    res.json(docs);
+  });
 
 // controllers/quizController.js
 export const getAttemptById = asyncHandler(async (req, res) => {
@@ -686,34 +728,139 @@ export const bulkUploadQuizzesFile = async (req, res) => {
 //   res.json(result);
 // });
 
+// src/controllers/quizController.js
+// controllers/quizController.js
+// controllers/quizController.js
 export const getGroupedTopics = asyncHandler(async (_req, res) => {
-  try {
-    // Fetch all topics and populate their associated category
-    const topics = await Topic.find().populate('category', 'name');  // Populate category name
+  // 1) grab all active quizzes, but only category & topic fields
+  const quizzes = await Quiz.find({ isActive: true }).select('category topic -_id');
 
-    // Create a map to store topics by category name
-    const grouped = {};
+  // 2) group in memory
+  const grouped = {};
+  quizzes.forEach(q => {
+    // skip any missing data
+    if (!q.category || !q.topic) return;
+    const catId = q.category.toString();
+    const topId = q.topic.toString();
+    if (!grouped[catId]) grouped[catId] = new Set();
+    grouped[catId].add(topId);
+  });
 
-    // Group topics by category name
-    topics.forEach(topic => {
-      const categoryName = topic.category?.name; // Safely access category name
-      if (categoryName) {
-        if (!grouped[categoryName]) {
-          grouped[categoryName] = [];
-        }
-        grouped[categoryName].push(topic.name);  // Add the topic to the respective category
-      }
-    });
+  // 3) turn map-of-sets into array-of-objects
+  const result = Object.entries(grouped).map(([category, topicSet]) => ({
+    category,                  // this is the _id of your Category
+    topics: Array.from(topicSet) // array of _id of your Topic
+  }));
 
-    // Convert grouped object to array of { category, topics }
-    const groupedArray = Object.keys(grouped).map(category => ({
-      category,
-      topics: grouped[category]
-    }));
+  res.json(result);
+});
 
-    res.json(groupedArray);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error while fetching grouped topics." });
+
+
+
+
+
+/** * GET /api/quizzes/highlight/just-added
+ * Returns the N most recently created active quizzes.
+ */
+export const getJustAddedQuizzes = asyncHandler(async (req, res) => {
+  const limit = Math.min(10, parseInt(req.query.limit,10) || 3);
+  const quizzes = await Quiz.find({ isActive: true })
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .select('title duration level createdAt')    // only necessary fields
+    .lean();
+  res.json(quizzes);
+});
+
+/**
+ * GET /api/quizzes/highlight/trending
+ * Returns the top N quizzes by number of attempts in the last week.
+ */
+export const getTrendingQuizzes = asyncHandler(async (req, res) => {
+  const limit = Math.min(10, parseInt(req.query.limit,10) || 5);
+  const since = new Date(Date.now() - 7*24*60*60*1000);
+
+  // aggregate attempt counts in last week
+  const top = await QuizAttempt.aggregate([
+    { $match: { createdAt: { $gte: since } } },
+    { $group: { _id: '$quiz', count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+    { $limit: limit }
+  ]);
+
+  const quizIds = top.map(x => x._id);
+  const quizzes = await Quiz.find({ _id: { $in: quizIds } })
+    .select('title duration level')
+    .lean();
+  
+  // preserve original order
+  const ordered = quizIds.map(id => 
+    quizzes.find(q => q._id.equals(id))
+  ).filter(Boolean);
+
+  res.json(ordered);
+});
+
+/**
+ * GET /api/quizzes/highlight/daily-spotlight
+ * Returns one quiz per day (rotates through your active quizzes).
+ */
+export const getDailySpotlight = asyncHandler(async (_req, res) => {
+  const all = await Quiz.find({ isActive: true })
+    .select('title duration level createdAt')
+    .lean();
+  if (!all.length) return res.json(null);
+
+  // pick an index based on today’s date
+  const day = new Date().getDate();
+  const idx = day % all.length;
+  res.json(all[idx]);
+});
+
+
+export const getSidebarFilters = asyncHandler(async (_req, res) => {
+  // 1) levels
+  const levels = await Quiz.distinct('level', { isActive: true });
+
+  // 2) distinct category & topic IDs from the quizzes
+  const [catIds, topicIds] = await Promise.all([
+    Quiz.distinct('category', { isActive: true }),
+    Quiz.distinct('topic',    { isActive: true }),
+  ]);
+
+  // 3) fetch their names in bulk
+  const [categories, topics] = await Promise.all([
+    Category.find({ _id: { $in: catIds } }).select('_id name'),
+    Topic    .find({ _id: { $in: topicIds } }).select('_id name'),
+  ]);
+
+  res.json({ categories, topics, levels });
+});
+
+
+/**
+ * DELETE /api/quizzes/admin/quizzes/:quizId
+ * Remove a quiz (admin only).
+ */
+export const deleteQuiz = asyncHandler(async (req, res) => {
+  // 1️⃣ Validate quizId param
+  const { quizId } = idParamSchema.parse(req.params);
+
+  // 2️⃣ Attempt deletion
+  const quiz = await Quiz.findByIdAndDelete(quizId);
+  if (!quiz) {
+    return res.status(404).json({ message: 'Quiz not found' });
   }
+
+  // 3️⃣ (Optional) Invalidate cache
+  if (redis) {
+    // Remove from all‐quizzes cache
+    redis.del('quizzes:all').catch(() => {});
+    // Remove individual quiz cache
+    redis.del(`quiz:${quizId}`).catch(() => {});
+  }
+
+  // 4️⃣ Respond
+  res.json({ message: 'Quiz deleted successfully' });
 });
