@@ -1,7 +1,21 @@
-// src/models/Ticket.js
 import mongoose from 'mongoose';
 
 const { Schema, model } = mongoose;
+
+// Define sub-schema for replies
+const replySchema = new Schema({
+  by:   { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  text: { type: String, required: true, trim: true },
+  at:   { type: Date, default: Date.now }
+}, { _id: true });
+
+// Define sub-schema for comments, including nested replies
+const commentSchema = new Schema({
+  by:      { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  text:    { type: String, required: true, trim: true },
+  at:      { type: Date, default: Date.now },
+  replies: [replySchema]
+}, { _id: true });
 
 const TicketSchema = new Schema({
   user: {
@@ -28,13 +42,7 @@ const TicketSchema = new Schema({
     enum: ['low', 'medium', 'high'],
     default: 'medium'
   },
-  comments: [
-    {
-      by:    { type: Schema.Types.ObjectId, ref: 'User' },
-      text:  String,
-      at:    { type: Date, default: Date.now }
-    }
-  ]
+  comments: [commentSchema]
 }, {
   timestamps: true
 });
