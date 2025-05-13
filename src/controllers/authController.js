@@ -12,6 +12,8 @@ import {
   sendResetPasswordEmail,
   sendActivationSuccessEmail
 } from '../services/emailService.js';
+import Role from '../models/Role.js';
+
 
 const CLIENT_URL = process.env.CLIENT_URL || 'https://jobneura.tech';
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
