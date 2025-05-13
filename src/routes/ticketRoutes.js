@@ -9,8 +9,9 @@ import {
   addComment,
   closeTicket
 } from '../controllers/ticketController.js';
-import { validate } from '../validators/validate.js';
+import validateZod  from '../validators/validateZod.js';
 import {
+  
   createTicketSchema,
   updateTicketSchema,
   commentSchema,
@@ -36,15 +37,15 @@ router.get(
 
 // Fetch, update, comment
 router.route('/admin/tickets/:id')
-  .all(protect, requireRole(['ADMIN','SUPERADMIN','SUPPORT']), validate(idParamSchema, 'params'))
+  .all(protect, requireRole(['ADMIN','SUPERADMIN','SUPPORT']),  validateZod(idParamSchema, 'params'))
   .get(getTicket)
-  .put(validate(updateTicketSchema), updateTicket);
+  .put(validateZod(updateTicketSchema, 'body'), updateTicket);
 
 router.post(
   '/admin/tickets/:id/comments',
   protect,
   requireRole(['ADMIN','SUPERADMIN','SUPPORT']),
-  validate(commentSchema),
+  validateZod(commentSchema),
   addComment
 );
 
@@ -52,7 +53,7 @@ router.post(
   '/admin/tickets/:id/close',
   protect,
   requireRole(['ADMIN','SUPERADMIN','SUPPORT']),
-  validate(idParamSchema, 'params'),
+  validateZod(idParamSchema, 'params'),
   closeTicket
 );
 

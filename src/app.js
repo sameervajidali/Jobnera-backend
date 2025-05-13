@@ -23,14 +23,14 @@ import quizRoutes from './routes/quizRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
 import ticketRoutes from './routes/ticketRoutes.js';
 import adminStatsRoutes from './routes/adminStatsRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import materialRoutes from './routes/materialRoutes.js';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 const app = express();
 
-// 1) Serve uploads
-// in your app.js, after you define __dirname:
-// app.use('/uploads', express.static(path.resolve(__dirname, 'uploads')))
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.use(express.json());
 
 //SDJFLSDSD FSDF 
 // 2) Base middleware
@@ -96,13 +96,17 @@ app.get('/', (_req, res) =>
 
 // 4) API routes
 app.use('/api/ticket', ticketRoutes);
-app.use('/api/auth',   authRoutes);
+app.use('/api/auth', authRoutes);
+
+// ...
+app.use('/api/user', userRoutes);
 app.use('/api/admin',  adminRoutes);
 app.use('/api/resumes', protect, resumeRoutes);
 app.use('/api/public', publicRoutes);
 app.use('/api/quizzes', quizRoutes);  // all quiz endpoints live under /api/quizzes
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/admin', adminStatsRoutes);
+app.use('/api/materials', materialRoutes);
 // 5) 404 & error handler
 
 async function seedSuperAdmin() {
