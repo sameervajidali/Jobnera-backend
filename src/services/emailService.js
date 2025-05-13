@@ -231,3 +231,32 @@ export async function sendActivationSuccessEmail(to, name) {
     html,
   });
 }
+
+
+export async function sendTicketUpdateEmail(to, { userName, subject, newStatus, ticketId }) {
+  const html = `
+    <p>Hi ${userName},</p>
+    <p>Your support ticket “<strong>${subject}</strong>” (ID: ${ticketId}) status has been updated to <strong>${newStatus}</strong>.</p>
+    <p>Thanks,<br/>The JobNeura Support Team</p>
+  `;
+  await transporter.sendMail({
+    to,
+    subject: `Your ticket #${ticketId} is now ${newStatus}`,
+    html
+  });
+}
+
+export async function sendNewCommentEmail(to, { userName, commenterName, comment, ticketId }) {
+  const html = `
+    <p>Hi ${userName},</p>
+    <p><strong>${commenterName}</strong> has added a new comment on your ticket #${ticketId}:</p>
+    <blockquote>${comment}</blockquote>
+    <p>You can view the full conversation in your dashboard.</p>
+    <p>Thanks,<br/>The JobNeura Support Team</p>
+  `;
+  await transporter.sendMail({
+    to,
+    subject: `New comment on ticket #${ticketId}`,
+    html
+  });
+}

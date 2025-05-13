@@ -1,4 +1,7 @@
+
 // src/controllers/ticketController.js
+import { sendTicketUpdateEmail, sendNewCommentEmail } from '../services/emailService.js';
+
 import asyncHandler from '../utils/asyncHandler.js';
 import Ticket from '../models/Ticket.js';
 
@@ -45,28 +48,38 @@ export const getTicket = asyncHandler(async (req, res) => {
 
 // Update ticket status / priority
 export const updateTicket = asyncHandler(async (req, res) => {
-  const { status, priority } = req.body;
-  const ticket = await Ticket.findByIdAndUpdate(
-    req.params.id,
-    { ...(status && { status }), ...(priority && { priority }) },
-    { new: true }
-  );
+  // … your existing update logic
+  const ticket = await Ticket.findByIdAndUpdate(/* … */).populate('user','email name');
   if (!ticket) return res.status(404).json({ message: 'Ticket not found' });
+
+ // send email informing the user their ticket status changed
+ await sendTicketUpdateEmail(ticket.user.email, {
+   userName: ticket.user.name,
+   subject: ticket.subject,
+   newStatus: ticket.status,
+   ticketId: ticket._id
+ });
+
   res.json({ ticket });
 });
 
 // Add a comment
 export const addComment = asyncHandler(async (req, res) => {
-  const { text } = req.body;
-  const ticket = await Ticket.findById(req.params.id);
-  if (!ticket) return res.status(404).json({ message: 'Ticket not found' });
-
-  ticket.comments.push({ by: req.user._id, text });
+  // … your existing comment logic
+  ticket.comments.push({ by: req.user._id, text: req.body.text });
   await ticket.save();
   const populated = await ticket.populate('comments.by', 'name email');
+
+ // notify the ticket owner of the new comment
+ await sendNewCommentEmail(populated.user.email, {
+   userName: populated.user.name,
+   commenterName: req.user.name,
+   comment: req.body.text,
+   ticketId: populated._id
+ });
+
   res.json({ ticket: populated });
 });
-
 // Close (archive) a ticket
 export const closeTicket = asyncHandler(async (req, res) => {
   const ticket = await Ticket.findByIdAndUpdate(
@@ -77,3 +90,4 @@ export const closeTicket = asyncHandler(async (req, res) => {
   if (!ticket) return res.status(404).json({ message: 'Ticket not found' });
   res.json({ ticket });
 });
+
