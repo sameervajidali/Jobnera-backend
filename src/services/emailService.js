@@ -247,16 +247,22 @@ export async function sendTicketUpdateEmail(to, { userName, subject, newStatus, 
 }
 
 export async function sendNewCommentEmail(to, { userName, commenterName, comment, ticketId }) {
+  // use your production URL
+  const frontendUrl = process.env.FRONTEND_URL || 'https://www.jobneura.tech/api';
+  const ticketLink = `${frontendUrl}/admin/tickets/${ticketId}`;
   const html = `
     <p>Hi ${userName},</p>
-    <p><strong>${commenterName}</strong> has added a new comment on your ticket #${ticketId}:</p>
-    <blockquote>${comment}</blockquote>
-    <p>You can view the full conversation in your dashboard.</p>
+    <p><strong>${commenterName}</strong> has added a new comment on your ticket <strong>#${ticketId}</strong>:</p>
+    <blockquote style="border-left:4px solid #ccc; margin:1em 0; padding-left:1em; color:#555;">${comment}</blockquote>
+    <p>You can view and reply to your ticket by clicking below:</p>
+    <p><a href="${ticketLink}" style="display:inline-block; padding:0.5em 1em; background-color:#4f46e5; color:#fff; text-decoration:none; border-radius:4px;">
+      View &amp; Reply to Ticket
+    </a></p>
     <p>Thanks,<br/>The JobNeura Support Team</p>
   `;
   await transporter.sendMail({
     to,
-    subject: `New comment on ticket #${ticketId}`,
+    subject: `New comment on your support ticket #${ticketId}`,
     html
   });
 }
