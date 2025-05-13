@@ -7,8 +7,6 @@ import User   from './models/User.js';
 import Role   from './models/Role.js'; 
 import express from 'express';
 import mongoose from 'mongoose';
-import path    from 'path';
-import { fileURLToPath } from 'url';
 import cors    from 'cors';
 import morgan  from 'morgan';
 import session from 'express-session';
@@ -61,28 +59,6 @@ app.use(
     },
   })
 );
-app.use(
-  session({
-    secret:            process.env.SESSION_SECRET,
-    resave:            false,
-    saveUninitialized: false,
-    cookie: {
-      // ❌ DO NOT set `domain` in dev—let it default to host-only
-      ...(process.env.NODE_ENV === 'production'
-        ? { domain: '.jobneura.tech' }    // only in prod
-        : {}),
-
-      httpOnly: true,
-      secure:   process.env.NODE_ENV === 'production',
-      sameSite:
-        process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      path:   '/',
-    },
-  })
-);
-
-
 app.use(passport.initialize());
 app.use(passport.session());
 

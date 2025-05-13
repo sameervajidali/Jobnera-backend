@@ -269,42 +269,108 @@ export const deleteAccount = asyncHandler(async (req, res) => {
 
 
 // ─── Google Social Login/Signup ───────────────────────────────────────────────
-export const googleAuth = asyncHandler(async (req, res) => {
-  const { idToken } = req.body;
-  const ticket = await googleClient.verifyIdToken({
-    idToken,
-    audience: process.env.GOOGLE_CLIENT_ID,
-  });
-  const { email, name, picture, email_verified } = ticket.getPayload();
-  if (!email_verified) {
-    return res.status(400).json({ message: 'Google email not verified.' });
-  }
+// export const googleAuth = asyncHandler(async (req, res) => {
+//   const { idToken } = req.body;
+//   const ticket = await googleClient.verifyIdToken({
+//     idToken,
+//     audience: process.env.GOOGLE_CLIENT_ID,
+//   });
+//   const { email, name, picture, email_verified } = ticket.getPayload();
+//   if (!email_verified) {
+//     return res.status(400).json({ message: 'Google email not verified.' });
+//   }
 
-  let user = await User.findOne({ email });
-  if (!user) {
-    user = await User.create({
-      name,
-      email,
-      avatar: picture,
-      isVerified: true,
-      provider: 'google',
+//   let user = await User.findOne({ email });
+//   if (!user) {
+//     user = await User.create({
+//       name,
+//       email,
+//       avatar: picture,
+//       isVerified: true,
+//       provider: 'google',
+//     });
+//   }
+
+//   const accessToken = createAccessToken({ userId: user._id, role: user.role });
+//   const refreshToken = createRefreshToken({ userId: user._id });
+
+//   res
+//     .cookie('accessToken', accessToken, {
+//       ...cookieOptions,
+//       maxAge: 15 * 60 * 1000,
+//     })
+//     .cookie('refreshToken', refreshToken, {
+//       ...cookieOptions,
+//       maxAge: 7 * 24 * 60 * 60 * 1000,
+//     })
+//     .status(200)
+//     .json({ message: 'Google authentication successful', user });
+// });
+
+export const googleAuth = asyncHandler(async (req, res) => {
+  try {
+    const { idToken } = req.body;
+    console.log('🟢 googleAuth: received idToken:', idToken?.slice(0, 20) + '…');
+
+    // 1) Verify the token
+    const ticket = await googleClient.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    console.log('🟢 googleAuth: payload:', {
+      email: payload.email,
+      email_verified: payload.email_verified,
+    });
+
+    if (!payload.email_verified) {
+      console.warn('⚠️ googleAuth: email not verified');
+      return res.status(400).json({ message: 'Google email not verified.' });
+    }
+
+    // 2) Find or create the user
+    let user = await User.findOne({ email: payload.email });
+    if (!user) {
+      console.log('🟢 googleAuth: creating new user');
+      user = await User.create({
+        name:        payload.name,
+        email:       payload.email,
+        avatar:      payload.picture,
+        isVerified:  true,
+        provider:    'google',
+      });
+    } else {
+      console.log('🟢 googleAuth: found existing user:', user._id);
+    }
+
+    // 3) Issue tokens
+    const accessToken  = createAccessToken({ userId: user._id, role: user.role });
+    const refreshToken = createRefreshToken({ userId: user._id });
+
+    // 4) Set cookies & respond
+    res
+      .cookie('accessToken', accessToken, {
+        ...cookieOptions,
+        maxAge: 15 * 60 * 1000,      // 15 minutes
+      })
+      .cookie('refreshToken', refreshToken, {
+        ...cookieOptions,
+        maxAge: 7 * 24 * 60 * 60 * 1000,  // 7 days
+      })
+      .status(200)
+      .json({ message: 'Google authentication successful', user });
+
+    console.log('✅ googleAuth: success for user', user._id);
+
+  } catch (err) {
+    console.error('❌ googleAuth error:', err);
+    // Send back the error message for debugging (you can remove details in prod)
+    res.status(500).json({
+      message: 'Google login failed',
+      error:   err.message,
+      stack:   process.env.NODE_ENV === 'development' ? err.stack : undefined
     });
   }
-
-  const accessToken = createAccessToken({ userId: user._id, role: user.role });
-  const refreshToken = createRefreshToken({ userId: user._id });
-
-  res
-    .cookie('accessToken', accessToken, {
-      ...cookieOptions,
-      maxAge: 15 * 60 * 1000,
-    })
-    .cookie('refreshToken', refreshToken, {
-      ...cookieOptions,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    })
-    .status(200)
-    .json({ message: 'Google authentication successful', user });
 });
 
 // ─── Facebook Social Login/Signup ─────────────────────────────────────────────
