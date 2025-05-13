@@ -7,12 +7,12 @@ import LeaderboardEntry from '../models/LeaderboardEntry.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import { attemptParamSchema } from '../validators/quizValidator.js';
 import { publicLeaderboardSchema } from '../validators/quizValidator.js';
-import Topic from '../models/Topic.js';  // Make sure this points to your Topic model file
-// src/controllers/quizController.js
-import Category from '../models/Category.js';
+import Topic    from '../models/Topic.js';
+import Quiz     from '../models/Quiz.js';
+import csv      from 'csvtojson';
 
 
-import csv from 'csvtojson';
+
 import { z } from 'zod';
 import {
   submitAttemptSchema,
@@ -659,47 +659,74 @@ export const getQuizTopThree = asyncHandler(async (req, res) => {
 });
 
 
+
 export const bulkUploadQuizzesFile = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'No file provided.' });
   }
 
-  // parse CSV buffer
   let rows;
   try {
     rows = await csv().fromString(req.file.buffer.toString());
-  } catch (err) {
+  } catch {
     return res.status(400).json({ message: 'Invalid CSV format.' });
   }
-
   if (!rows.length) {
     return res.status(400).json({ message: 'CSV is empty.' });
   }
 
-  // expecting columns: title,category,topic,level,duration,totalMarks,isActive
-  const toCreate = rows.map(r => ({
-    title:       r.title,
-    category:    r.category,
-    topic:       r.topic,
-    level:       r.level,
-    duration:    Number(r.duration)    || 0,
-    totalMarks:  Number(r.totalMarks)  || 0,
-    isActive:    String(r.isActive).toLowerCase() === 'true',
-  }));
+  const quizDocs = [];
+  for (const row of rows) {
+    const {
+      title = '',
+      category: categoryName = '',
+      topic: topicName = '',
+      level = '',
+      duration = '0',
+      totalMarks = '0',
+      isActive = 'false'
+    } = row;
 
-  let created;
-  try {
-    created = await Quiz.insertMany(toCreate);
-  } catch (err) {
-    console.error('Bulk upload quizzes error:', err);
-    return res.status(500).json({ message: 'Failed to save quizzes.' });
+    if (!title.trim()) continue;
+
+    // Upsert category
+    let cat = await Category.findOne({ name: categoryName.trim() });
+    if (!cat) cat = await Category.create({ name: categoryName.trim() });
+
+    // Upsert topic
+    let top = await Topic.findOne({ name: topicName.trim(), category: cat._id });
+    if (!top) top = await Topic.create({ name: topicName.trim(), category: cat._id });
+
+    quizDocs.push({
+      title:      title.trim(),
+      category:   cat._id,
+      topic:      top._id,
+      level:      level.trim(),
+      duration:   Number(duration) || 0,
+      totalMarks: Number(totalMarks) || 0,
+      isActive:   String(isActive).toLowerCase() === 'true'
+    });
   }
 
-  res.status(201).json({
-    message: `Imported ${created.length} quizzes successfully.`,
-    count:   created.length
+  if (!quizDocs.length) {
+    return res.status(400).json({ message: 'No valid rows to import.' });
+  }
+
+  let inserted = [];
+  try {
+    inserted = await Quiz.insertMany(quizDocs, { ordered: false });
+  } catch (err) {
+    // continue on duplicate key errors
+    inserted = err.insertedDocs || [];
+    console.warn('Some rows failed:', err.writeErrors);
+  }
+
+  return res.status(201).json({
+    message: `Imported ${inserted.length} quizzes successfully.`,
+    count:   inserted.length
   });
 };
+
 
 
 // // GET /api/quizzes/grouped-topics
