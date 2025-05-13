@@ -5,8 +5,6 @@ export const idParamSchema = z.object({
   id: z.string().regex(/^[0-9a-fA-F]{24}$/)
 });
 
-// src/validators/ticketValidator.js
-import { z } from 'zod';
 
 export const createTicketSchema = z
   .object({
