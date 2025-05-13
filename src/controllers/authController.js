@@ -332,6 +332,8 @@ export const googleAuth = asyncHandler(async (req, res) => {
     let user = await User.findOne({ email: payload.email });
     if (!user) {
       console.log('🟢 googleAuth: creating new user');
+
+      const userRole = await Role.findOne({ name: 'USER' });
       user = await User.create({
         name:        payload.name,
         email:       payload.email,
