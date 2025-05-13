@@ -102,13 +102,13 @@ export const login = asyncHandler(async (req, res) => {
   // 6️⃣ Geo-lookup (optional)
   let geo = {};
   try {
-    const geoRes  = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,regionName,city`);
+    const geoRes = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,regionName,city`);
     const geoJson = await geoRes.json();
     if (geoJson.status === 'success') {
       geo = {
         country: geoJson.country,
-        region:  geoJson.regionName,
-        city:    geoJson.city,
+        region: geoJson.regionName,
+        city: geoJson.city,
       };
     }
   } catch (err) {
@@ -117,19 +117,19 @@ export const login = asyncHandler(async (req, res) => {
 
   // 7️⃣ Log a single history entry
   await LoginHistory.create({
-    user:      user._id,
+    user: user._id,
     ip,
     userAgent: ua,
-    success:   true,
+    success: true,
     ...geo,
   });
 
   // 8️⃣ Generate & set tokens
-  const accessToken  = createAccessToken({ userId: user._id, role: user.role });
+  const accessToken = createAccessToken({ userId: user._id, role: user.role });
   const refreshToken = createRefreshToken({ userId: user._id });
 
- 
-    res
+
+  res
     .cookie('accessToken', accessToken, {
       ...cookieOptions,
       maxAge: 15 * 60 * 1000, // 15 minutes
@@ -141,14 +141,14 @@ export const login = asyncHandler(async (req, res) => {
 
   // 9️⃣ Return the safe user object
   const safeUser = await User.findById(user._id)
-  .select('-password -refreshTokens -resetToken -activationToken')
-  .populate('role', 'name')   // ← add this
-  .lean();
+    .select('-password -refreshTokens -resetToken -activationToken')
+    .populate('role', 'name')   // ← add this
+    .lean();
 
 
   res.status(200).json({
     message: 'Login successful',
-    user:    safeUser
+    user: safeUser
   });
 });
 
@@ -166,7 +166,7 @@ export const logout = (req, res) => {
 // Refresh Token Controller
 export const refreshToken = asyncHandler(async (req, res) => {
   const token = req.cookies.refreshToken;
-  
+
   if (!token) {
     return res.status(401).json({ message: 'No refresh token found. Please login again.' });
   }
@@ -174,7 +174,7 @@ export const refreshToken = asyncHandler(async (req, res) => {
   try {
     // Verify the refresh token
     const { userId } = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
-    
+
     // Find the user associated with the token
     const user = await User.findById(userId);
     if (!user) {
@@ -334,19 +334,24 @@ export const googleAuth = asyncHandler(async (req, res) => {
       console.log('🟢 googleAuth: creating new user');
 
       const userRole = await Role.findOne({ name: 'USER' });
+      if (!userRole) {
+        throw new Error('Default USER role not found in the database');
+      }
+
       user = await User.create({
-        name:        payload.name,
-        email:       payload.email,
-        avatar:      payload.picture,
-        isVerified:  true,
-        provider:    'google',
+        name: payload.name,
+        email: payload.email,
+        avatar: payload.picture,
+        isVerified: true,
+        provider: 'google',
+        role: userRole._id
       });
     } else {
       console.log('🟢 googleAuth: found existing user:', user._id);
     }
 
     // 3) Issue tokens
-    const accessToken  = createAccessToken({ userId: user._id, role: user.role });
+    const accessToken = createAccessToken({ userId: user._id, role: user.role });
     const refreshToken = createRefreshToken({ userId: user._id });
 
     // 4) Set cookies & respond
@@ -369,8 +374,8 @@ export const googleAuth = asyncHandler(async (req, res) => {
     // Send back the error message for debugging (you can remove details in prod)
     res.status(500).json({
       message: 'Google login failed',
-      error:   err.message,
-      stack:   process.env.NODE_ENV === 'development' ? err.stack : undefined
+      error: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
     });
   }
 });
@@ -571,7 +576,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
 //     const relPath = `/uploads/${req.files.avatar[0].filename}`;
 //     updates.avatar = `${req.protocol}://${req.get("host")}${relPath}`;
 //   }
-  
+
 //   if (req.files.resume) {
 //     const filename = req.files.resume[0].filename;
 //     const url = `${req.protocol}://${req.get("host")}/uploads/${filename}`;
@@ -580,7 +585,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
 //   console.log('Avatar URL:', updates.avatar);
 // console.log('Resume URL:', updates.resume);
 
-  
+
 //   try {
 //     // Update the user in the database
 //     const user = await User.findByIdAndUpdate(
@@ -624,18 +629,18 @@ export const updateProfile = asyncHandler(async (req, res) => {
 
   // 2) Build an updates object, parsing arrays if they arrive as strings
   const updates = {
-    ...(name      !== undefined && { name }),
-    ...(phone     !== undefined && { phone }),
-    ...(location  !== undefined && { location }),
-    ...(bio       !== undefined && { bio }),
-    ...(website   !== undefined && { website }),
-    ...(linkedin  !== undefined && { linkedin }),
-    ...(skills    !== undefined && { skills: typeof skills === 'string' ? JSON.parse(skills) : skills }),
+    ...(name !== undefined && { name }),
+    ...(phone !== undefined && { phone }),
+    ...(location !== undefined && { location }),
+    ...(bio !== undefined && { bio }),
+    ...(website !== undefined && { website }),
+    ...(linkedin !== undefined && { linkedin }),
+    ...(skills !== undefined && { skills: typeof skills === 'string' ? JSON.parse(skills) : skills }),
     ...(languages !== undefined && { languages: typeof languages === 'string' ? JSON.parse(languages) : languages }),
-    ...(experience!== undefined && { experience: typeof experience === 'string' ? JSON.parse(experience) : experience }),
+    ...(experience !== undefined && { experience: typeof experience === 'string' ? JSON.parse(experience) : experience }),
     ...(education !== undefined && { education: typeof education === 'string' ? JSON.parse(education) : education }),
-    ...(avatar    !== undefined && { avatar }),   // URL from Firebase
-    ...(resume    !== undefined && { resume })    // URL from Firebase
+    ...(avatar !== undefined && { avatar }),   // URL from Firebase
+    ...(resume !== undefined && { resume })    // URL from Firebase
   };
 
   // 3) Update the user document
