@@ -312,14 +312,14 @@ export const googleAuth = asyncHandler(async (req, res) => {
     const { idToken } = req.body;
     console.log('🟢 googleAuth: received idToken:', idToken?.slice(0, 20) + '…');
 
-    // 1) Verify the token
+    // Verify Google ID token
     const ticket = await googleClient.verifyIdToken({
       idToken,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
     const payload = ticket.getPayload();
     console.log('🟢 googleAuth: payload:', {
-      email: payload.email,
+      email:          payload.email,
       email_verified: payload.email_verified,
     });
 
@@ -328,42 +328,35 @@ export const googleAuth = asyncHandler(async (req, res) => {
       return res.status(400).json({ message: 'Google email not verified.' });
     }
 
-    // 2) Find or create the user
+    // Find or create user
     let user = await User.findOne({ email: payload.email });
     if (!user) {
       console.log('🟢 googleAuth: creating new user');
-
+      // Lookup default role
       const userRole = await Role.findOne({ name: 'USER' });
-      if (!userRole) {
-        throw new Error('Default USER role not found in the database');
-      }
+      if (!userRole) throw new Error('Default USER role not found');
 
+      // Create with role
       user = await User.create({
-        name: payload.name,
-        email: payload.email,
-        avatar: payload.picture,
+        name:       payload.name,
+        email:      payload.email,
+        avatar:     payload.picture,
         isVerified: true,
-        provider: 'google',
-        role: userRole._id
+        provider:   'google',
+        role:       userRole._id
       });
     } else {
       console.log('🟢 googleAuth: found existing user:', user._id);
     }
 
-    // 3) Issue tokens
-    const accessToken = createAccessToken({ userId: user._id, role: user.role });
+    // Issue tokens
+    const accessToken  = createAccessToken({ userId: user._id, role: user.role });
     const refreshToken = createRefreshToken({ userId: user._id });
 
-    // 4) Set cookies & respond
+    // Set cookies & respond
     res
-      .cookie('accessToken', accessToken, {
-        ...cookieOptions,
-        maxAge: 15 * 60 * 1000,      // 15 minutes
-      })
-      .cookie('refreshToken', refreshToken, {
-        ...cookieOptions,
-        maxAge: 7 * 24 * 60 * 60 * 1000,  // 7 days
-      })
+      .cookie('accessToken', accessToken,  { ...cookieOptions, maxAge: 15*60*1000 })
+      .cookie('refreshToken', refreshToken,{ ...cookieOptions, maxAge: 7*24*60*60*1000 })
       .status(200)
       .json({ message: 'Google authentication successful', user });
 
@@ -371,14 +364,10 @@ export const googleAuth = asyncHandler(async (req, res) => {
 
   } catch (err) {
     console.error('❌ googleAuth error:', err);
-    // Send back the error message for debugging (you can remove details in prod)
-    res.status(500).json({
-      message: 'Google login failed',
-      error: err.message,
-      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
-    });
+    res.status(500).json({ message: 'Google login failed', error: err.message });
   }
 });
+
 
 // ─── Facebook Social Login/Signup ─────────────────────────────────────────────
 export const facebookAuth = asyncHandler(async (req, res) => {
