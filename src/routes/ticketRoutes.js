@@ -39,9 +39,10 @@ router.get(
 
 // Fetch, update, comment
 router.route('/admin/tickets/:id')
-  .all(protect, requireRole(['ADMIN','SUPERADMIN','SUPPORT']),  validateZod(idParamSchema, 'params'))
+  .all(protect, requireRole(['ADMIN', 'SUPERADMIN', 'SUPPORT']))
+  //validateZod(idParamSchema, 'params'))
   .get(getTicket)
-  .put(validateZod(updateTicketSchema, 'body'), updateTicket);
+    .put(validateZod(updateTicketSchema, 'body'), updateTicket);
 
 router.post(
   '/admin/tickets/:id/comments',
