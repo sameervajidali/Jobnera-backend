@@ -21,10 +21,12 @@ import {
 const router = express.Router();
 
 // Anyone logged in can open a ticket
+
 router.post(
   '/ticket',
   protect,
-   createTicket
+  validateZod(createTicketSchema, 'body'),  // ← add this
+  createTicket
 );
 
 // Admins/support can list & manage
