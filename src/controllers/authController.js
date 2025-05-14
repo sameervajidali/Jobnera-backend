@@ -33,16 +33,41 @@ const cookieOptions = {
 };
 
 // ─── Register ───────────────────────────────────────────────────────────────
+import Role from '../models/roleModel.js'; // Import your Role model
+
 export const register = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
-  if (!name || !email || !password) return res.status(400).json({ message: 'All fields required.' });
-  if (await User.exists({ email })) return res.status(409).json({ message: 'Email already registered.' });
+
+  if (!name || !email || !password) {
+    return res.status(400).json({ message: 'All fields required.' });
+  }
+
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    return res.status(409).json({ message: 'Email already registered.' });
+  }
+
+  // Find default role (e.g., 'USER')
+  const defaultRole = await Role.findOne({ name: 'USER' });
+  if (!defaultRole) {
+    return res.status(500).json({ message: 'Default user role not found in the system.' });
+  }
 
   const activationToken = crypto.randomBytes(32).toString('hex');
   const activationLink = `${CLIENT_URL}/activate?token=${activationToken}`;
 
-  const newUser = await User.create({ name, email, password, isVerified: false, provider: 'local', activationToken });
+  const newUser = await User.create({
+    name,
+    email,
+    password,
+    role: defaultRole._id,  // Assign role ID
+    isVerified: false,
+    provider: 'local',
+    activationToken
+  });
+
   sendActivationEmail(email, name, activationLink).catch(console.error);
+
   res.status(201).json({ message: 'Registered! Check your email.' });
 });
 

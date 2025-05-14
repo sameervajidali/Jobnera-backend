@@ -28,6 +28,15 @@ export const getPublicJobs = asyncHandler(async (req, res) => {
 // ─────────────────────────────────────────────────────────────
 export const getAllJobsAdmin = asyncHandler(async (req, res) => {
   const jobs = await Job.find().sort({ createdAt: -1 });
+  const { search = "", status, jobType, workType } = req.query;
+  const query = {
+    ...(search && { title: { $regex: search, $options: "i" } }),
+    ...(status && { status }),
+    ...(jobType && { jobType }),
+    ...(workType && { workType }),
+  };
+
+
   res.json({ jobs });
 });
 

@@ -59,7 +59,21 @@ const jobSchema = new mongoose.Schema(
     postedAt: {
       type: Date,
       default: Date.now
+    },
+    status: {
+      type: String,
+      enum: ['published', 'draft', 'archived'],
+      default: 'published'
+    },
+    isActive: {
+      type: Boolean,
+      default: true
+    },
+    views: {
+      type: Number,
+      default: 0
     }
+
   },
   { timestamps: true }
 );
