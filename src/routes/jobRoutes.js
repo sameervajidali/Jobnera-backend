@@ -30,11 +30,11 @@ router.use(
 );
 
 // Full CRUD
-router.post('/admin/jobs', validateJob, createJob);
-router.put('/admin/jobs/:id', validateJob, updateJob);
-router.delete('/admin/jobs/:id', deleteJob);
+router.post('/jobs', validateJob, createJob);
+router.put('/jobs/:id', validateJob, updateJob);
+router.delete('/jobs/:id', deleteJob);
 
 // Bulk upload
-router.post('/admin/jobs/bulk-upload', upload.single('file'), bulkUploadJobs);
+router.post('/jobs/bulk-upload', upload.single('file'), bulkUploadJobs);
 
 export default router;
