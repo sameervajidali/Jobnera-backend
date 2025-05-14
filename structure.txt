@@ -1,0 +1,107 @@
+Folder PATH listing
+Volume serial number is 00000189 EC7E:7D96
+D:\FUTURE\JOBNEURA-TECH\BACKEND\SRC
+|   app.js
+|   
++---config
+|       db.js
+|       firebase.js
+|       jwt.js
+|       multer.js
+|       passport.js
+|       
++---controllers
+|   |   adminController.js
+|   |   adminStatsController.js
+|   |   authController.js
+|   |   dashboardController.js
+|   |   githubOAuthController.js
+|   |   jobController.js
+|   |   materialController.js
+|   |   publicController.js
+|   |   quizController.js
+|   |   resumeController.js
+|   |   seoController.js
+|   |   testController.js
+|   |   ticketController.js
+|   |   userController.js
+|   |   
+|   \---admin
+|           adminUserController.js
+|           categoryController.js
+|           topicController.js
+|           userController.js
+|           
++---middlewares
+|       authMiddleware.js
+|       errorMiddleware.js
+|       
++---models
+|       Application.js
+|       Bookmark.js
+|       Category.js
+|       Certificate.js
+|       Job.js
+|       LeaderboardEntry.js
+|       LoginHistory.js
+|       Material.js
+|       Notification.js
+|       Question.js
+|       Quiz.js
+|       QuizAssignment.js
+|       QuizAttempt.js
+|       Resume.js
+|       resumeModel.js
+|       Role.js
+|       SeoMeta.js
+|       Ticket.js
+|       Topic.js
+|       User.js
+|       WaitlistEntry.js
+|       
++---routes
+|   |   adminRoutes.js
+|   |   adminStatsRoutes.js
+|   |   authRoutes.js
+|   |   dashboardRoutes.js
+|   |   jobRoutes.js
+|   |   materialRoutes.js
+|   |   publicRoutes.js
+|   |   quizRoutes.js
+|   |   resumeRoutes.js
+|   |   seoRoutes.js
+|   |   test.js
+|   |   ticketRoutes.js
+|   |   userRoutes.js
+|   |   
+|   \---admin
+|           categoryRoutes.js
+|           topicRoutes.js
+|           users.js
+|           
++---services
+|       aiService.js
+|       atsService.js
+|       emailService.js
+|       pdfService.js
+|       resumeEnhancerService.js
+|       
++---uploads
++---utils
+|       asyncHandler.js
+|       fileUploader.js
+|       generateToken.js
+|       validators.js
+|       
+\---validators
+        adminValidator.js
+        authValidator.js
+        jobValidator.js
+        questionValidator.js
+        quizAttemptValidator.js
+        quizValidator.js
+        seoValidator.js
+        ticketValidator.js
+        validate.js
+        validateZod.js
+        
