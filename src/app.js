@@ -85,6 +85,8 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/admin', adminStatsRoutes);
 app.use('/api/materials', materialRoutes);
 app.use('/api/jobs', jobRoutes);
+console.log("✅ jobRoutes mounted at /api/jobs");
+
 // 5) 404 & error handler
 
 async function seedSuperAdmin() {
