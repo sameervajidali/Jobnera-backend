@@ -1,18 +1,68 @@
 import mongoose from 'mongoose';
 
-const JobSchema = new mongoose.Schema({
-  title:         { type: String, required: true, trim: true },
-  company:       { type: String, required: true },
-  location:      { type: String, required: true },
-  workType:      { type: String, enum: ['Remote', 'On-site', 'Hybrid'], default: 'Remote' },
-  jobType:       { type: String, enum: ['Full-time', 'Part-time', 'Contract'], default: 'Full-time' },
-  skills:        [{ type: String }],
-  salaryRange:   { type: String }, // Optional, e.g. "$60k–$90k"
-  applyLink:     { type: String, required: true },
-  source:        { type: String, default: 'Manual' }, // "LinkedIn", "Indeed", etc.
-  postedAt:      { type: Date, default: Date.now },
-  expiresAt:     { type: Date }, // Optional
-  createdBy:     { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // ADMIN user
-}, { timestamps: true });
+export const WORK_TYPES = ['Remote', 'Hybrid', 'Onsite'];
+export const JOB_TYPES = ['Full-time', 'Part-time', 'Contract', 'Internship', 'Freelance'];
 
-export default mongoose.model('Job', JobSchema);
+const jobSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 100
+    },
+    company: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    location: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    workType: {
+      type: String,
+      enum: WORK_TYPES,
+      default: 'Remote',
+      required: true
+    },
+    jobType: {
+      type: String,
+      enum: JOB_TYPES,
+      default: 'Full-time',
+      required: true
+    },
+    skills: {
+      type: [String],
+      default: [],
+      set: (arr) => arr.map(s => s.trim().toLowerCase()).filter(Boolean)
+    },
+    salaryRange: {
+      type: String,
+      default: ''
+    },
+    applyLink: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    source: {
+      type: String,
+      default: 'Manual'
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+    postedAt: {
+      type: Date,
+      default: Date.now
+    }
+  },
+  { timestamps: true }
+);
+
+const Job = mongoose.model('Job', jobSchema);
+export default Job;
