@@ -23,6 +23,7 @@ import ticketRoutes from './routes/ticketRoutes.js';
 import adminStatsRoutes from './routes/adminStatsRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import materialRoutes from './routes/materialRoutes.js';
+import jobRoutes from './routes/jobRoutes.js';
 
 
 const app = express();
@@ -83,6 +84,7 @@ app.use('/api/quizzes', quizRoutes);  // all quiz endpoints live under /api/quiz
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/admin', adminStatsRoutes);
 app.use('/api/materials', materialRoutes);
+app.use('/api/jobs', jobRoutes);
 // 5) 404 & error handler
 
 async function seedSuperAdmin() {

@@ -196,7 +196,11 @@ export const getQuizById = asyncHandler(async (req, res) => {
     if (c) return res.json(JSON.parse(c));
   }
 
-  const quiz = await Quiz.findById(quizId).populate('questions');
+  const quiz = await Quiz.findById(quizId)
+  .populate('questions')
+  .populate('category', 'name')
+  .populate('topic',    'name');
+
   if (!quiz) return res.status(404).json({ message: 'Quiz not found' });
 
   if (redis) {
