@@ -6,13 +6,14 @@ import { OAuth2Client } from 'google-auth-library';
 import asyncHandler from '../utils/asyncHandler.js';
 import User from '../models/User.js';
 import LoginHistory from '../models/LoginHistory.js';
+import Role from '../models/Role.js'; // Import your Role model
 import {
   sendActivationEmail,
   sendPasswordChangedEmail,
   sendResetPasswordEmail,
   sendActivationSuccessEmail
 } from '../services/emailService.js';
-import Role from '../models/Role.js';
+
 
 
 const CLIENT_URL = process.env.CLIENT_URL || 'https://jobneura.tech';
@@ -33,8 +34,6 @@ const cookieOptions = {
 };
 
 // ─── Register ───────────────────────────────────────────────────────────────
-import Role from '../models/roleModel.js'; // Import your Role model
-
 export const register = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
