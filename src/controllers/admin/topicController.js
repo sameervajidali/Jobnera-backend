@@ -50,9 +50,11 @@ export const updateTopic = asyncHandler(async (req, res) => {
 });
 
 // Delete
+// src/controllers/topicController.js
 export const deleteTopic = asyncHandler(async (req, res) => {
-  const topic = await Topic.findById(req.params.id);
-  if (!topic) return res.status(404).json({ message: 'Topic not found' });
-  await topic.remove();
-  res.json({ message: 'Topic deleted' });
+  const { id } = req.params;
+  const deleted = await Topic.findByIdAndDelete(id);
+  if (!deleted) return res.status(404).json({ message: 'Topic not found' });
+  res.json({ success: true });
 });
+
