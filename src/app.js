@@ -34,12 +34,11 @@ const isProd = process.env.NODE_ENV === 'production';
 // =========================
 // ✅ CORS: Allow frontend to send cookies
 // =========================
-app.use(
-  cors({
-    origin: ['https://jobneura.tech', 'https://www.jobneura.tech', 'http://localhost:5173'],
-    credentials: true, // ✅ Allow sending/receiving cookies
-  })
-);
+app.use(cors({
+  origin: ['https://jobneura.tech'],
+  credentials: true,
+}));
+
 
 // =========================
 // ✅ Parse cookies before using sessions
