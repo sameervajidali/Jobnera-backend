@@ -1,13 +1,14 @@
-// src/controllers/adminStatsController.js
 import asyncHandler from '../utils/asyncHandler.js';
 import User from '../models/User.js';
 import Quiz from '../models/Quiz.js';
 import LoginHistory from '../models/LoginHistory.js';
+import Ticket from '../models/Ticket.js';
 
 // 1) Daily Active Users (last 7 days)
 export const getDAU = asyncHandler(async (req, res) => {
   const today = new Date();
-  const past = new Date(); past.setDate(today.getDate() - 6);
+  const past = new Date();
+  past.setDate(today.getDate() - 6);
 
   const pipeline = [
     { $match: { createdAt: { $gte: past, $lte: today } } },
@@ -19,14 +20,34 @@ export const getDAU = asyncHandler(async (req, res) => {
   res.json(results.map(r => ({ date: r._id, count: r.count })));
 });
 
-// 2) Category distribution of quizzes
-//enum: get number of quizzes per category
+// 2) Category distribution of quizzes (with category lookup)
 export const getCategoryStats = asyncHandler(async (req, res) => {
   const pipeline = [
-    { $group: { _id: "$category", value: { $sum: 1 } } },
-    { $project: { _id: 0, name: "$_id", value: 1 } },
-    { $sort: { value: -1 } }
-  ]; F
+    // Group by category ObjectId
+    { $group: { _id: "$category", count: { $sum: 1 } } },
+    // Join with categories collection to get name
+    {
+      $lookup: {
+        from: 'categories',       // MongoDB collection name for Category
+        localField: '_id',
+        foreignField: '_id',
+        as: 'categoryInfo'
+      }
+    },
+    // Unwind the joined array
+    { $unwind: '$categoryInfo' },
+    // Project the desired output fields
+    {
+      $project: {
+        _id: 0,
+        name: '$categoryInfo.name',
+        count: 1
+      }
+    },
+    // Sort descending by count
+    { $sort: { count: -1 } }
+  ];
+
   const results = await Quiz.aggregate(pipeline);
   res.json(results);
 });
@@ -34,7 +55,8 @@ export const getCategoryStats = asyncHandler(async (req, res) => {
 // 3) New User Growth (last 7 days)
 export const getUserGrowth = asyncHandler(async (req, res) => {
   const today = new Date();
-  const past = new Date(); past.setDate(today.getDate() - 6);
+  const past = new Date();
+  past.setDate(today.getDate() - 6);
 
   const pipeline = [
     { $match: { createdAt: { $gte: past, $lte: today } } },
@@ -46,7 +68,6 @@ export const getUserGrowth = asyncHandler(async (req, res) => {
 });
 
 // 4) Ticket status summary
-import Ticket from '../models/Ticket.js';
 export const getTicketStats = asyncHandler(async (req, res) => {
   const pipeline = [
     { $group: { _id: "$status", count: { $sum: 1 } } },
