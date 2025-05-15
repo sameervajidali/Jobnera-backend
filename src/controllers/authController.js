@@ -191,9 +191,20 @@ export const logout = (req, res) => {
 // ─── Refresh ─────────────────────────────────────────────────────────────────
 // Refresh Token Controller
 export const refreshToken = asyncHandler(async (req, res) => {
+  
+  
+  console.log('🧪 /auth/refresh-token HIT');
+
+  // Log raw cookies
+  console.log('📦 Received cookies:', req.headers.cookie);
+  console.log('🍪 Parsed req.cookies:', req.cookies);
+  
   const token = req.cookies.refreshToken;
 
+
+
   if (!token) {
+      console.warn('🚫 No refresh token received in cookie');
     return res.status(401).json({ message: 'No refresh token found. Please login again.' });
   }
 
@@ -201,9 +212,13 @@ export const refreshToken = asyncHandler(async (req, res) => {
     // Verify the refresh token
     const { userId } = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
 
+      console.log('✅ Refresh token verified. Payload:', payload);
+
+
     // Find the user associated with the token
     const user = await User.findById(userId);
     if (!user) {
+       console.error('❌ JWT verify failed:', err.message);
       return res.status(401).json({ message: 'User not found for the provided refresh token. Please login again.' });
     }
 
