@@ -123,16 +123,45 @@ export const getUserMaterials = asyncHandler(async (req, res) => {
  * Optional query: ?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD
  */
 export const getUserHistory = asyncHandler(async (req, res) => {
-  const userId = req.user._id;
-  const { startDate, endDate } = req.query;
-  const filter = { user: userId };
-  if (startDate || endDate) {
-    filter.createdAt = {};
-    if (startDate) filter.createdAt.$gte = new Date(startDate);
-    if (endDate)   filter.createdAt.$lte = new Date(endDate);
+  const { id } = req.params;
+
+  // 1) Validate the ID
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: 'Invalid user ID' });
   }
-  const attempts = await QuizAttempt.find(filter)
+
+  // 2) Load & populate the user, including role.name
+  const user = await User.findById(id)
+    .select('name email role isVerified createdAt')
+    .populate('role', 'name');
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  // 3) Optionally filter by date if you pass startDate/endDate query params…
+  const { startDate, endDate } = req.query;
+  const dateFilter = {};
+  if (startDate) dateFilter.$gte = new Date(startDate);
+  if (endDate)   dateFilter.$lte = new Date(endDate);
+
+  // 4) Fetch that user’s quiz attempts, populating quiz.title
+  const attemptFilter = { user: id };
+  if (startDate || endDate) {
+    attemptFilter.createdAt = dateFilter;
+  }
+  const quizAttempts = await QuizAttempt.find(attemptFilter)
     .populate('quiz', 'title')
     .sort({ createdAt: -1 });
-  res.json(attempts);
+
+  // 5) (Optional) also fetch login history
+  const loginFilter = { user: id };
+  if (startDate || endDate) {
+    loginFilter.at = dateFilter; // adjust to your schema field name
+  }
+  const loginHistory = await LoginHistory.find(loginFilter)
+    .select('at ip city region country success')
+    .sort({ at: -1 });
+
+  // 6) Return them in one JSON
+  res.json({ user, quizAttempts, loginHistory });
 });
