@@ -191,55 +191,55 @@ export const logout = (req, res) => {
 // ─── Refresh ─────────────────────────────────────────────────────────────────
 // Refresh Token Controller
 export const refreshToken = asyncHandler(async (req, res) => {
-  
-  
-  console.log('🧪 /auth/refresh-token HIT');
+  // 1) Read the raw cookie
+  const raw = req.cookies.refreshToken;
+  console.log('🔍 [refresh-token] raw cookie:', raw);
+  console.log('🔍 [refresh-token] secret loaded:', !!process.env.JWT_REFRESH_SECRET);
 
-  // Log raw cookies
-  console.log('📦 Received cookies:', req.headers.cookie);
-  console.log('🍪 Parsed req.cookies:', req.cookies);
-  
-  const token = req.cookies.refreshToken;
-
-
-
-  if (!token) {
-      console.warn('🚫 No refresh token received in cookie');
+  if (!raw) {
+    console.warn('🚫 No refresh token provided');
     return res.status(401).json({ message: 'No refresh token found. Please login again.' });
   }
 
   try {
-    // Verify the refresh token
-    const { userId } = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+    // 2) Verify & decode into an object
+    const decoded = jwt.verify(raw, process.env.JWT_REFRESH_SECRET);
+    console.log('✅ [refresh-token] decoded payload:', decoded);
 
-      console.log('✅ Refresh token verified. Payload:', payload);
-
-
-    // Find the user associated with the token
-    const user = await User.findById(userId);
+    // 3) Look up the user from the payload
+    const user = await User.findById(decoded.userId);
     if (!user) {
-       console.error('❌ JWT verify failed:', err.message);
-      return res.status(401).json({ message: 'User not found for the provided refresh token. Please login again.' });
+      console.warn('🚫 No user found for payload.userId:', decoded.userId);
+      return res.status(401).json({ message: 'Invalid refresh token. Please login again.' });
     }
 
-    // Generate new access token
-    const newAccessToken = createAccessToken({ userId: user._id, role: user.role });
-
-    // Optionally rotate the refresh token (for additional security)
+    // 4) Issue new tokens
+    const newAccessToken  = createAccessToken({ userId: user._id, role: user.role });
     const newRefreshToken = createRefreshToken({ userId: user._id });
 
-    // Store the new refresh token (optional: save in DB or Redis for better security)
-    // Example: await user.update({ refreshToken: newRefreshToken });
-
-    // Send the new tokens via cookies
-    res
-      .cookie('accessToken', newAccessToken, { ...cookieOptions, maxAge: 15 * 60 * 1000 })  // 15 minutes
-      .cookie('refreshToken', newRefreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 })  // 7 days
+    // 5) Set cookies & return the updated user
+    return res
+      .cookie('accessToken', newAccessToken, {
+        ...cookieOptions,
+        maxAge: 15 * 60 * 1000, // 15 minutes
+      })
+      .cookie('refreshToken', newRefreshToken, {
+        ...cookieOptions,
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      })
       .status(200)
-      .json({ message: 'Access token refreshed.' });
-
+      .json({
+        message: 'Access token refreshed.',
+        user: {
+          _id:    user._id,
+          email:  user.email,
+          role:   user.role,
+          name:   user.name,
+          // …any other fields your frontend needs…
+        },
+      });
   } catch (err) {
-    console.error('Refresh Token Error:', err); // Optional: log error for debugging (don't expose sensitive details)
+    console.error('❌ [refresh-token] error verifying token:', err);
     return res.status(401).json({ message: 'Invalid or expired refresh token.' });
   }
 });
