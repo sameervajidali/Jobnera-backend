@@ -1,6 +1,7 @@
 
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import Role from '../models/Role.js';
 import asyncHandler from '../utils/asyncHandler.js';
 
 const cookieOptions = {
@@ -46,6 +47,7 @@ export const handleGitHubCallback = asyncHandler(async (req, res) => {
         avatar: githubUser.photos?.[0]?.value || null,
         isVerified: true,
         provider: 'github',
+         role:       userRole._id,    // 🔑 assign the role
       });
     }
 
