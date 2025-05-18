@@ -104,10 +104,12 @@ import Role from '../models/Role.js';
 import asyncHandler from '../utils/asyncHandler.js';
 
 const cookieOptions = {
+ 
+  domain:   '.jobneura.tech',   // ← allow jobneura.tech & api.jobneura.tech
+  path:     '/',
   httpOnly: true,
   secure:   process.env.NODE_ENV === 'production',
   sameSite: 'None',
-  path:     '/',
 };
 
 const createAccessToken = payload =>
