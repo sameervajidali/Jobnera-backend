@@ -451,72 +451,68 @@ export const facebookAuth = asyncHandler(async (req, res) => {
 // ─── GitHub Social Login/Signup ───────────────────────────────────────────────
 export const githubAuth = asyncHandler(async (req, res) => {
   const { code } = req.body;
-  if (!code) return res.status(400).json({ message: 'Authorization code missing' });
-
-  try {
-    // Exchange code for access token
-    const tokenRes = await axios.post(
-      `https://github.com/login/oauth/access_token`,
-      {
-        client_id: process.env.GITHUB_CLIENT_ID,
-        client_secret: process.env.GITHUB_CLIENT_SECRET,
-        code,
-      },
-      {
-        headers: { Accept: 'application/json' },
-      }
-    );
-
-    const accessToken = tokenRes.data.access_token;
-    if (!accessToken) throw new Error('GitHub token exchange failed');
-
-    // Get user data
-    const userRes = await axios.get(`https://api.github.com/user`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-
-    const emailRes = await axios.get(`https://api.github.com/user/emails`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-
-    const primaryEmail = emailRes.data.find(e => e.primary && e.verified)?.email;
-
-    const { name, avatar_url } = userRes.data;
-    const email = primaryEmail;
-
-    if (!email) throw new Error('GitHub email not verified');
-
-    let user = await User.findOne({ email });
-    if (!user) {
-      user = await User.create({
-        name: name || 'GitHub User',
-        email,
-        avatar: avatar_url,
-        isVerified: true,
-        provider: 'github',
-      });
-    }
-
-    const accessTokenJwt = createAccessToken({ userId: user._id, role: user.role });
-    const refreshToken = createRefreshToken({ userId: user._id });
-
-    res
-      .cookie('accessToken', accessTokenJwt, {
-        ...cookieOptions,
-        maxAge: 15 * 60 * 1000,
-      })
-      .cookie('refreshToken', refreshToken, {
-        ...cookieOptions,
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      })
-      .status(200)
-      .json({ message: 'GitHub authentication successful', user });
-  } catch (err) {
-    console.error('❌ GitHub auth error:', err.message);
-    res.status(500).json({ message: 'GitHub authentication failed' });
+  if (!code) {
+    return res.status(400).json({ message: 'Authorization code missing' });
   }
-});
 
+  // 1️⃣ Exchange code for GitHub access token
+  const tokenRes = await axios.post(
+    'https://github.com/login/oauth/access_token',
+    {
+      client_id:     process.env.GITHUB_CLIENT_ID,
+      client_secret: process.env.GITHUB_CLIENT_SECRET,
+      code,
+    },
+    { headers: { Accept: 'application/json' } }
+  );
+  const accessToken = tokenRes.data.access_token;
+  if (!accessToken) throw new Error('GitHub token exchange failed');
+
+  // 2️⃣ Fetch user profile & emails
+  const userRes  = await axios.get('https://api.github.com/user', {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  const emailRes = await axios.get('https://api.github.com/user/emails', {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  const primary = emailRes.data.find(e => e.primary && e.verified);
+  if (!primary) throw new Error('GitHub email not verified');
+
+  const email = primary.email;
+  const name  = userRes.data.name || userRes.data.login;
+  const avatar = userRes.data.avatar_url;
+
+  // 3️⃣ Find or create user
+  let user = await User.findOne({ email });
+  if (!user) {
+    console.log('🟢 githubAuth: creating new user');
+    // lookup the default USER role
+    const userRole = await Role.findOne({ name: 'USER' });
+    if (!userRole) throw new Error('Default USER role not found');
+
+    user = await User.create({
+      name,
+      email,
+      avatar,
+      isVerified: true,
+      provider:   'github',
+      role:       userRole._id,            // ← include the role
+    });
+  } else {
+    console.log('🟢 githubAuth: found existing user', user._id);
+  }
+
+  // 4️⃣ Issue JWTs
+  const accessTokenJwt  = createAccessToken({ userId: user._id, role: user.role });
+  const refreshTokenJwt = createRefreshToken({ userId: user._id });
+
+  // 5️⃣ Set cookies & respond
+  res
+    .cookie('accessToken',  accessTokenJwt,  { ...cookieOptions, maxAge: 15 * 60 * 1000 })
+    .cookie('refreshToken', refreshTokenJwt, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 })
+    .status(200)
+    .json({ message: 'GitHub authentication successful', user });
+});
 
 
 export const getProfile = asyncHandler(async (req, res) => {
