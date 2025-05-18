@@ -38,7 +38,7 @@ router.get('/activate-account', activateAccount);
 router.post('/login', validate(loginSchema), login);
 
 // ─── Social Auth ─────────────────────────────────────────────
-router.post('/google/callback', googleAuth);
+router.post('/google/', googleAuth);
 router.post('/facebook', facebookAuth);
 
 // GitHub OAuth
