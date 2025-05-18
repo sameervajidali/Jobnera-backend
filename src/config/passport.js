@@ -7,7 +7,7 @@ passport.use(
     {
       clientID: process.env.GITHUB_CLIENT_ID || 'Ov23lid4mBMrp2GmrdLo',
       clientSecret: process.env.GITHUB_CLIENT_SECRET || '4a570a277fc15fc34825e3cff8867dc69d59fc6c',
-      callbackURL: process.env.GITHUB_CALLBACK_URL || 'http://localhost:5000/api/auth/github/callback',
+      callbackURL: process.env.GITHUB_CALLBACK_URL || 'http://api.jobneura.tech/api/auth/github/callback',
 
       scope: ['user:email']
     },
