@@ -7,9 +7,14 @@ import LeaderboardEntry from '../models/LeaderboardEntry.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import { attemptParamSchema } from '../validators/quizValidator.js';
 import { publicLeaderboardSchema } from '../validators/quizValidator.js';
+import { Parser } from 'json2csv';
+
 import Topic    from '../models/Topic.js';
 import csv      from 'csvtojson';
 import { z } from 'zod';
+import AuditLog from '../models/AuditLog.js';
+import Category from '../models/Category.js'
+
 import {
   submitAttemptSchema,
   bulkQuestionsSchema,
@@ -659,7 +664,6 @@ export const getQuizTopThree = asyncHandler(async (req, res) => {
 });
 
 
-
 export const bulkUploadQuizzesFile = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'No file provided.' });
@@ -676,6 +680,8 @@ export const bulkUploadQuizzesFile = async (req, res) => {
   }
 
   const quizDocs = [];
+  let skipped = 0;
+
   for (const row of rows) {
     const {
       title = '',
@@ -691,88 +697,138 @@ export const bulkUploadQuizzesFile = async (req, res) => {
     const trimmedCategory = categoryName.trim();
     const trimmedTopic = topicName.trim();
 
-    if (!trimmedTitle || !trimmedCategory || !trimmedTopic) continue;
+    if (!trimmedTitle || !trimmedCategory || !trimmedTopic || !level.trim()) {
+      skipped++;
+      continue;
+    }
 
-    // Check if quiz already exists by title + topic
-    const existingQuiz = await Quiz.findOne({ title: trimmedTitle });
-    if (existingQuiz) continue;
+    const parsedDuration = Number(duration);
+    const parsedMarks = Number(totalMarks);
 
-    // Ensure category exists or create it
-    let cat = await Category.findOneAndUpdate(
+    if (isNaN(parsedDuration) || isNaN(parsedMarks)) {
+      skipped++;
+      continue;
+    }
+
+    if (parsedDuration < 1 || parsedDuration > 180 || parsedMarks < 1 || parsedMarks > 100) {
+      skipped++;
+      continue;
+    }
+
+    const cat = await Category.findOneAndUpdate(
       { name: trimmedCategory },
       { name: trimmedCategory },
       { new: true, upsert: true }
     );
 
-    // Ensure topic exists under the category or create it
-    let top = await Topic.findOneAndUpdate(
+    const top = await Topic.findOneAndUpdate(
       { name: trimmedTopic, category: cat._id },
       { name: trimmedTopic, category: cat._id },
       { new: true, upsert: true }
     );
+
+    const existingQuiz = await Quiz.findOne({ title: trimmedTitle, topic: top._id });
+    if (existingQuiz) {
+      skipped++;
+      continue;
+    }
 
     quizDocs.push({
       title:      trimmedTitle,
       category:   cat._id,
       topic:      top._id,
       level:      level.trim(),
-      duration:   Number(duration) || 0,
-      totalMarks: Number(totalMarks) || 0,
+      duration:   parsedDuration,
+      totalMarks: parsedMarks,
       isActive:   String(isActive).toLowerCase() === 'true'
     });
   }
 
   if (!quizDocs.length) {
-    return res.status(409).json({ message: 'No new quizzes to import.' });
+    return res.status(409).json({ message: `No new quizzes to import. Skipped ${skipped} row(s).` });
   }
 
   try {
     const inserted = await Quiz.insertMany(quizDocs, { ordered: false });
+
+    await AuditLog.create({
+      action: 'bulk_quiz_upload',
+      user: req.user?._id || null,
+      details: {
+        inserted: inserted.length,
+        skipped,
+        totalUploaded: rows.length
+      },
+      createdAt: new Date()
+    });
+
     return res.status(201).json({
-      message: `Successfully imported ${inserted.length} quizzes.`,
-      insertedCount: inserted.length
+      message: `Successfully imported ${inserted.length} quizzes. Skipped ${skipped}.`,
+      insertedCount: inserted.length,
+      skippedCount: skipped
     });
   } catch (err) {
     const inserted = err.insertedDocs || [];
     console.warn('Partial insert, some rows failed:', err.writeErrors);
+
+    await AuditLog.create({
+      action: 'bulk_quiz_upload_partial',
+      user: req.user?._id || null,
+      details: {
+        inserted: inserted.length,
+        skipped,
+        totalUploaded: rows.length
+      },
+      createdAt: new Date()
+    });
+
     return res.status(207).json({
-      message: `Partially imported ${inserted.length} quizzes.`,
-      insertedCount: inserted.length
+      message: `Partially imported ${inserted.length} quizzes. Skipped ${skipped}.`,
+      insertedCount: inserted.length,
+      skippedCount: skipped
     });
   }
 };
 
+export const downloadAllQuizzes = async (req, res) => {
+  const quizzes = await Quiz.find({})
+    .populate('category', 'name')
+    .populate('topic', 'name')
+    .lean();
+
+  const fields = ['title', 'category.name', 'topic.name', 'level', 'duration', 'totalMarks', 'isActive'];
+  const parser = new Parser({ fields });
+  const csv = parser.parse(quizzes);
+
+  res.header('Content-Type', 'text/csv');
+  res.attachment('quizzes.csv');
+  return res.send(csv);
+};
+
+export const downloadAllCategories = async (req, res) => {
+  const categories = await Category.find({}).lean();
+  const fields = ['name'];
+  const parser = new Parser({ fields });
+  const csv = parser.parse(categories);
+
+  res.header('Content-Type', 'text/csv');
+  res.attachment('categories.csv');
+  return res.send(csv);
+};
+
+export const downloadAllTopics = async (req, res) => {
+  const topics = await Topic.find({}).populate('category', 'name').lean();
+  const fields = ['name', 'category.name'];
+  const parser = new Parser({ fields });
+  const csv = parser.parse(topics);
+
+  res.header('Content-Type', 'text/csv');
+  res.attachment('topics.csv');
+  return res.send(csv);
+};
 
 
 
-// // GET /api/quizzes/grouped-topics
-// export const getGroupedTopics = asyncHandler(async (_req, res) => {
-//   const quizzes = await Quiz.find({ isActive: true }).select('category topic -_id')
-//     .populate('category', 'name')  // Populate the category name
-//     .populate('topic', 'name');    // Populate the topic name
-
-//   const grouped = {};
-
-//   quizzes.forEach(({ category, topic }) => {
-//     // Ensure category and topic are not null before accessing their properties
-//     if (category && category.name) {
-//       if (!grouped[category._id]) grouped[category._id] = { category: category.name, topics: [] };
-//       if (topic && topic.name) {
-//         grouped[category._id].topics.push(topic.name);
-//       }
-//     }
-//   });
-
-//   const result = Object.values(grouped).map(item => ({
-//     category: item.category,
-//     topics: item.topics
-//   }));
-
-//   res.json(result);
-// });
-
-// src/controllers/quizController.js
-// controllers/quizController.js
 // controllers/quizController.js
 export const getGroupedTopics = asyncHandler(async (_req, res) => {
   // 1) grab all active quizzes, but only category & topic fields
