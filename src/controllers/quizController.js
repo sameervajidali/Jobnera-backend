@@ -670,143 +670,88 @@ export const bulkUploadQuizzesFile = async (req, res) => {
   }
 
   let rows;
+  const ext = path.extname(req.file.originalname).toLowerCase();
+
   try {
-    rows = await csv().fromString(req.file.buffer.toString());
-  } catch {
-    return res.status(400).json({ message: 'Invalid CSV format.' });
+    if (ext === '.csv') {
+      rows = await csv().fromString(req.file.buffer.toString());
+    } else if (ext === '.xlsx' || ext === '.xls') {
+      const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      rows = XLSX.utils.sheet_to_json(sheet);
+    } else {
+      return res.status(400).json({ message: 'Unsupported file format. Please upload CSV or XLSX.' });
+    }
+  } catch (error) {
+    return res.status(400).json({ message: 'Invalid file format or corrupted file.' });
   }
+
   if (!rows.length) {
-    return res.status(400).json({ message: 'CSV is empty.' });
+    return res.status(400).json({ message: 'Uploaded file is empty.' });
   }
 
   const quizDocs = [];
   const report = [];
 
   for (const row of rows) {
-    const {
-      title = '',
-      category: categoryName = '',
-      topic: topicName = '',
-      level = '',
-      duration = '0',
-      totalMarks = '0',
-      isActive = 'false'
-    } = row;
+    const { title = '', category: categoryName = '', topic: topicName = '', level = '', duration = '0', totalMarks = '0', isActive = 'false' } = row;
+    const trimmedTitle = String(title).trim();
+    const trimmedCategory = String(categoryName).trim();
+    const trimmedTopic = String(topicName).trim();
 
-    const trimmedTitle = title.trim();
-    const trimmedCategory = categoryName.trim();
-    const trimmedTopic = topicName.trim();
     let status = 'Success';
     let reason = '';
-
-    if (!trimmedTitle || !trimmedCategory || !trimmedTopic || !level.trim()) {
-      status = 'Failed';
-      reason = 'Missing required fields';
-    }
-
     const parsedDuration = Number(duration);
     const parsedMarks = Number(totalMarks);
 
-    if (isNaN(parsedDuration) || isNaN(parsedMarks)) {
-      status = 'Failed';
-      reason = 'Invalid number in duration or totalMarks';
+    // Validate
+    if (!trimmedTitle || !trimmedCategory || !trimmedTopic || !level.trim()) {
+      status = 'Failed'; reason = 'Missing required fields';
+    } else if (isNaN(parsedDuration) || isNaN(parsedMarks)) {
+      status = 'Failed'; reason = 'Invalid number in duration or totalMarks';
+    } else if (parsedDuration < 1 || parsedDuration > 180 || parsedMarks < 1 || parsedMarks > 100) {
+      status = 'Failed'; reason = 'Duration or marks out of range';
     }
 
-    if (parsedDuration < 1 || parsedDuration > 180 || parsedMarks < 1 || parsedMarks > 100) {
-      status = 'Failed';
-      reason = 'Duration or marks out of range';
-    }
-
-    let cat, top, existingQuiz;
+    let cat, top, existing;
     if (status === 'Success') {
-      cat = await Category.findOneAndUpdate(
-        { name: trimmedCategory },
-        { name: trimmedCategory },
-        { new: true, upsert: true }
-      );
-
-      top = await Topic.findOneAndUpdate(
-        { name: trimmedTopic, category: cat._id },
-        { name: trimmedTopic, category: cat._id },
-        { new: true, upsert: true }
-      );
-
-      existingQuiz = await Quiz.findOne({ title: trimmedTitle, topic: top._id });
-      if (existingQuiz) {
-        status = 'Failed';
-        reason = 'Duplicate quiz for topic';
+      cat = await Category.findOneAndUpdate({ name: trimmedCategory }, { name: trimmedCategory }, { new: true, upsert: true });
+      top = await Topic.findOneAndUpdate({ name: trimmedTopic, category: cat._id }, { name: trimmedTopic, category: cat._id }, { new: true, upsert: true });
+      existing = await Quiz.findOne({ title: trimmedTitle, topic: top._id });
+      if (existing) {
+        status = 'Failed'; reason = 'Duplicate quiz for topic';
       }
     }
 
     if (status === 'Success') {
-      quizDocs.push({
-        title: trimmedTitle,
-        category: cat._id,
-        topic: top._id,
-        level: level.trim(),
-        duration: parsedDuration,
-        totalMarks: parsedMarks,
-        isActive: String(isActive).toLowerCase() === 'true'
-      });
+      quizDocs.push({ title: trimmedTitle, category: cat._id, topic: top._id, level: level.trim(), duration: parsedDuration, totalMarks: parsedMarks, isActive: String(isActive).toLowerCase() === 'true' });
     }
 
-    report.push({
-      title: trimmedTitle,
-      category: trimmedCategory,
-      topic: trimmedTopic,
-      level,
-      duration,
-      totalMarks,
-      isActive,
-      status,
-      reason
-    });
+    report.push({ title: trimmedTitle, category: trimmedCategory, topic: trimmedTopic, level, duration, totalMarks, isActive, status, reason });
   }
 
   let inserted = [];
   try {
-    if (quizDocs.length) {
-      inserted = await Quiz.insertMany(quizDocs, { ordered: false });
-    }
+    if (quizDocs.length) inserted = await Quiz.insertMany(quizDocs, { ordered: false });
 
-    await AuditLog.create({
-      action: 'bulk_quiz_upload',
-      user: req.user?._id || null,
-      details: {
-        inserted: inserted.length,
-        totalUploaded: rows.length,
-        skipped: rows.length - inserted.length
-      },
-      createdAt: new Date()
-    });
+    await AuditLog.create({ action: 'bulk_quiz_upload', user: req.user?._id || null, details: { inserted: inserted.length, totalUploaded: rows.length, skipped: rows.length - inserted.length }, createdAt: new Date() });
 
     const parser = new Parser();
     const csvReport = parser.parse(report);
-
     res.header('Content-Type', 'text/csv');
     res.attachment('quiz_upload_report.csv');
     return res.send(csvReport);
   } catch (err) {
-    console.warn('Partial insert error:', err);
     const parser = new Parser();
     const csvReport = parser.parse(report);
-
-    await AuditLog.create({
-      action: 'bulk_quiz_upload_partial',
-      user: req.user?._id || null,
-      details: {
-        inserted: inserted.length,
-        totalUploaded: rows.length,
-        skipped: rows.length - inserted.length
-      },
-      createdAt: new Date()
-    });
-
+    await AuditLog.create({ action: 'bulk_quiz_upload_partial', user: req.user?._id || null, details: { inserted: inserted.length, totalUploaded: rows.length, skipped: rows.length - inserted.length }, createdAt: new Date() });
     res.header('Content-Type', 'text/csv');
     res.attachment('quiz_upload_partial_report.csv');
     return res.status(207).send(csvReport);
   }
 };
+
 export const downloadAllQuizzes = async (req, res) => {
   const quizzes = await Quiz.find({})
     .populate('category', 'name')
