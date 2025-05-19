@@ -687,18 +687,32 @@ export const bulkUploadQuizzesFile = async (req, res) => {
       isActive = 'false'
     } = row;
 
-    if (!title.trim()) continue;
+    const trimmedTitle = title.trim();
+    const trimmedCategory = categoryName.trim();
+    const trimmedTopic = topicName.trim();
 
-    // Upsert category
-    let cat = await Category.findOne({ name: categoryName.trim() });
-    if (!cat) cat = await Category.create({ name: categoryName.trim() });
+    if (!trimmedTitle || !trimmedCategory || !trimmedTopic) continue;
 
-    // Upsert topic
-    let top = await Topic.findOne({ name: topicName.trim(), category: cat._id });
-    if (!top) top = await Topic.create({ name: topicName.trim(), category: cat._id });
+    // Check if quiz already exists by title + topic
+    const existingQuiz = await Quiz.findOne({ title: trimmedTitle });
+    if (existingQuiz) continue;
+
+    // Ensure category exists or create it
+    let cat = await Category.findOneAndUpdate(
+      { name: trimmedCategory },
+      { name: trimmedCategory },
+      { new: true, upsert: true }
+    );
+
+    // Ensure topic exists under the category or create it
+    let top = await Topic.findOneAndUpdate(
+      { name: trimmedTopic, category: cat._id },
+      { name: trimmedTopic, category: cat._id },
+      { new: true, upsert: true }
+    );
 
     quizDocs.push({
-      title:      title.trim(),
+      title:      trimmedTitle,
       category:   cat._id,
       topic:      top._id,
       level:      level.trim(),
@@ -709,23 +723,25 @@ export const bulkUploadQuizzesFile = async (req, res) => {
   }
 
   if (!quizDocs.length) {
-    return res.status(400).json({ message: 'No valid rows to import.' });
+    return res.status(409).json({ message: 'No new quizzes to import.' });
   }
 
-  let inserted = [];
   try {
-    inserted = await Quiz.insertMany(quizDocs, { ordered: false });
+    const inserted = await Quiz.insertMany(quizDocs, { ordered: false });
+    return res.status(201).json({
+      message: `Successfully imported ${inserted.length} quizzes.`,
+      insertedCount: inserted.length
+    });
   } catch (err) {
-    // continue on duplicate key errors
-    inserted = err.insertedDocs || [];
-    console.warn('Some rows failed:', err.writeErrors);
+    const inserted = err.insertedDocs || [];
+    console.warn('Partial insert, some rows failed:', err.writeErrors);
+    return res.status(207).json({
+      message: `Partially imported ${inserted.length} quizzes.`,
+      insertedCount: inserted.length
+    });
   }
-
-  return res.status(201).json({
-    message: `Imported ${inserted.length} quizzes successfully.`,
-    count:   inserted.length
-  });
 };
+
 
 
 
