@@ -25,8 +25,13 @@ import adminStatsRoutes from './routes/adminStatsRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import materialRoutes from './routes/materialRoutes.js';
 import jobRoutes from './routes/jobRoutes.js';
-
 import { protect } from './middlewares/authMiddleware.js';
+import sessionMiddleware from './middlewares/session.js';
+import notificationRoutes from './routes/notifications.js';
+import eventBus from './middlewares/eventBus.js';
+
+
+
 
 const app = express();
 const isProd = process.env.NODE_ENV === 'production';
@@ -39,6 +44,9 @@ app.use(cors({
   credentials: true,
 }));
 
+
+app.use(sessionMiddleware);
+app.use(eventBus);
 
 // =========================
 // ✅ Parse cookies before using sessions
@@ -88,6 +96,8 @@ app.get('/api/test', (_req, res) =>
 // =========================
 // ✅ All API routes
 // =========================
+// 3️⃣ Mount REST routes
+app.use('/api/notifications', notificationRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
@@ -100,7 +110,6 @@ app.use('/api/admin', adminStatsRoutes);
 app.use('/api/materials', materialRoutes);
 app.use('/api/jobs', jobRoutes);
 
-console.log('✅ jobRoutes mounted at /api/jobs');
 
 // =========================
 // ✅ Seed SuperAdmin (on startup)
