@@ -13,7 +13,12 @@ bus.on('userRegistered', async ({ userId }) => {
 
 // Password reset requested
 bus.on('passwordResetRequested', async ({ userId }) => {
-  await sendNotification(userId, 'passwordReset', { message: 'Password reset requested.' });
+  await sendNotification(userId, 'passwordResetRequested', { message: 'Password reset requested.' });
+});
+
+// Password reset completed
+bus.on('passwordResetCompleted', async ({ userId }) => {
+  await sendNotification(userId, 'passwordResetCompleted', { message: 'Your password has been successfully changed.' });
 });
 
 // ── Quiz Events ──────────────────────────────────────────────────────────────

@@ -36,6 +36,7 @@ import dns from 'node:dns';
 import app from './src/app.js';
 import sessionMiddleware from './src/middlewares/session.js';
 import { handleNotificationSockets } from './src/services/notificationSockets.js';
+import setupChangeStreams from './src/services/changeStreamListeners.js';
 
 dns.setDefaultResultOrder('ipv4first');  // Ensure IPv4-first DNS resolution
 
@@ -73,6 +74,10 @@ mongoose.connect(process.env.MONGO_URI, {
 })
   .then(() => {
     console.log('📦 MongoDB connected');
+
+      // Start watching for DB changes
+    setupChangeStreams();
+    
     server.listen(PORT, () => {
       console.log(`🚀 Server & Socket.IO listening on port ${PORT}`);
     });
