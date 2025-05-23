@@ -214,7 +214,7 @@ export const refreshToken = asyncHandler(async (req, res) => {
     }
 
     // 4) Issue new tokens
-    const newAccessToken  = createAccessToken({ userId: user._id, role: user.role });
+    const newAccessToken = createAccessToken({ userId: user._id, role: user.role });
     const newRefreshToken = createRefreshToken({ userId: user._id });
 
     // 5) Set cookies & return the updated user
@@ -231,10 +231,10 @@ export const refreshToken = asyncHandler(async (req, res) => {
       .json({
         message: 'Access token refreshed.',
         user: {
-          _id:    user._id,
-          email:  user.email,
-          role:   user.role,
-          name:   user.name,
+          _id: user._id,
+          email: user.email,
+          role: user.role,
+          name: user.name,
           // …any other fields your frontend needs…
         },
       });
@@ -360,7 +360,7 @@ export const googleAuth = asyncHandler(async (req, res) => {
     });
     const payload = ticket.getPayload();
     console.log('🟢 googleAuth: payload:', {
-      email:          payload.email,
+      email: payload.email,
       email_verified: payload.email_verified,
     });
 
@@ -379,25 +379,25 @@ export const googleAuth = asyncHandler(async (req, res) => {
 
       // Create with role
       user = await User.create({
-        name:       payload.name,
-        email:      payload.email,
-        avatar:     payload.picture,
+        name: payload.name,
+        email: payload.email,
+        avatar: payload.picture,
         isVerified: true,
-        provider:   'google',
-        role:       userRole._id
+        provider: 'google',
+        role: userRole._id
       });
     } else {
       console.log('🟢 googleAuth: found existing user:', user._id);
     }
 
     // Issue tokens
-    const accessToken  = createAccessToken({ userId: user._id, role: user.role });
+    const accessToken = createAccessToken({ userId: user._id, role: user.role });
     const refreshToken = createRefreshToken({ userId: user._id });
 
     // Set cookies & respond
     res
-      .cookie('accessToken', accessToken,  { ...cookieOptions, maxAge: 15*60*1000 })
-      .cookie('refreshToken', refreshToken,{ ...cookieOptions, maxAge: 7*24*60*60*1000 })
+      .cookie('accessToken', accessToken, { ...cookieOptions, maxAge: 15 * 60 * 1000 })
+      .cookie('refreshToken', refreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 })
       .status(200)
       .json({ message: 'Google authentication successful', user });
 
@@ -459,7 +459,7 @@ export const githubAuth = asyncHandler(async (req, res) => {
   const tokenRes = await axios.post(
     'https://github.com/login/oauth/access_token',
     {
-      client_id:     process.env.GITHUB_CLIENT_ID,
+      client_id: process.env.GITHUB_CLIENT_ID,
       client_secret: process.env.GITHUB_CLIENT_SECRET,
       code,
     },
@@ -469,7 +469,7 @@ export const githubAuth = asyncHandler(async (req, res) => {
   if (!accessToken) throw new Error('GitHub token exchange failed');
 
   // 2️⃣ Fetch user profile & emails
-  const userRes  = await axios.get('https://api.github.com/user', {
+  const userRes = await axios.get('https://api.github.com/user', {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
   const emailRes = await axios.get('https://api.github.com/user/emails', {
@@ -479,7 +479,7 @@ export const githubAuth = asyncHandler(async (req, res) => {
   if (!primary) throw new Error('GitHub email not verified');
 
   const email = primary.email;
-  const name  = userRes.data.name || userRes.data.login;
+  const name = userRes.data.name || userRes.data.login;
   const avatar = userRes.data.avatar_url;
 
   // 3️⃣ Find or create user
@@ -495,20 +495,20 @@ export const githubAuth = asyncHandler(async (req, res) => {
       email,
       avatar,
       isVerified: true,
-      provider:   'github',
-      role:       userRole._id,            // ← include the role
+      provider: 'github',
+      role: userRole._id,            // ← include the role
     });
   } else {
     console.log('🟢 githubAuth: found existing user', user._id);
   }
 
   // 4️⃣ Issue JWTs
-  const accessTokenJwt  = createAccessToken({ userId: user._id, role: user.role });
+  const accessTokenJwt = createAccessToken({ userId: user._id, role: user.role });
   const refreshTokenJwt = createRefreshToken({ userId: user._id });
 
   // 5️⃣ Set cookies & respond
   res
-    .cookie('accessToken',  accessTokenJwt,  { ...cookieOptions, maxAge: 15 * 60 * 1000 })
+    .cookie('accessToken', accessTokenJwt, { ...cookieOptions, maxAge: 15 * 60 * 1000 })
     .cookie('refreshToken', refreshTokenJwt, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 })
     .status(200)
     .json({ message: 'GitHub authentication successful', user });
@@ -569,7 +569,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Invalid or expired token." });
   }
 
-  user.password = await bcrypt.hash(password, 12);
+  user.password = password;
   user.resetToken = undefined;
   user.resetTokenExpiry = undefined;
   await user.save();
@@ -580,60 +580,6 @@ export const resetPassword = asyncHandler(async (req, res) => {
 });
 
 
-// controllers/authController.js
-
-// export const updateProfile = asyncHandler(async (req, res) => {
-//   const {
-//     name, phone, location, bio,
-//     skills, languages, experience, education
-//   } = req.body;
-
-//   const updates = {
-//     name, phone, location, bio,
-//     // Parse JSON arrays if needed:
-//     skills: skills ? JSON.parse(skills) : [],
-//     languages: languages ? JSON.parse(languages) : [],
-//     experience: experience ? JSON.parse(experience) : [],
-//     education: education ? JSON.parse(education) : [],
-//   };
-
-//   // Handle avatar and resume uploads
-//   if (req.files.avatar) {
-//     const relPath = `/uploads/${req.files.avatar[0].filename}`;
-//     updates.avatar = `${req.protocol}://${req.get("host")}${relPath}`;
-//   }
-
-//   if (req.files.resume) {
-//     const filename = req.files.resume[0].filename;
-//     const url = `${req.protocol}://${req.get("host")}/uploads/${filename}`;
-//     updates.resume = url;
-//   }
-//   console.log('Avatar URL:', updates.avatar);
-// console.log('Resume URL:', updates.resume);
-
-
-//   try {
-//     // Update the user in the database
-//     const user = await User.findByIdAndUpdate(
-//       req.user._id,
-//       updates,
-//       { new: true, runValidators: true }
-//     ).select('-password');
-
-//     if (!user) {
-//       return res.status(404).json({ message: 'User not found.' });
-//     }
-
-//     // Log the updated user data
-//     console.log('Updated user data:', user);
-
-//     // Respond with the updated user object
-//     res.status(200).json({ message: 'Profile updated.', user });
-//   } catch (error) {
-//     console.error('Error updating profile:', error);
-//     res.status(500).json({ message: 'Error updating profile', error: error.message });
-//   }
-// });
 
 
 export const updateProfile = asyncHandler(async (req, res) => {

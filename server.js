@@ -42,8 +42,6 @@ dns.setDefaultResultOrder('ipv4first');  // Ensure IPv4-first DNS resolution
 
 const PORT = process.env.PORT || 5000;
 
-// Debug: log the MongoDB URI to confirm you're using the correct one
-console.log('📥 MONGO_URI:', process.env.MONGO_URI);
 
 // Silence Mongoose strictQuery deprecation warning
 mongoose.set('strictQuery', true);
