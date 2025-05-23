@@ -12,29 +12,33 @@ let ioInstance = null;
 export function handleNotificationSockets(io) {
   ioInstance = io;
 
-  // Share Express session with Socket.IO
   io.use((socket, next) => {
     sessionMiddleware(socket.request, {}, next);
   });
 
   io.on('connection', socket => {
-    const user = socket.request.session?.user;
-    if (!user) return socket.disconnect();
+    // Passport saves the user ID here:
+    const passportSession = socket.request.session.passport;
+    const userId = passportSession && passportSession.user;
+    if (!userId) {
+      return socket.disconnect();
+    }
 
     // Track this socket for the user
-    const sockets = onlineUsers.get(user._id) || new Set();
+    const sockets = onlineUsers.get(userId) || new Set();
     sockets.add(socket.id);
-    onlineUsers.set(user._id, sockets);
+    onlineUsers.set(userId, sockets);
 
     socket.on('disconnect', () => {
-      const set = onlineUsers.get(user._id);
+      const set = onlineUsers.get(userId);
       if (set) {
         set.delete(socket.id);
-        if (set.size === 0) onlineUsers.delete(user._id);
+        if (set.size === 0) onlineUsers.delete(userId);
       }
     });
   });
 }
+
 
 /**
  * Get the Socket.IO instance
