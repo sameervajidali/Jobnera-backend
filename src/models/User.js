@@ -1,6 +1,7 @@
 // src/models/User.js
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
+import notificationPlugin from '../plugins/notificationPlugin.js';
 
 const { Schema, model } = mongoose;
 
@@ -24,26 +25,24 @@ const EducationSchema = new Schema({
 // Main User schema
 const userSchema = new Schema({
   // ─ Authentication ───────────────────────────────────────────────
-  name:       { type: String, required: true, trim: true },
-  email:      { type: String, required: true, unique: true, lowercase: true, trim: true, index: true },
-  password:   { type: String, minlength: 6, select: false },
-  provider:   { type: String, enum: ['local','google','facebook','github'], default: 'local' },
-  providerId: { type: String, select: false },
+  name:            { type: String, required: true, trim: true },
+  email:           { type: String, required: true, unique: true, lowercase: true, trim: true, index: true },
+  password:        { type: String, minlength: 6, select: false },
+  provider:        { type: String, enum: ['local','google','facebook','github'], default: 'local' },
+  providerId:      { type: String, select: false },
 
   // ─ Profile Fields ────────────────────────────────────────────────
-  phone:     { type: String, default: '', trim: true },
-  location:  { type: String, default: '', trim: true },
-  bio:       { type: String, default: '', trim: true },
-  website:   { type: String, default: '', trim: true },
-  linkedin:  { type: String, default: '', trim: true },
-
-  avatar:    { type: String, default: '' },   // URL to avatar
-  resume:    { type: String, default: '' },   // URL to resume PDF
-
-  skills:    { type: [String], default: [] },
-  languages: { type: [String], default: [] },
-  experience:{ type: [ExperienceSchema], default: [] },
-  education: { type: [EducationSchema],   default: [] },
+  phone:           { type: String, default: '', trim: true },
+  location:        { type: String, default: '', trim: true },
+  bio:             { type: String, default: '', trim: true },
+  website:         { type: String, default: '', trim: true },
+  linkedin:        { type: String, default: '', trim: true },
+  avatar:          { type: String, default: '' },   // URL to avatar
+  resume:          { type: String, default: '' },   // URL to resume PDF
+  skills:          { type: [String], default: [] },
+  languages:       { type: [String], default: [] },
+  experience:      { type: [ExperienceSchema], default: [] },
+  education:       { type: [EducationSchema], default: [] },
 
   // ─ Email Verification & Password Reset ───────────────────────────
   isVerified:           { type: Boolean, default: false },
@@ -64,16 +63,10 @@ const userSchema = new Schema({
   ],
 
   // ─ Roles & Brute-Force Protection ────────────────────────────────
-  role: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Role',
-    required: true,
-    default: null,         // we’ll backfill this in step 2
-  },
-  loginAttempts:{ type: Number, default: 0, select: false },
-  lockUntil:    { type: Date,   select: false },
-
-  lastLogin:    Date,
+  role:                 { type: Schema.Types.ObjectId, ref: 'Role', required: true, default: null },
+  loginAttempts:        { type: Number, default: 0, select: false },
+  lockUntil:            { type: Date, select: false },
+  lastLogin:            { type: Date },
 }, {
   timestamps: true,
 });
@@ -95,8 +88,22 @@ userSchema.methods.comparePassword = function (candidate) {
   return bcrypt.compare(candidate, this.password);
 };
 
-// Lockout logic stub
-userSchema.methods.incLoginAttempts = function () { /* … */ };
+// Apply notification plugin for domain events
+userSchema.plugin(notificationPlugin, {
+  events: [
+    {
+      on: 'insert',
+      event: 'userRegistered',
+      payload: doc => ({ userId: doc._id })
+    },
+       {
+      on: 'update',
+      event: 'passwordResetCompleted',
+      match: (_doc, update) => Boolean(update.$set?.password),
+      payload: doc => ({ userId: doc._id })
+    }
+  ]
+});
 
 // Avoid model overwrite errors in development/hot reload
 const User = mongoose.models.User || model('User', userSchema);

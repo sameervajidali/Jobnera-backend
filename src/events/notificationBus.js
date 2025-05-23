@@ -1,70 +1,107 @@
-// src/events/notificationBus.js
-import { EventEmitter } from 'events';
-import { sendNotification } from '../services/notificationService.js';
+// src/services/changeStreamListeners.js
+import mongoose from 'mongoose';
+import bus from '../events/notificationBus.js';
 
-// Central event bus for triggering notifications
-const bus = new EventEmitter();
+// helper to watch a model for change events
+function watchModel(Model, onChange) {
+  const stream = Model.watch([], { fullDocument: 'updateLookup' });
+  stream.on('change', change => {
+    try { onChange(change); }
+    catch (err) { console.error(`ChangeStream handler error for ${Model.modelName}:`, err); }
+  });
+  stream.on('error', err => {
+    console.error(`ChangeStream error on ${Model.modelName}:`, err);
+  });
+}
 
-// ── User Events ──────────────────────────────────────────────────────────────
-// Welcome new users on registration
-bus.on('userRegistered', async ({ userId }) => {
-  await sendNotification(userId, 'userRegistered', { message: 'Welcome to JobNeura!' });
-});
+// import your Mongoose models (no User model watchers here)
+import QuizAssignment    from '../models/QuizAssignment.js';
+import QuizAttempt       from '../models/QuizAttempt.js';
+import PasswordResetToken from '../models/PasswordResetToken.js';
+import Application       from '../models/Application.js';
+import Ticket            from '../models/Ticket.js';
+import Job               from '../models/Job.js';
+import Material          from '../models/Material.js';
 
-// Password reset requested
-bus.on('passwordResetRequested', async ({ userId }) => {
-  await sendNotification(userId, 'passwordResetRequested', { message: 'Password reset requested.' });
-});
+export default function setupChangeStreams() {
+  console.log('🔔 Initializing change streams for domain events');
 
-// Password reset completed
-bus.on('passwordResetCompleted', async ({ userId }) => {
-  await sendNotification(userId, 'passwordResetCompleted', { message: 'Your password has been successfully changed.' });
-});
+  // ── Quiz Assigned ──────────────────────────────────────────────
+  watchModel(QuizAssignment, ({ operationType, fullDocument }) => {
+    if (operationType === 'insert') {
+      bus.emit('quizAssigned', {
+        userId: fullDocument.userId,
+        quizId: fullDocument.quizId,
+        title:  'New Quiz Assigned'
+      });
+    }
+  });
 
-// ── Quiz Events ──────────────────────────────────────────────────────────────
-// A new quiz has been assigned to a user
-bus.on('quizAssigned', async ({ userId, quizId, title }) => {
-  await sendNotification(userId, 'quizAssigned', { quizId, title });
-});
+  // ── Quiz Graded ────────────────────────────────────────────────
+  watchModel(QuizAttempt, ({ operationType, fullDocument }) => {
+    if ((operationType === 'insert' || operationType === 'update') && fullDocument.score != null) {
+      bus.emit('quizGraded', {
+        userId: fullDocument.userId,
+        quizId: fullDocument.quizId,
+        score:  fullDocument.score
+      });
+    }
+  });
 
-// A quiz attempt has been graded
-bus.on('quizGraded', async ({ userId, quizId, score }) => {
-  await sendNotification(userId, 'quizGraded', { quizId, score });
-});
+  // ── Password Reset Requested ───────────────────────────────────
+  watchModel(PasswordResetToken, ({ operationType, fullDocument }) => {
+    if (operationType === 'insert') {
+      bus.emit('passwordResetRequested', { userId: fullDocument.userId });
+    }
+  });
 
-// ── Material Events ──────────────────────────────────────────────────────────
-// New learning material assigned
-bus.on('materialAssigned', async ({ userId, materialId, title }) => {
-  await sendNotification(userId, 'materialAssigned', { materialId, title });
-});
+  // ── Application Status Changed ─────────────────────────────────
+  watchModel(Application, ({ operationType, fullDocument, updateDescription, documentKey }) => {
+    if (operationType === 'update' && updateDescription.updatedFields.status) {
+      bus.emit('applicationStatusChanged', {
+        userId:        fullDocument.userId,
+        applicationId: documentKey._id,
+        status:        updateDescription.updatedFields.status
+      });
+    }
+  });
 
-// ── Ticket Events ────────────────────────────────────────────────────────────
-// Support ticket received a reply
-bus.on('ticketReplied', async ({ userId, ticketId, message }) => {
-  await sendNotification(userId, 'ticketReplied', { ticketId, message });
-});
+  // ── Ticket Replied ─────────────────────────────────────────────
+  watchModel(Ticket, ({ operationType, fullDocument, updateDescription, documentKey }) => {
+    if (operationType === 'update' && updateDescription.updatedFields.latestReply) {
+      bus.emit('ticketReplied', {
+        userId:   fullDocument.user.toString(),
+        ticketId: documentKey._id,
+        message:  updateDescription.updatedFields.latestReply.text
+      });
+    }
+  });
 
-// ── Job Events ───────────────────────────────────────────────────────────────
-// New job posted matching a user's profile
-bus.on('jobPosted', async ({ userId, jobId, title }) => {
-  await sendNotification(userId, 'jobPosted', { jobId, title });
-});
+  // ── Job Posted ─────────────────────────────────────────────────
+  watchModel(Job, ({ operationType, fullDocument }) => {
+    if (operationType === 'insert') {
+      const { _id: jobId, title } = fullDocument;
+      // notify all users or targeted group
+      mongoose.model('User').find().select('_id').lean()
+        .then(users => {
+          users.forEach(u =>
+            bus.emit('jobPosted', { userId: u._id, jobId, title })
+          );
+        })
+        .catch(console.error);
+    }
+  });
 
-// Application status updated
-bus.on('applicationStatusChanged', async ({ userId, applicationId, status }) => {
-  await sendNotification(userId, 'applicationStatusChanged', { applicationId, status });
-});
+  // ── Material Assigned ──────────────────────────────────────────
+  watchModel(Material, ({ operationType, fullDocument }) => {
+    if (operationType === 'insert') {
+      bus.emit('materialAssigned', {
+        userId:     fullDocument.userId,
+        materialId: fullDocument._id,
+        title:      fullDocument.title || 'New Material Available'
+      });
+    }
+  });
 
-// ── Admin/User Management Events ─────────────────────────────────────────────
-// New user created by admin
-bus.on('adminUserCreated', async ({ userId }) => {
-  await sendNotification(userId, 'adminUserCreated', { message: 'Your account was created by an admin.' });
-});
-
-// Role changed for a user
-bus.on('roleChanged', async ({ userId, oldRole, newRole }) => {
-  await sendNotification(userId, 'roleChanged', { oldRole, newRole });
-});
-
-// Export the bus for controllers to emit events
-export default bus;
+  console.log('✅ Change streams are active.');
+}

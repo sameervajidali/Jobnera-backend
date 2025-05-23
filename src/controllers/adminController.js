@@ -3,6 +3,8 @@ import asyncHandler from '../utils/asyncHandler.js';
 import User from '../models/User.js';
 import Role from '../models/Role.js';
 import { sendUserCredentialsEmail } from '../services/emailService.js';
+import bus from '../events/notificationBus.js';
+import { sendNotification } from '../services/notificationService.js';
 
 const VALID_ROLES = [
   'USER', 'MODERATOR', 'CREATOR', 'SUPPORT', 'ADMIN', 'SUPERADMIN'
@@ -10,74 +12,22 @@ const VALID_ROLES = [
 
 const PROTECTED_ROLES = ['ADMIN', 'SUPERADMIN', 'MODERATOR', 'CREATOR', 'SUPPORT'];
 
-// export const createUser = asyncHandler(async (req, res) => {
-//   const { name, email, password, role } = req.body;
-
-//   if (!name || !email || !password) {
-//     return res.status(400).json({ message: 'Name, email, and password are required.' });
-//   }
-
-//   const normalizedRole = (role || 'USER').toUpperCase();
-
-//   if (!VALID_ROLES.includes(normalizedRole)) {
-//     return res.status(400).json({ message: `Invalid role '${role}'.` });
-//   }
-
-//   const currentUserRole = req.user?.role?.toUpperCase();
-//   if (PROTECTED_ROLES.includes(normalizedRole) && currentUserRole !== 'SUPERADMIN') {
-//     return res.status(403).json({ message: 'Insufficient rights to assign that elevated role.' });
-//   }
-
-//   if (await User.exists({ email })) {
-//     return res.status(409).json({ message: 'Email already in use.' });
-//   }
-
-//   const user = await User.create({
-//     name,
-//     email,
-//     password,
-//     role: normalizedRole,
-//     isVerified: true,
-//     provider: 'local',
-//   });
-
-//   sendUserCredentialsEmail(email, name, password)
-//     .then(() => console.log(`✉️ Sent credentials to ${email}`))
-//     .catch(err => console.error(`❌ Failed to send credentials:`, err));
-
-//   res.status(201).json({
-//     message: 'User created successfully and credentials sent via email.',
-//     user: {
-//       id: user._id,
-//       name: user.name,
-//       email: user.email,
-//       role: user.role,
-//     },
-//   });
-// });
-
 
 export const createUser = asyncHandler(async (req, res) => {
-  const { role: roleName, ...rest } = req.body;
+  const roleDoc = await Role.findOne({ name: req.body.role.toUpperCase() });
+  const user = await User.create({ ...req.body, role: roleDoc._id, provider: 'local' });
+  console.log('🔔 Controller: admin created user', user._id);
 
-  // 1) Find the role document by name
-  const roleDoc = await Role.findOne({ name: roleName.toUpperCase() });
-  if (!roleDoc) {
-    return res.status(400).json({
-      message: `Invalid role "${roleName}". Must be one of: USER, ADMIN, …`
-    });
-  }
+  await sendNotification(
+    user._id,
+    'adminUserCreated',
+    { message: 'Your account was created by an administrator.' }
+  );
 
-  // 2) Use the ObjectId
-  const user = new User({
-    ...rest,
-    role: roleDoc._id,
-  });
-
-  await user.save();
-  res.status(201).json({ user });
+  const out = user.toObject();
+  delete out.password;
+  res.status(201).json({ user: out });
 });
-
 
 
 
