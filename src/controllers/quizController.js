@@ -1822,7 +1822,7 @@ export const downloadAllTopics = async (req, res) => {
   // Log export action
   await ExportLog.create({
     user: req.user._id,
-     action: 'download_topics_csv',
+    
     exportType: 'topics',
     exportedAt: new Date(),
     details: { count: topics.length }

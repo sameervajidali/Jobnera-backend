@@ -29,6 +29,7 @@ import { protect } from './middlewares/authMiddleware.js';
 import sessionMiddleware from './middlewares/session.js';
 import notificationRoutes from './routes/notifications.js';
 import eventBus from './middlewares/eventBus.js';
+import blogRoutes from './routes/blogRoutes.js';
 
 
 
@@ -109,7 +110,7 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/admin', adminStatsRoutes);
 app.use('/api/materials', materialRoutes);
 app.use('/api/jobs', jobRoutes);
-
+app.use('/api/blogs', blogRoutes);
 
 // =========================
 // ✅ Seed SuperAdmin (on startup)
