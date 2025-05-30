@@ -1782,6 +1782,7 @@ export const downloadAllQuizzes = async (req, res) => {
   // Log export action
   await ExportLog.create({
     user: req.user._id,
+    action: 'download_quizzes_csv',
     exportType: 'quizzes',
     exportedAt: new Date(),
     details: { count: quizzes.length }
@@ -1801,6 +1802,7 @@ export const downloadAllCategories = async (req, res) => {
   // Log export action
   await ExportLog.create({
     user: req.user._id,
+    action: 'download_categories_csv',
     exportType: 'categories',
     exportedAt: new Date(),
     details: { count: categories.length }
@@ -1820,6 +1822,7 @@ export const downloadAllTopics = async (req, res) => {
   // Log export action
   await ExportLog.create({
     user: req.user._id,
+     action: 'download_topics_csv',
     exportType: 'topics',
     exportedAt: new Date(),
     details: { count: topics.length }
