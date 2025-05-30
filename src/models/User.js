@@ -76,35 +76,61 @@ userSchema.virtual('isLocked').get(function () {
   return !!(this.lockUntil && this.lockUntil > Date.now());
 });
 
-// Hash password before save
-userSchema.pre('save', async function (next) {
+// ─── Hash Password ────────────────────────────────────────────────────────────
+userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
   next();
 });
 
-// Compare password helper
-userSchema.methods.comparePassword = function (candidate) {
+// ─── Compare Helper ───────────────────────────────────────────────────────────
+userSchema.methods.comparePassword = function(candidate) {
   return bcrypt.compare(candidate, this.password);
 };
 
-// Apply notification plugin for domain events
+// ─── Auto-notifications via plugin ────────────────────────────────────────────
 userSchema.plugin(notificationPlugin, {
   events: [
+    // New user sign-up
     {
       on: 'insert',
       event: 'userRegistered',
       payload: doc => ({ userId: doc._id })
     },
-       {
+    // Admin created a new user (role is ADMIN or SUPERADMIN)
+    {
+      on: 'insert',
+      event: 'adminUserCreated',
+      match: doc => ['ADMIN','SUPERADMIN'].includes(String(doc.role)),
+      payload: doc => ({ userId: doc._id })
+    },
+    // Password reset requested (resetToken set)
+    {
+      on: 'update',
+      event: 'passwordResetRequested',
+      match: (_doc, update) => Boolean(update.$set?.resetToken),
+      payload: doc => ({ userId: doc._id })
+    },
+    // Password actually changed
+    {
       on: 'update',
       event: 'passwordResetCompleted',
       match: (_doc, update) => Boolean(update.$set?.password),
       payload: doc => ({ userId: doc._id })
+    },
+    // Role changed
+    {
+      on: 'update',
+      event: 'roleChanged',
+      match: (_doc, update) => Boolean(update.$set?.role),
+      payload: doc => ({
+        userId: doc._id,
+        oldRole: _doc.role,
+        newRole: update.$set.role
+      })
     }
   ]
 });
-
 // Avoid model overwrite errors in development/hot reload
 const User = mongoose.models.User || model('User', userSchema);
 export default User;
