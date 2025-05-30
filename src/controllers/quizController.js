@@ -938,7 +938,6 @@ import asyncHandler from '../utils/asyncHandler.js';
 import { Parser } from 'json2csv';
 import csv from 'csvtojson';
 import { z } from 'zod';
-
 import Topic from '../models/Topic.js';
 import AuditLog from '../models/AuditLog.js';
 import Category from '../models/Category.js';
@@ -1150,6 +1149,23 @@ export const updateQuiz = asyncHandler(async (req, res) => {
   }
   res.json(quiz);
 });
+
+// Inside quizController.js
+
+export const deleteQuiz = asyncHandler(async (req, res) => {
+  const { quizId } = idParamSchema.parse(req.params);
+
+  const quiz = await Quiz.findByIdAndDelete(quizId);
+  if (!quiz) return res.status(404).json({ message: 'Quiz not found' });
+
+  if (redis) {
+    redis.del('quizzes:all').catch(() => {});
+    redis.del(`quiz:${quizId}`).catch(() => {});
+  }
+
+  res.json({ message: 'Quiz deleted successfully' });
+});
+
 
 // ─── QUESTIONS CRUD ──────────────────────────────────────────────────────────
 export const addQuestionToQuiz = asyncHandler(async (req, res) => {
@@ -1751,3 +1767,152 @@ export const saveAlertConfig = asyncHandler(async (req, res) => {
   res.json({ message: 'Alert settings saved', alert });
 });
 
+
+
+export const downloadAllQuizzes = async (req, res) => {
+  const quizzes = await Quiz.find({})
+    .populate('category', 'name')
+    .populate('topic', 'name')
+    .lean();
+
+  const fields = ['title', 'category.name', 'topic.name', 'level', 'duration', 'totalMarks', 'isActive'];
+  const parser = new Parser({ fields });
+  const csv = parser.parse(quizzes);
+
+  res.header('Content-Type', 'text/csv');
+  res.attachment('quizzes.csv');
+  return res.send(csv);
+};
+
+export const downloadAllCategories = async (req, res) => {
+  const categories = await Category.find({}).lean();
+  const fields = ['name'];
+  const parser = new Parser({ fields });
+  const csv = parser.parse(categories);
+
+  res.header('Content-Type', 'text/csv');
+  res.attachment('categories.csv');
+  return res.send(csv);
+};
+
+export const downloadAllTopics = async (req, res) => {
+  const topics = await Topic.find({}).populate('category', 'name').lean();
+  const fields = ['name', 'category.name'];
+  const parser = new Parser({ fields });
+  const csv = parser.parse(topics);
+
+  res.header('Content-Type', 'text/csv');
+  res.attachment('topics.csv');
+  return res.send(csv);
+};
+
+
+
+/**
+ * GET /api/quizzes/highlight/daily-spotlight
+ * Returns one quiz per day (rotates through your active quizzes).
+ */
+export const getDailySpotlight = asyncHandler(async (_req, res) => {
+  const all = await Quiz.find({ isActive: true })
+    .select('title duration level createdAt')
+    .lean();
+  if (!all.length) return res.json(null);
+
+  // pick an index based on today’s date
+  const day = new Date().getDate();
+  const idx = day % all.length;
+  res.json(all[idx]);
+});
+
+
+
+export const getGroupedTopics = asyncHandler(async (_req, res) => {
+  // 1) grab all active quizzes, but only category & topic fields
+  const quizzes = await Quiz.find({ isActive: true }).select('category topic -_id');
+
+  // 2) group in memory
+  const grouped = {};
+  quizzes.forEach(q => {
+    // skip any missing data
+    if (!q.category || !q.topic) return;
+    const catId = q.category.toString();
+    const topId = q.topic.toString();
+    if (!grouped[catId]) grouped[catId] = new Set();
+    grouped[catId].add(topId);
+  });
+
+  // 3) turn map-of-sets into array-of-objects
+  const result = Object.entries(grouped).map(([category, topicSet]) => ({
+    category,                  // this is the _id of your Category
+    topics: Array.from(topicSet) // array of _id of your Topic
+  }));
+
+  res.json(result);
+});
+
+
+
+/** * GET /api/quizzes/highlight/just-added
+ * Returns the N most recently created active quizzes.
+ */
+export const getJustAddedQuizzes = asyncHandler(async (req, res) => {
+  const limit = Math.min(10, parseInt(req.query.limit,10) || 3);
+  const quizzes = await Quiz.find({ isActive: true })
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .select('title duration level createdAt')    // only necessary fields
+    .lean();
+  res.json(quizzes);
+});
+
+
+
+export const getSidebarFilters = asyncHandler(async (_req, res) => {
+  // 1) levels
+  const levels = await Quiz.distinct('level', { isActive: true });
+
+  // 2) distinct category & topic IDs from the quizzes
+  const [catIds, topicIds] = await Promise.all([
+    Quiz.distinct('category', { isActive: true }),
+    Quiz.distinct('topic',    { isActive: true }),
+  ]);
+
+  // 3) fetch their names in bulk
+  const [categories, topics] = await Promise.all([
+    Category.find({ _id: { $in: catIds } }).select('_id name'),
+    Topic    .find({ _id: { $in: topicIds } }).select('_id name'),
+  ]);
+
+  res.json({ categories, topics, levels });
+});
+
+
+
+/**
+ * GET /api/quizzes/highlight/trending
+ * Returns the top N quizzes by number of attempts in the last week.
+ */
+export const getTrendingQuizzes = asyncHandler(async (req, res) => {
+  const limit = Math.min(10, parseInt(req.query.limit,10) || 5);
+  const since = new Date(Date.now() - 7*24*60*60*1000);
+
+  // aggregate attempt counts in last week
+  const top = await QuizAttempt.aggregate([
+    { $match: { createdAt: { $gte: since } } },
+    { $group: { _id: '$quiz', count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+    { $limit: limit }
+  ]);
+
+  const quizIds = top.map(x => x._id);
+  const quizzes = await Quiz.find({ _id: { $in: quizIds } })
+    .select('title duration level')
+    .lean();
+  
+  // preserve original order
+  const ordered = quizIds.map(id =>
+    quizzes.find(q => q._id.equals(id))
+  ).filter(Boolean);
+
+  res.json(ordered);
+});

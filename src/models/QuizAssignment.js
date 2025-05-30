@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import notificationPlugin from '../plugins/notificationPlugin.js';
 
 const quizAssignmentSchema = new mongoose.Schema({
   quiz: {
