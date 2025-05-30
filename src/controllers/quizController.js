@@ -1779,6 +1779,14 @@ export const downloadAllQuizzes = async (req, res) => {
   const parser = new Parser({ fields });
   const csv = parser.parse(quizzes);
 
+  // Log export action
+  await ExportLog.create({
+    user: req.user._id,
+    exportType: 'quizzes',
+    exportedAt: new Date(),
+    details: { count: quizzes.length }
+  });
+
   res.header('Content-Type', 'text/csv');
   res.attachment('quizzes.csv');
   return res.send(csv);
@@ -1790,6 +1798,14 @@ export const downloadAllCategories = async (req, res) => {
   const parser = new Parser({ fields });
   const csv = parser.parse(categories);
 
+  // Log export action
+  await ExportLog.create({
+    user: req.user._id,
+    exportType: 'categories',
+    exportedAt: new Date(),
+    details: { count: categories.length }
+  });
+
   res.header('Content-Type', 'text/csv');
   res.attachment('categories.csv');
   return res.send(csv);
@@ -1800,6 +1816,14 @@ export const downloadAllTopics = async (req, res) => {
   const fields = ['name', 'category.name'];
   const parser = new Parser({ fields });
   const csv = parser.parse(topics);
+
+  // Log export action
+  await ExportLog.create({
+    user: req.user._id,
+    exportType: 'topics',
+    exportedAt: new Date(),
+    details: { count: topics.length }
+  });
 
   res.header('Content-Type', 'text/csv');
   res.attachment('topics.csv');
