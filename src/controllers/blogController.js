@@ -37,16 +37,16 @@ export const getBlogs = asyncHandler(async (req, res) => {
 
 // ─── Get single blog by ID ────────────────────────────────────────────────────
 export const getBlogById = asyncHandler(async (req, res) => {
-  const blog = await Blog.findById(req.params.id)
+  const blog = await Blog.findById(req.params.blogId)  // <-- note: req.params.blogId, not id
     .populate('category', 'name')
     .populate('author', 'name email');
 
   if (!blog || blog.isDeleted) {
     return res.status(404).json({ message: 'Blog not found' });
   }
-
   res.json(blog);
 });
+
 
 // ─── Create a new blog post ────────────────────────────────────────────────────
 export const createBlog = asyncHandler(async (req, res) => {

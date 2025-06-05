@@ -169,7 +169,7 @@ export const getAllQuizzes = asyncHandler(async (_req, res) => {
     .populate('questions');
 
   if (redis) {
-    redis.set(cacheKey, JSON.stringify(quizzes), 'EX', 3600).catch(() => {});
+    redis.set(cacheKey, JSON.stringify(quizzes), 'EX', 3600).catch(() => { });
   }
 
   res.json(quizzes);
@@ -198,7 +198,7 @@ export const getQuizById = asyncHandler(async (req, res) => {
   if (!quiz) return res.status(404).json({ message: 'Quiz not found' });
 
   if (redis) {
-    redis.set(cacheKey, JSON.stringify(quiz), 'EX', 3600).catch(() => {});
+    redis.set(cacheKey, JSON.stringify(quiz), 'EX', 3600).catch(() => { });
   }
 
   res.json(quiz);
@@ -208,7 +208,7 @@ export const getQuizById = asyncHandler(async (req, res) => {
 export const createQuiz = asyncHandler(async (req, res) => {
   const data = createQuizSchema.parse(req.body);
   const quiz = await Quiz.create(data);
-  if (redis) redis.del('quizzes:all').catch(() => {});
+  if (redis) redis.del('quizzes:all').catch(() => { });
   res.status(201).json(quiz);
 });
 
@@ -219,8 +219,8 @@ export const updateQuiz = asyncHandler(async (req, res) => {
   if (!quiz) return res.status(404).json({ message: 'Quiz not found' });
 
   if (redis) {
-    redis.del(`quiz:${quizId}`).catch(() => {});
-    redis.del('quizzes:all').catch(() => {});
+    redis.del(`quiz:${quizId}`).catch(() => { });
+    redis.del('quizzes:all').catch(() => { });
   }
   res.json(quiz);
 });
@@ -234,8 +234,8 @@ export const deleteQuiz = asyncHandler(async (req, res) => {
   if (!quiz) return res.status(404).json({ message: 'Quiz not found' });
 
   if (redis) {
-    redis.del('quizzes:all').catch(() => {});
-    redis.del(`quiz:${quizId}`).catch(() => {});
+    redis.del('quizzes:all').catch(() => { });
+    redis.del(`quiz:${quizId}`).catch(() => { });
   }
 
   res.json({ message: 'Quiz deleted successfully' });
@@ -255,8 +255,8 @@ export const addQuestionToQuiz = asyncHandler(async (req, res) => {
   });
 
   if (redis) {
-    redis.del(`quiz:${quizId}`).catch(() => {});
-    redis.del('quizzes:all').catch(() => {});
+    redis.del(`quiz:${quizId}`).catch(() => { });
+    redis.del('quizzes:all').catch(() => { });
   }
 
   res.status(201).json(question);
@@ -290,8 +290,8 @@ export const bulkUploadQuestions = asyncHandler(async (req, res) => {
     await session.commitTransaction();
 
     if (redis) {
-      redis.del(`quiz:${quizId}`).catch(() => {});
-      redis.del('quizzes:all').catch(() => {});
+      redis.del(`quiz:${quizId}`).catch(() => { });
+      redis.del('quizzes:all').catch(() => { });
     }
 
     res.status(201).json({ message: 'Questions uploaded', count: created.length });
@@ -354,8 +354,8 @@ export const bulkUploadFromFile = asyncHandler(async (req, res) => {
     await session.commitTransaction();
 
     if (redis) {
-      redis.del(`quiz:${quizId}`).catch(() => {});
-      redis.del('quizzes:all').catch(() => {});
+      redis.del(`quiz:${quizId}`).catch(() => { });
+      redis.del('quizzes:all').catch(() => { });
     }
 
     res.status(201).json({ message: 'Bulk upload successful', count: created.length });
@@ -769,7 +769,10 @@ export const getDAUReport = asyncHandler(async (req, res) => {
     { $sort: { date: 1 } }
   ]);
 
+  // Optional: convert date strings to ISODate strings or timestamps here if needed
+
   res.json(results);
+
 });
 
 /**
@@ -912,7 +915,7 @@ export const downloadAllTopics = async (req, res) => {
   // Log export action
   await ExportLog.create({
     user: req.user._id,
-    
+
     exportType: 'topics',
     exportedAt: new Date(),
     details: { count: topics.length }
@@ -973,7 +976,7 @@ export const getGroupedTopics = asyncHandler(async (_req, res) => {
  * Returns the N most recently created active quizzes.
  */
 export const getJustAddedQuizzes = asyncHandler(async (req, res) => {
-  const limit = Math.min(10, parseInt(req.query.limit,10) || 3);
+  const limit = Math.min(10, parseInt(req.query.limit, 10) || 3);
   const quizzes = await Quiz.find({ isActive: true })
     .sort({ createdAt: -1 })
     .limit(limit)
@@ -991,13 +994,13 @@ export const getSidebarFilters = asyncHandler(async (_req, res) => {
   // 2) distinct category & topic IDs from the quizzes
   const [catIds, topicIds] = await Promise.all([
     Quiz.distinct('category', { isActive: true }),
-    Quiz.distinct('topic',    { isActive: true }),
+    Quiz.distinct('topic', { isActive: true }),
   ]);
 
   // 3) fetch their names in bulk
   const [categories, topics] = await Promise.all([
     Category.find({ _id: { $in: catIds } }).select('_id name'),
-    Topic    .find({ _id: { $in: topicIds } }).select('_id name'),
+    Topic.find({ _id: { $in: topicIds } }).select('_id name'),
   ]);
 
   res.json({ categories, topics, levels });
@@ -1010,8 +1013,8 @@ export const getSidebarFilters = asyncHandler(async (_req, res) => {
  * Returns the top N quizzes by number of attempts in the last week.
  */
 export const getTrendingQuizzes = asyncHandler(async (req, res) => {
-  const limit = Math.min(10, parseInt(req.query.limit,10) || 5);
-  const since = new Date(Date.now() - 7*24*60*60*1000);
+  const limit = Math.min(10, parseInt(req.query.limit, 10) || 5);
+  const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
   // aggregate attempt counts in last week
   const top = await QuizAttempt.aggregate([
@@ -1025,7 +1028,7 @@ export const getTrendingQuizzes = asyncHandler(async (req, res) => {
   const quizzes = await Quiz.find({ _id: { $in: quizIds } })
     .select('title duration level')
     .lean();
-  
+
   // preserve original order
   const ordered = quizIds.map(id =>
     quizzes.find(q => q._id.equals(id))
