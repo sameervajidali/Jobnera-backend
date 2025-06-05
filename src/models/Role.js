@@ -1,39 +1,41 @@
-// src/models/Role.js
 import mongoose from 'mongoose';
 
-// 1️⃣ Define your modules/resources
+// ─── 1️⃣ Define your modules/resources ────────────────────────────────
+// These represent your system’s main resource entities for permissions
 const RESOURCES = [
   'USER',
   'ROLE',
   'QUIZ',
   'BLOG',
   'JOB',
-  // add new modules here...
+  // Add new modules here as your system expands
 ];
 
-// 2️⃣ Define your CRUD actions (plus any extras)
+// ─── 2️⃣ Define your CRUD actions (plus any extras) ───────────────────
+// Common actions plus extra like MANAGE for higher-level access
 const ACTIONS = [
   'CREATE',
   'READ',
   'UPDATE',
   'DELETE',
-  'MANAGE'
-  // you can add 'PUBLISH', 'ASSIGN', etc.
+  'MANAGE',
+  // Add more granular actions if needed (e.g., 'PUBLISH', 'ASSIGN')
 ];
 
-// 3️⃣ Auto-generate all valid permission keys
-//    e.g. ['USER_CREATE','USER_READ',...,'JOB_DELETE']
+// ─── 3️⃣ Auto-generate all valid permission keys ─────────────────────
+// Combines each resource with every action (e.g., USER_CREATE)
 export const VALID_PERMISSIONS = RESOURCES.flatMap(resource =>
   ACTIONS.map(action => `${resource}_${action}`)
 );
 
+// ─── Role Schema ──────────────────────────────────────────────────────
 const roleSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
     unique: true,
     trim: true,
-    uppercase: true,
+    uppercase: true,  // Normalize role names to uppercase for consistency
   },
   description: {
     type: String,
@@ -42,16 +44,17 @@ const roleSchema = new mongoose.Schema({
   },
   permissions: {
     type: [String],
-    enum: VALID_PERMISSIONS,
-    default: [],           // by default a new role has no permissions
+    enum: VALID_PERMISSIONS,  // Validate permissions against allowed keys
+    default: [],              // New roles start with no permissions
   },
 }, {
-  timestamps: true,
+  timestamps: true, // createdAt, updatedAt auto-managed
 });
 
-// Optional: add a static helper to list permissions if needed
+// Optional: Static method to get all valid permissions
 roleSchema.statics.getValidPermissions = function() {
   return VALID_PERMISSIONS;
 };
 
-export default mongoose.model('Role', roleSchema);
+// Avoid model overwrite on hot reloads (especially in dev)
+export default mongoose.models.Role || mongoose.model('Role', roleSchema);

@@ -1,4 +1,3 @@
-
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
@@ -14,19 +13,19 @@ import {
   sendActivationSuccessEmail
 } from '../services/emailService.js';
 
-
-
 const CLIENT_URL = process.env.CLIENT_URL || 'https://jobneura.tech';
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
+// Create access token (JWT) with 15 min expiry
 const createAccessToken = (payload) => jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '15m' });
+
+// Create refresh token (JWT) with 7 day expiry
 const createRefreshToken = (payload) => jwt.sign(payload, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
 
+// Secure cookie options for auth tokens
 const cookieOptions = {
-  domain: process.env.NODE_ENV === 'production'
-    ? '.jobneura.tech'
-    : 'localhost',
+  domain: process.env.NODE_ENV === 'production' ? '.jobneura.tech' : 'localhost',
   path: '/',
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
@@ -52,9 +51,11 @@ export const register = asyncHandler(async (req, res) => {
     return res.status(500).json({ message: 'Default user role not found in the system.' });
   }
 
+  // Generate activation token and activation link
   const activationToken = crypto.randomBytes(32).toString('hex');
   const activationLink = `${CLIENT_URL}/activate?token=${activationToken}`;
 
+  // Create user with hashed password (assumed User model handles hashing)
   const newUser = await User.create({
     name,
     email,
@@ -65,6 +66,7 @@ export const register = asyncHandler(async (req, res) => {
     activationToken
   });
 
+  // Send activation email (async catch errors silently)
   sendActivationEmail(email, name, activationLink).catch(console.error);
 
   res.status(201).json({ message: 'Registered! Check your email.' });
@@ -84,12 +86,11 @@ export const activateAccount = asyncHandler(async (req, res) => {
   res.status(200).json({ message: 'Account activated.' });
 });
 
-// // ─── Login ───────────────────────────────────────────────────────────────────
-
-
+// ─── Login ───────────────────────────────────────────────────────────────────
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  // Derive client IP (supports proxies)
+
+  // Derive client IP supporting proxies
   const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '')
     .split(',')[0]
     .trim();
@@ -101,31 +102,31 @@ export const login = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: 'Email and password are required.' });
   }
 
-  // 2️⃣ Find user
+  // 2️⃣ Find user and select password explicitly (hidden by default)
   const user = await User.findOne({ email }).select('+password');
   if (!user) {
     await LoginHistory.create({ user: null, ip, userAgent: ua, success: false });
     return res.status(404).json({ message: 'No account found with this email.' });
   }
 
-  // 3️⃣ Check verification
+  // 3️⃣ Check email verification status
   if (!user.isVerified) {
     await LoginHistory.create({ user: user._id, ip, userAgent: ua, success: false });
     return res.status(403).json({ message: 'Please verify your email first.' });
   }
 
-  // 4️⃣ Verify password
+  // 4️⃣ Verify password using bcrypt
   const match = await bcrypt.compare(password, user.password);
   if (!match) {
     await LoginHistory.create({ user: user._id, ip, userAgent: ua, success: false });
     return res.status(401).json({ message: 'Incorrect password.' });
   }
 
-  // 5️⃣ Record last login
+  // 5️⃣ Update last login timestamp without triggering validators
   user.lastLogin = Date.now();
   await user.save({ validateBeforeSave: false });
 
-  // 6️⃣ Geo-lookup (optional)
+  // 6️⃣ Geo-lookup (optional, failure logged but ignored)
   let geo = {};
   try {
     const geoRes = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,regionName,city`);
@@ -141,7 +142,7 @@ export const login = asyncHandler(async (req, res) => {
     console.warn('Geo lookup error:', err);
   }
 
-  // 7️⃣ Log a single history entry
+  // 7️⃣ Log login history with success and geo info
   await LoginHistory.create({
     user: user._id,
     ip,
@@ -150,11 +151,11 @@ export const login = asyncHandler(async (req, res) => {
     ...geo,
   });
 
-  // 8️⃣ Generate & set tokens
+  // 8️⃣ Generate JWT access and refresh tokens
   const accessToken = createAccessToken({ userId: user._id, role: user.role });
   const refreshToken = createRefreshToken({ userId: user._id });
 
-
+  // 9️⃣ Set tokens as secure HttpOnly cookies and send safe user info
   res
     .cookie('accessToken', accessToken, {
       ...cookieOptions,
@@ -165,19 +166,17 @@ export const login = asyncHandler(async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
-  // 9️⃣ Return the safe user object
+  // Return user without sensitive fields, with populated role name
   const safeUser = await User.findById(user._id)
     .select('-password -refreshTokens -resetToken -activationToken')
-    .populate('role', 'name')   // ← add this
+    .populate('role', 'name')
     .lean();
-
 
   res.status(200).json({
     message: 'Login successful',
     user: safeUser
   });
 });
-
 
 // ─── Logout ───────────────────────────────────────────────────────────────────
 export const logout = (req, res) => {
@@ -188,7 +187,7 @@ export const logout = (req, res) => {
     .json({ message: 'Logged out successfully' });
 };
 
-// ─── Refresh ─────────────────────────────────────────────────────────────────
+// ─── Refresh ───────────────────────────────────────────────────────────────────
 // Refresh Token Controller
 export const refreshToken = asyncHandler(async (req, res) => {
   // 1) Read the raw cookie
@@ -245,13 +244,12 @@ export const refreshToken = asyncHandler(async (req, res) => {
 });
 
 // ─── Get Current User ────────────────────────────────────────────────────────
-
 export const getCurrentUser = async (req, res) => {
   console.log("🧁 Cookies:", req.cookies);
 
   const user = await User.findById(req.user._id)
     .select('-password')
-    .populate('role', 'name');    // ← populate role.name here
+    .populate('role', 'name');    // populate role name
 
   if (!user) {
     return res.status(404).json({ message: 'User not found' });
@@ -260,33 +258,31 @@ export const getCurrentUser = async (req, res) => {
   res.status(200).json({ user });
 };
 
-
-
-
 // ─── Change Password ────────────────────────────────────────────────────────
 export const changePassword = asyncHandler(async (req, res) => {
   const { currentPassword, newPassword } = req.body;
 
-  // 🔒 Validate input
+  // Validate new password length
   if (!newPassword || newPassword.length < 6) {
     return res.status(400).json({
       message: 'New password must be at least 6 characters long.',
     });
   }
 
+  // Find user with password for validation
   const user = await User.findById(req.user._id).select('+password');
   if (!user) {
     return res.status(404).json({ message: 'User not found.' });
   }
 
-  // 🔐 For regular users with existing password
+  // Validate current password if exists (not social login user)
   if (user.password) {
     const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Incorrect current password.' });
     }
   } else {
-    // 👥 For social login users without password
+    // For social login users without existing password
     if (currentPassword) {
       return res.status(400).json({
         message: "You don't have an existing password. Leave 'Current Password' empty to set one.",
@@ -294,60 +290,20 @@ export const changePassword = asyncHandler(async (req, res) => {
     }
   }
 
+  // Update password and send notification email
   user.password = newPassword;
   await user.save();
   await sendPasswordChangedEmail(user.email, user.name);
   res.status(200).json({ message: 'Password updated successfully.' });
 });
 
-
+// ─── Delete Account ───────────────────────────────────────────────────────────
 export const deleteAccount = asyncHandler(async (req, res) => {
   await User.findByIdAndDelete(req.user.userId);
   res.status(200).json({ message: 'Account deleted.' });
 });
 
-
-
-
-// ─── Google Social Login/Signup ───────────────────────────────────────────────
-// export const googleAuth = asyncHandler(async (req, res) => {
-//   const { idToken } = req.body;
-//   const ticket = await googleClient.verifyIdToken({
-//     idToken,
-//     audience: process.env.GOOGLE_CLIENT_ID,
-//   });
-//   const { email, name, picture, email_verified } = ticket.getPayload();
-//   if (!email_verified) {
-//     return res.status(400).json({ message: 'Google email not verified.' });
-//   }
-
-//   let user = await User.findOne({ email });
-//   if (!user) {
-//     user = await User.create({
-//       name,
-//       email,
-//       avatar: picture,
-//       isVerified: true,
-//       provider: 'google',
-//     });
-//   }
-
-//   const accessToken = createAccessToken({ userId: user._id, role: user.role });
-//   const refreshToken = createRefreshToken({ userId: user._id });
-
-//   res
-//     .cookie('accessToken', accessToken, {
-//       ...cookieOptions,
-//       maxAge: 15 * 60 * 1000,
-//     })
-//     .cookie('refreshToken', refreshToken, {
-//       ...cookieOptions,
-//       maxAge: 7 * 24 * 60 * 60 * 1000,
-//     })
-//     .status(200)
-//     .json({ message: 'Google authentication successful', user });
-// });
-
+// ─── Google OAuth Login ───────────────────────────────────────────────────────
 export const googleAuth = asyncHandler(async (req, res) => {
   try {
     const { idToken } = req.body;
@@ -373,11 +329,9 @@ export const googleAuth = asyncHandler(async (req, res) => {
     let user = await User.findOne({ email: payload.email });
     if (!user) {
       console.log('🟢 googleAuth: creating new user');
-      // Lookup default role
       const userRole = await Role.findOne({ name: 'USER' });
       if (!userRole) throw new Error('Default USER role not found');
 
-      // Create with role
       user = await User.create({
         name: payload.name,
         email: payload.email,
@@ -409,8 +363,7 @@ export const googleAuth = asyncHandler(async (req, res) => {
   }
 });
 
-
-// ─── Facebook Social Login/Signup ─────────────────────────────────────────────
+// ─── Facebook Social Login ────────────────────────────────────────────────────
 export const facebookAuth = asyncHandler(async (req, res) => {
   const { accessToken: fbToken } = req.body;
   const fbRes = await fetch(
@@ -447,8 +400,7 @@ export const facebookAuth = asyncHandler(async (req, res) => {
     .json({ message: 'Facebook authentication successful', user });
 });
 
-
-// ─── GitHub Social Login/Signup ───────────────────────────────────────────────
+// ─── GitHub Social Login ──────────────────────────────────────────────────────
 export const githubAuth = asyncHandler(async (req, res) => {
   const { code } = req.body;
   if (!code) {
@@ -486,7 +438,6 @@ export const githubAuth = asyncHandler(async (req, res) => {
   let user = await User.findOne({ email });
   if (!user) {
     console.log('🟢 githubAuth: creating new user');
-    // lookup the default USER role
     const userRole = await Role.findOne({ name: 'USER' });
     if (!userRole) throw new Error('Default USER role not found');
 
@@ -496,7 +447,7 @@ export const githubAuth = asyncHandler(async (req, res) => {
       avatar,
       isVerified: true,
       provider: 'github',
-      role: userRole._id,            // ← include the role
+      role: userRole._id,
     });
   } else {
     console.log('🟢 githubAuth: found existing user', user._id);
@@ -514,18 +465,14 @@ export const githubAuth = asyncHandler(async (req, res) => {
     .json({ message: 'GitHub authentication successful', user });
 });
 
-
+// ─── Get Profile ─────────────────────────────────────────────────────────────
 export const getProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id).select('-password').lean();
   if (!user) return res.status(404).json({ message: 'User not found.' });
   res.status(200).json({ user });
 });
 
-
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Password Reset
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Password Reset Requests ──────────────────────────────────────────────────
 export const requestPasswordReset = asyncHandler(async (req, res) => {
   console.log("📨 Password reset route HIT");
 
@@ -547,8 +494,6 @@ export const requestPasswordReset = asyncHandler(async (req, res) => {
 
   res.status(200).json({ message: "If this email exists, a reset link has been sent." });
 });
-
-
 
 export const resetPassword = asyncHandler(async (req, res) => {
   console.log("📥 Reset request body:", req.body);
@@ -579,27 +524,15 @@ export const resetPassword = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Password updated successfully." });
 });
 
-
-
-
+// ─── Update Profile ──────────────────────────────────────────────────────────
 export const updateProfile = asyncHandler(async (req, res) => {
-  // 1) Destructure expected fields from JSON body
+  // Destructure fields
   const {
-    name,
-    phone,
-    location,
-    bio,
-    website,
-    linkedin,
-    skills,
-    languages,
-    experience,
-    education,
-    avatar,
-    resume
+    name, phone, location, bio, website, linkedin,
+    skills, languages, experience, education, avatar, resume
   } = req.body;
 
-  // 2) Build an updates object, parsing arrays if they arrive as strings
+  // Prepare update object with parsing for JSON strings
   const updates = {
     ...(name !== undefined && { name }),
     ...(phone !== undefined && { phone }),
@@ -611,11 +544,11 @@ export const updateProfile = asyncHandler(async (req, res) => {
     ...(languages !== undefined && { languages: typeof languages === 'string' ? JSON.parse(languages) : languages }),
     ...(experience !== undefined && { experience: typeof experience === 'string' ? JSON.parse(experience) : experience }),
     ...(education !== undefined && { education: typeof education === 'string' ? JSON.parse(education) : education }),
-    ...(avatar !== undefined && { avatar }),   // URL from Firebase
-    ...(resume !== undefined && { resume })    // URL from Firebase
+    ...(avatar !== undefined && { avatar }),
+    ...(resume !== undefined && { resume }),
   };
 
-  // 3) Update the user document
+  // Update user and return new data
   const updated = await User.findByIdAndUpdate(
     req.user._id,
     updates,
@@ -626,14 +559,10 @@ export const updateProfile = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: 'User not found.' });
   }
 
-  // 4) Return the updated user
   res.json({ message: 'Profile updated', user: updated });
 });
 
-
-
-
-// ─── Check Email Availability ─────────────────────────────────────────────
+// ─── Check Email Availability ────────────────────────────────────────────────
 export const checkEmailAvailability = async (req, res) => {
   const { email } = req.query;
 

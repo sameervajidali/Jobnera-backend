@@ -367,37 +367,7 @@ export const bulkUploadFromFile = asyncHandler(async (req, res) => {
   }
 });
 
-// ─── DOWNLOAD QUESTIONS TEMPLATE CSV ─────────────────────────────────────────
-// export const downloadQuestionsTemplate = asyncHandler(async (req, res) => {
-//   const { quizId } = idParamSchema.parse(req.params);
 
-//   const quiz = await Quiz.findById(quizId).select('topic level');
-//   if (!quiz) return res.status(404).json({ message: 'Quiz not found' });
-
-//   const topic = quiz.topic || 'quiz';
-//   const level = quiz.level || 'medium';
-
-//   const header = ['question', 'option1', 'option2', 'option3', 'option4', 'correctAnswer', 'topic', 'explanation', 'difficulty'];
-//   const sampleRows = [[
-//     'Sample question text?',
-//     'Option A',
-//     'Option B',
-//     'Option C',
-//     'Option D',
-//     '0',
-//     topic,
-//     'Explain why this is the correct answer.',
-//     level
-//   ]];
-
-//   const csvContent = [header, ...sampleRows]
-//     .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
-//     .join('\n');
-
-//   res.setHeader('Content-Disposition', `attachment; filename="questions_template_${topic.replace(/\s+/g, '_')}.csv"`);
-//   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-//   res.send(csvContent);
-// });
 
 export const downloadQuestionsTemplate = asyncHandler(async (req, res) => {
   const { quizId } = idParamSchema.parse(req.params);

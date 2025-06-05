@@ -19,62 +19,63 @@ import User          from '../models/User.js';
 export const getUserDashboard = asyncHandler(async (req, res) => {
   const userId = req.user._id;
   const { startDate, endDate } = req.query;
+
+  function parseDate(dateStr) {
+    if (!dateStr) return null;
+    const d = new Date(dateStr);
+    return isNaN(d) ? null : d;
+  }
+
+  const start = parseDate(startDate);
+  const end = parseDate(endDate);
+  if ((startDate && !start) || (endDate && !end)) {
+    return res.status(400).json({ message: 'Invalid date filter' });
+  }
+
   const dateFilter = {};
-  if (startDate) dateFilter.$gte = new Date(startDate);
-  if (endDate)   dateFilter.$lte = new Date(endDate);
+  if (start) dateFilter.$gte = start;
+  if (end) dateFilter.$lte = end;
 
-  // 1) Bookmarks
-  const bookmarks = await Bookmark.find({ user: userId })
-    .populate('quiz', 'title category topic level');
-
-  // 2) Attempts (with optional date filtering)
   const attemptQuery = { user: userId };
-  if (startDate || endDate) attemptQuery.createdAt = dateFilter;
-  const attempts = await QuizAttempt.find(attemptQuery)
-    .populate('quiz', 'title duration level category topic')
-    .sort({ createdAt: -1 });
+  if (start || end) attemptQuery.createdAt = dateFilter;
 
-  // 3) Assigned quizzes
-  const assignments = await QuizAssignment.find({ user: userId })
-    .populate({
+  // Run DB queries in parallel
+  const [bookmarks, attempts, assignments, materials] = await Promise.all([
+    Bookmark.find({ user: userId }).populate('quiz', 'title category topic level').lean(),
+    QuizAttempt.find(attemptQuery).populate('quiz', 'title duration level category topic').sort({ createdAt: -1 }).lean(),
+    QuizAssignment.find({ user: userId }).populate({
       path: 'quiz',
       select: 'title category topic level duration',
-      populate: [
-        { path: 'category', select: 'name' },
-        { path: 'topic',    select: 'name' }
-      ]
-    });
+      populate: [{ path: 'category', select: 'name' }, { path: 'topic', select: 'name' }]
+    }).lean(),
+    LearningMaterial.find({ assignedTo: userId }).select('title type url assignedAt').sort({ assignedAt: -1 }).lean()
+  ]);
 
-  // 4) Learning materials (e.g. articles or PDFs assigned by admin)
-  const materials = await LearningMaterial.find({ assignedTo: userId })
-    .select('title type url assignedAt')
-    .sort({ assignedAt: -1 });
-
-  // 5) Full quiz history summary
   const history = attempts.map(a => ({
-    quizId:      a.quiz._id,
-    title:       a.quiz.title,
-    score:       a.score,
-    correct:     a.correctAnswers,
-    totalQs:     a.totalQuestions,
-    timeTaken:   a.timeTaken,
+    quizId: a.quiz._id,
+    title: a.quiz.title,
+    score: a.score,
+    correct: a.correctAnswers,
+    totalQs: a.totalQuestions,
+    timeTaken: a.timeTaken,
     attemptedAt: a.createdAt,
   }));
 
   res.json({
     user: {
-      _id:    req.user._id,
-      name:   req.user.name,
-      email:  req.user.email,
+      _id: req.user._id,
+      name: req.user.name,
+      email: req.user.email,
       joined: req.user.createdAt,
     },
-    bookmarks:    bookmarks.map(b => b.quiz),
+    bookmarks: bookmarks.map(b => b.quiz),
     attempts,
-    assignments:  assignments.map(a => a.quiz),
+    assignments: assignments.map(a => a.quiz),
     materials,
     history,
   });
 });
+
 
 
 /**

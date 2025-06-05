@@ -1,51 +1,58 @@
-// src/models/Certificate.js
 import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
 
 const CertificateSchema = new Schema({
+  // Reference to the user owning the certificate
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
-    index: true
+    index: true, // Indexed for fast user-based queries
   },
+  // Title of the certificate
   title: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
   },
+  // Issuer of the certificate, default to JobNeura
   issuer: {
     type: String,
     default: 'JobNeura',
-    trim: true
+    trim: true,
   },
+  // Date the certificate was issued
   issueDate: {
     type: Date,
     required: true,
-    default: Date.now
+    default: Date.now,
   },
+  // Optional expiration date of the certificate
   expirationDate: {
-    type: Date // optional
+    type: Date,
   },
+  // Score or grade achieved on the certificate, optional
   score: {
     type: Number,
-    default: null
+    default: null,
   },
+  // URL to badge or certificate image
   badgeUrl: {
-    type: String, // URL to certificate image/badge
+    type: String,
     trim: true,
-    default: ''
+    default: '',
   },
+  // Optional description or notes about the certificate
   description: {
     type: String,
     trim: true,
-    default: ''
-  }
+    default: '',
+  },
 }, {
-  timestamps: true
+  timestamps: true, // createdAt and updatedAt timestamps
 });
 
-// If you want to fetch a user's certificates in order:
+// Compound index to fetch certificates by user sorted by issue date descending
 CertificateSchema.index({ user: 1, issueDate: -1 });
 
 export default model('Certificate', CertificateSchema);

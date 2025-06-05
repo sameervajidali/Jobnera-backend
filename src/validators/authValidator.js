@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-// ✅ User registration validation
+// ─── User Registration Validation ──────────────────────────────────────
 export const registerSchema = Joi.object({
   name: Joi.string()
     .min(2)
@@ -29,7 +29,7 @@ export const registerSchema = Joi.object({
     }),
 });
 
-// ✅ Login validation
+// ─── Login Validation ───────────────────────────────────────────────────
 export const loginSchema = Joi.object({
   email: Joi.string()
     .email()
@@ -45,7 +45,7 @@ export const loginSchema = Joi.object({
     }),
 });
 
-// ✅ Password reset request
+// ─── Password Reset Request Validation ──────────────────────────────────
 export const passwordResetRequestSchema = Joi.object({
   email: Joi.string()
     .email()
@@ -56,7 +56,7 @@ export const passwordResetRequestSchema = Joi.object({
     }),
 });
 
-// ✅ Password reset confirmation
+// ─── Password Reset Confirmation Validation ────────────────────────────
 export const passwordResetSchema = Joi.object({
   token: Joi.string()
     .required()
