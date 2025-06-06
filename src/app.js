@@ -31,7 +31,7 @@ import notificationRoutes from './routes/notifications.js';
 import eventBus from './middlewares/eventBus.js';
 import blogRoutes from './routes/blogRoutes.js';
 import tutorialRoutes from './routes/tutorialRoutes.js';
-import subTopicRoutes from './routes/subTopicRoutes.js';
+import subTopicRoutes from './routes/admin/subTopicRoutes.js';
 
 
 

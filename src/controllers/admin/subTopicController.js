@@ -144,3 +144,33 @@ export const bulkUploadSubTopicsJSON = asyncHandler(async (req, res) => {
     errors,
   });
 });
+
+export const bulkUploadSubTopicsCSV = asyncHandler(async (req, res) => {
+  const { file } = req;
+  if (!file) {
+    return res.status(400).json({ message: "No file uploaded" });
+  }
+
+  const buffer = file.buffer;
+  const workbook = XLSX.read(buffer, { type: "buffer" });
+  const sheet = workbook.Sheets[workbook.SheetNames[0]];
+  const json = XLSX.utils.sheet_to_json(sheet);
+
+  let count = 0;
+  for (const row of json) {
+    if (!row.name || !row.topic) continue;
+
+    const exists = await SubTopic.findOne({ name: row.name, topic: row.topic });
+    if (exists) continue;
+
+    await SubTopic.create({
+      name: row.name.trim(),
+      description: row.description || "",
+      topic: row.topic.trim(),
+    });
+
+    count++;
+  }
+
+  res.json({ success: true, count });
+});
