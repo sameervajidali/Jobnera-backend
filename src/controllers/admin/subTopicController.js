@@ -146,31 +146,27 @@ export const bulkUploadSubTopicsJSON = asyncHandler(async (req, res) => {
 });
 
 export const bulkUploadSubTopicsCSV = asyncHandler(async (req, res) => {
-  const { file } = req;
-  if (!file) {
-    return res.status(400).json({ message: "No file uploaded" });
+  const { topic } = req.query;
+  if (!req.file || !topic) {
+    return res.status(400).json({ message: "File and topic ID required" });
   }
 
-  const buffer = file.buffer;
-  const workbook = XLSX.read(buffer, { type: "buffer" });
+  const workbook = xlsx.read(req.file.buffer);
   const sheet = workbook.Sheets[workbook.SheetNames[0]];
-  const json = XLSX.utils.sheet_to_json(sheet);
+  const jsonData = xlsx.utils.sheet_to_json(sheet);
 
-  let count = 0;
-  for (const row of json) {
-    if (!row.name || !row.topic) continue;
-
-    const exists = await SubTopic.findOne({ name: row.name, topic: row.topic });
-    if (exists) continue;
-
-    await SubTopic.create({
-      name: row.name.trim(),
-      description: row.description || "",
-      topic: row.topic.trim(),
-    });
-
-    count++;
+  if (!Array.isArray(jsonData) || jsonData.length === 0) {
+    return res.status(400).json({ message: "No valid subtopics found in file" });
   }
 
-  res.json({ success: true, count });
+  const subTopics = jsonData.map((item) => ({
+    name: item.name,
+    description: item.description || "",
+    topic,
+  }));
+
+  await SubTopic.insertMany(subTopics);
+
+  res.status(200).json({ message: "Bulk upload successful", count: subTopics.length });
 });
+
