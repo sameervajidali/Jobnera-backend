@@ -127,46 +127,45 @@ export const bulkUploadSubTopics = asyncHandler(async (req, res) => {
 
 // 🆕 BULK UPLOAD SubTopics via JSON Paste
 export const bulkUploadSubTopicsJSON = asyncHandler(async (req, res) => {
+  const { topic } = req.query;
   const data = req.body.subtopics;
 
+  if (!mongoose.Types.ObjectId.isValid(topic)) {
+    return res.status(400).json({ message: 'Invalid topic ID in query' });
+  }
+
   if (!Array.isArray(data) || data.length === 0) {
-    return res.status(400).json({ message: "Invalid or empty subtopics array" });
+    return res.status(400).json({ message: 'Invalid or empty subtopics array' });
   }
 
   let createdCount = 0;
   const errors = [];
 
   for (const entry of data) {
-    const { name, topic, description = "", icon = "", isVisible = true, order = 0 } = entry;
+    const { name, description = '', isVisible = true, order = 0 } = entry;
 
-    if (!name || !topic || !mongoose.Types.ObjectId.isValid(topic)) {
-      errors.push({ name, message: "Missing or invalid name/topic" });
-      continue;
-    }
-
-    const topicExists = await Topic.findById(topic);
-    if (!topicExists) {
-      errors.push({ name, message: "Topic does not exist" });
+    if (!name) {
+      errors.push({ name, message: 'Missing name' });
       continue;
     }
 
     const duplicate = await SubTopic.findOne({ name, topic });
     if (duplicate) {
-      errors.push({ name, message: "Duplicate subtopic" });
+      errors.push({ name, message: 'Duplicate subtopic in same topic' });
       continue;
     }
 
-    await SubTopic.create({ name, topic, description, icon, isVisible, order });
+    await SubTopic.create({ name, topic, description, isVisible, order });
     createdCount++;
   }
 
   res.status(201).json({
     message: `${createdCount} subtopics uploaded successfully`,
-    count: createdCount,
     failed: errors.length,
     errors,
   });
 });
+
 
 
 export const bulkUploadSubTopicsCSV = asyncHandler(async (req, res) => {
