@@ -145,7 +145,7 @@ export const bulkUploadSubTopicsJSON = asyncHandler(async (req, res) => {
     const { name, description = '', isVisible = true, order = 0 } = entry;
 
     if (!name) {
-      errors.push({ name, message: 'Missing name' });
+      errors.push({ name: '', message: 'Missing name field' });
       continue;
     }
 
@@ -159,12 +159,19 @@ export const bulkUploadSubTopicsJSON = asyncHandler(async (req, res) => {
     createdCount++;
   }
 
+  const successMessage = createdCount === 0
+    ? "No subtopics uploaded"
+    : `${createdCount} subtopics uploaded successfully`;
+
   res.status(201).json({
-    message: `${createdCount} subtopics uploaded successfully`,
+    success: createdCount > 0,
+    message: successMessage,
+    created: createdCount,
     failed: errors.length,
     errors,
   });
 });
+
 
 
 
