@@ -31,6 +31,7 @@ import notificationRoutes from './routes/notifications.js';
 import eventBus from './middlewares/eventBus.js';
 import blogRoutes from './routes/blogRoutes.js';
 import tutorialRoutes from './routes/tutorialRoutes.js';
+import subTopicRoutes from './routes/subTopicRoutes.js';
 
 
 
@@ -108,6 +109,8 @@ app.use('/api/quizzes', quizRoutes);
 app.use('/api/ticket', ticketRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/admin', adminStatsRoutes);
+app.use("/api/admin/subtopics", subTopicRoutes);
+
 app.use('/api/materials', materialRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/blogs', blogRoutes);
