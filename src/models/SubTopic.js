@@ -1,23 +1,27 @@
-// src/models/SubTopic.js
 import mongoose from 'mongoose';
 
 const subTopicSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
+    required: [true, "SubTopic name is required"],
     trim: true,
+    minlength: [2, "SubTopic name must be at least 2 characters long"],
+    maxlength: [120, "SubTopic name must be at most 120 characters"],
   },
   topic: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Topic',
-    required: true,
+    required: [true, "Associated topic is required"],
   },
   description: {
     type: String,
+    trim: true,
     default: '',
+    maxlength: 1000,
   },
   icon: {
     type: String,
+    trim: true,
     default: '',
   },
   isVisible: {
@@ -27,7 +31,12 @@ const subTopicSchema = new mongoose.Schema({
   order: {
     type: Number,
     default: 0,
+    min: 0,
   }
-}, { timestamps: true });
-
+}, {
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
+});
+subTopicSchema.index({ name: 1, topic: 1 }, { unique: true });
 export default mongoose.model('SubTopic', subTopicSchema);
