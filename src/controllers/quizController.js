@@ -264,7 +264,9 @@ export const addQuestionToQuiz = asyncHandler(async (req, res) => {
 
 export const bulkUploadQuestions = asyncHandler(async (req, res) => {
   const { quizId } = idParamSchema.parse(req.params);
-  const { questions } = bulkQuestionsSchema.parse(req.body);
+
+  // ✅ Accept raw array of questions
+  const questions = bulkQuestionsSchema.parse(req.body);
 
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -272,32 +274,37 @@ export const bulkUploadQuestions = asyncHandler(async (req, res) => {
   try {
     const docs = questions.map(q => ({
       quiz: quizId,
-      text: q.text,
-      options: q.options,
+      text: q.text.trim(),
+      options: q.options.map(opt => opt.trim()),
       correctIndex: q.correctIndex,
-      topicTag: q.topicTag,
-      explanation: q.explanation,
-      difficulty: q.difficulty || 'medium'
+      topicTag: q.topicTag.trim(),
+      explanation: q.explanation?.trim() || '',
+      difficulty: q.difficulty || 'Intermediate'
     }));
 
     const created = await Question.insertMany(docs, { session });
 
-    await Quiz.findByIdAndUpdate(quizId, {
-      $push: { questions: created.map(x => x._id) },
-      $inc: { totalMarks: created.length }
-    }, { session });
+    await Quiz.findByIdAndUpdate(
+      quizId,
+      {
+        $push: { questions: created.map(q => q._id) },
+        $inc: { totalMarks: created.length }
+      },
+      { session }
+    );
 
     await session.commitTransaction();
 
     if (redis) {
-      redis.del(`quiz:${quizId}`).catch(() => { });
-      redis.del('quizzes:all').catch(() => { });
+      redis.del(`quiz:${quizId}`).catch(() => {});
+      redis.del('quizzes:all').catch(() => {});
     }
 
     res.status(201).json({ message: 'Questions uploaded', count: created.length });
   } catch (e) {
     await session.abortTransaction();
-    throw e;
+    console.error('Bulk upload error:', e);
+    res.status(500).json({ message: 'Bulk upload failed', error: e.message });
   } finally {
     session.endSession();
   }
@@ -308,7 +315,6 @@ export const bulkUploadFromFile = asyncHandler(async (req, res) => {
   const { quizId } = idParamSchema.parse(req.params);
   if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
 
-  // Determine file type
   const ext = path.extname(req.file.originalname).toLowerCase();
   let rows;
 
@@ -317,8 +323,7 @@ export const bulkUploadFromFile = asyncHandler(async (req, res) => {
       rows = await csv().fromString(req.file.buffer.toString());
     } else if (ext === '.xlsx' || ext === '.xls') {
       const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
-      const sheetName = workbook.SheetNames[0];
-      const sheet = workbook.Sheets[sheetName];
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
       rows = XLSX.utils.sheet_to_json(sheet);
     } else {
       return res.status(400).json({ message: 'Unsupported file format. Please upload CSV or XLSX.' });
@@ -329,39 +334,49 @@ export const bulkUploadFromFile = asyncHandler(async (req, res) => {
 
   if (!rows.length) return res.status(400).json({ message: 'Uploaded file is empty.' });
 
-  // Use a transaction to insert questions
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    const docs = rows.map(r => ({
-      quiz: quizId,
-      text: r.question,
-      options: [r.option1, r.option2, r.option3, r.option4],
-      correctIndex: Number(r.correctAnswer),
-      topicTag: r.topic || '',
-      explanation: r.explanation || '',
-      difficulty: r.difficulty || 'medium'
-    }));
+    const docs = rows.map((r, index) => {
+      if (!r.question || !r.option1 || !r.option2 || !r.option3 || !r.option4 || r.correctAnswer === undefined) {
+        throw new Error(`Missing fields in row ${index + 1}`);
+      }
+
+      return {
+        quiz: quizId,
+        text: r.question.trim(),
+        options: [r.option1, r.option2, r.option3, r.option4].map(s => s.trim()),
+        correctIndex: Number(r.correctAnswer),
+        topicTag: r.topic?.trim() || '',
+        explanation: r.explanation?.trim() || '',
+        difficulty: ['Beginner', 'Intermediate', 'Expert'].includes(r.difficulty) ? r.difficulty : 'Intermediate'
+      };
+    });
 
     const created = await Question.insertMany(docs, { session });
 
-    await Quiz.findByIdAndUpdate(quizId, {
-      $push: { questions: created.map(x => x._id) },
-      $inc: { totalMarks: created.length }
-    }, { session });
+    await Quiz.findByIdAndUpdate(
+      quizId,
+      {
+        $push: { questions: created.map(x => x._id) },
+        $inc: { totalMarks: created.length }
+      },
+      { session }
+    );
 
     await session.commitTransaction();
 
     if (redis) {
-      redis.del(`quiz:${quizId}`).catch(() => { });
-      redis.del('quizzes:all').catch(() => { });
+      redis.del(`quiz:${quizId}`).catch(() => {});
+      redis.del('quizzes:all').catch(() => {});
     }
 
     res.status(201).json({ message: 'Bulk upload successful', count: created.length });
   } catch (e) {
     await session.abortTransaction();
-    throw e;
+    console.error('CSV Upload Error:', e);
+    res.status(500).json({ message: 'Bulk file upload failed', error: e.message });
   } finally {
     session.endSession();
   }

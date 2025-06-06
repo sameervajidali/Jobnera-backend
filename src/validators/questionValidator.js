@@ -37,15 +37,13 @@ export const addQuestionSchema = z.object({
 });
 
 // ─── Bulk Questions Upload Validation ───────────────────────────────────────
-export const bulkQuestionsSchema = z.object({
-  questions: z.array(
-    z.object({
-      text: z.string().min(1),
-      options: z.array(z.string().min(1)).length(4),
-      correctIndex: z.number().int().min(0).max(3),
-      topicTag: z.string().optional(),
-      explanation: z.string().optional(),
-      difficulty: z.enum(['easy', 'medium', 'hard']).optional(),
-    })
-  ).min(1, 'At least one question must be provided'),
-});
+export const bulkQuestionsSchema = z.array(
+  z.object({
+    text: z.string().min(1),
+    options: z.array(z.string().min(1)).length(4),
+    correctIndex: z.number().int().min(0).max(3),
+    topicTag: z.string().optional(),
+    explanation: z.string().optional(),
+    difficulty: z.enum(['easy', 'medium', 'hard']).optional(),
+  })
+);
