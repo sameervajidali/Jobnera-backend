@@ -10,7 +10,7 @@ const quizSchema = new mongoose.Schema({
   level: { type: String, enum: ["Beginner", "Intermediate", "Expert"], required: true, index: true },
   questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
   duration: { type: Number, required: true, min: 1, max: 600 },
-  totalMarks: { type: Number, required: true, min: 1 },
+  totalMarks: { type: Number, required: true, min: 0 },
   isActive: { type: Boolean, default: true, index: true }
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
