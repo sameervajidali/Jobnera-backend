@@ -322,8 +322,26 @@ export const bulkUploadQuestions = asyncHandler(async (req, res) => {
 });
 
 // ─── BULK UPLOAD FROM FILE (CSV/XLSX) ────────────────────────────────────────
-// Acceptable difficulty values (lowercase)
-const DIFFICULTY_ENUM = ['beginner', 'intermediate', 'expert'];
+// Acceptable difficulty values (MUST match your schema exactly)
+const DIFFICULTY_ENUM = ['easy', 'medium', 'hard'];
+
+/**
+ * Attempts to normalize difficulty to your schema.
+ * Accepts all typical variants: Beginner, beginner, EASY, intermediate, Medium, etc.
+ * Defaults to 'medium' if not recognized.
+ */
+function normalizeDifficulty(val) {
+  if (!val) return 'medium';
+  const v = String(val).trim().toLowerCase();
+  if (['easy', 'beginner', 'basic'].includes(v)) return 'easy';
+  if (['medium', 'intermediate', 'normal'].includes(v)) return 'medium';
+  if (['hard', 'difficult', 'expert', 'advance', 'advanced'].includes(v)) return 'hard';
+  // fallback for numeric levels (1=easy, 2=medium, 3=hard)
+  if (['1', '0'].includes(v)) return 'easy';
+  if (['2'].includes(v)) return 'medium';
+  if (['3'].includes(v)) return 'hard';
+  return 'medium';
+}
 
 export const bulkUploadFromFile = asyncHandler(async (req, res) => {
   const { quizId } = idParamSchema.parse(req.params);
@@ -348,38 +366,44 @@ export const bulkUploadFromFile = asyncHandler(async (req, res) => {
 
   if (!rows.length) return res.status(400).json({ message: 'Uploaded file is empty.' });
 
+  const errors = [];
+  const validDocs = [];
+
+  // Validate and normalize
+  rows.forEach((r, i) => {
+    if (
+      !r.question || !r.option1 || !r.option2 || !r.option3 || !r.option4 ||
+      typeof r.correctAnswer === "undefined" || r.correctAnswer === ""
+    ) {
+      errors.push(`Row ${i + 2}: Missing question/options/correctAnswer`);
+      return;
+    }
+    let difficulty = normalizeDifficulty(r.difficulty);
+
+    if (!DIFFICULTY_ENUM.includes(difficulty)) {
+      errors.push(`Row ${i + 2}: Invalid difficulty "${r.difficulty}", defaulted to "medium"`);
+      difficulty = 'medium';
+    }
+    validDocs.push({
+      quiz: quizId,
+      text: String(r.question).trim(),
+      options: [r.option1, r.option2, r.option3, r.option4].map(s => String(s).trim()),
+      correctIndex: Number(r.correctAnswer),
+      topicTag: r.topic?.trim() || '',
+      explanation: r.explanation?.trim() || '',
+      difficulty
+    });
+  });
+
+  if (!validDocs.length) {
+    return res.status(400).json({ message: 'No valid questions to upload.', errors });
+  }
+
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    const docs = rows
-      .map((r, index) => {
-        if (
-          !r.question || !r.option1 || !r.option2 || !r.option3 || !r.option4 ||
-          typeof r.correctAnswer === "undefined" || r.correctAnswer === ""
-        ) {
-          return null;
-        }
-        // Only allow specific difficulty values (ensure case matches your schema exactly!)
-        const allowedDifficulties = ['beginner', 'intermediate', 'expert'];
-        let difficulty = String(r.difficulty || '').toLowerCase();
-        if (!allowedDifficulties.includes(difficulty)) difficulty = 'intermediate';
-
-        return {
-          quiz: quizId,
-          text: String(r.question).trim(),
-          options: [r.option1, r.option2, r.option3, r.option4].map(s => String(s).trim()),
-          correctIndex: Number(r.correctAnswer),
-          topicTag: r.topic?.trim() || '',
-          explanation: r.explanation?.trim() || '',
-          difficulty
-        };
-      })
-      .filter(Boolean); // remove nulls
-
-    if (!docs.length) throw new Error('No valid questions to upload.');
-
-    const created = await Question.insertMany(docs, { session });
+    const created = await Question.insertMany(validDocs, { session });
 
     await Quiz.findByIdAndUpdate(
       quizId,
@@ -397,15 +421,24 @@ export const bulkUploadFromFile = asyncHandler(async (req, res) => {
       redis.del('quizzes:all').catch(() => {});
     }
 
-    res.status(201).json({ message: `Bulk upload successful, ${created.length} questions added.`, count: created.length });
+    res.status(201).json({
+      message: `Bulk upload successful: ${created.length} questions added.`,
+      count: created.length,
+      warnings: errors
+    });
   } catch (e) {
     await session.abortTransaction();
     console.error('CSV Upload Error:', e);
-    res.status(500).json({ message: 'Bulk file upload failed', error: e.message });
+    res.status(500).json({
+      message: 'Bulk file upload failed',
+      error: e.message,
+      warnings: errors
+    });
   } finally {
     session.endSession();
   }
 });
+
 
 
 export const downloadQuestionsTemplate = asyncHandler(async (req, res) => {
