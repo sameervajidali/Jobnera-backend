@@ -13,7 +13,7 @@ import cookieParser from 'cookie-parser';
 import passport from './config/passport.js';
 import User from './models/User.js';
 import Role from './models/Role.js';
-
+import Quiz from './models/Quiz.js';
 import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import resumeRoutes from './routes/resumeRoutes.js';
@@ -116,6 +116,14 @@ app.use('/api/jobs', jobRoutes);
 app.use('/api/blogs', blogRoutes);
 app.use('/api/tutorials', tutorialRoutes); 
 
+// In your Express server (temporary route for debug):
+app.get('/test-populate', async (req, res) => {
+  const quiz = await Quiz.findOne({}).populate('subTopic', 'name');
+  res.json({ quiz });
+});
+
+
+
 // =========================
 // ✅ Seed SuperAdmin (on startup)
 // =========================
@@ -134,6 +142,8 @@ async function seedSuperAdmin() {
     console.error('❌ No SUPERADMIN role found! Did you seed roles already?');
     return;
   }
+
+
 
   const result = await User.updateOne(
     { email },

@@ -44,6 +44,7 @@ import {
   downloadAllQuizzes,
   downloadAllCategories,
   downloadAllTopics,
+  getTestPopulatedQuizzes,
 
   // New Admin Reports APIs
   getDAUReport,
@@ -85,10 +86,15 @@ router.get('/distinct/level', asyncHandler(async (_req, res) => {
   res.json(levels);
 }));
 
+// Add this test route
+router.get('/test-quizzes', getTestPopulatedQuizzes);
+
 // Public quizzes & leaderboard
 router.get('/', getPublicQuizzes);
 router.get('/leaderboard', getLeaderboard);
 router.get('/:quizId/top-three', getQuizTopThree);
+
+
 
 // Require login for accessing detailed quiz data & attempts
 router.get('/:quizId', protect, getQuizById);

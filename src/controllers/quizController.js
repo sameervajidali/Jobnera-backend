@@ -1,7 +1,8 @@
 
 import mongoose from 'mongoose';
 import Redis from 'ioredis';
-import Quiz from '../models/Quiz.js';
+import SubTopic from '../models/SubTopic.js';
+
 import Question from '../models/Question.js';
 import QuizAttempt from '../models/QuizAttempt.js';
 import LeaderboardEntry from '../models/LeaderboardEntry.js';
@@ -10,6 +11,7 @@ import { Parser } from 'json2csv';
 import csv from 'csvtojson';
 import { z } from 'zod';
 import Topic from '../models/Topic.js';
+import Quiz from '../models/Quiz.js'; 
 import AuditLog from '../models/AuditLog.js';
 import Category from '../models/Category.js';
 import QuizAssignment from '../models/QuizAssignment.js';
@@ -154,26 +156,28 @@ export const getUserAttempts = asyncHandler(async (req, res) => {
 export const getAllQuizzes = asyncHandler(async (_req, res) => {
   const cacheKey = 'quizzes:all';
 
-  if (redis) {
-    try {
-      const cached = await redis.get(cacheKey);
-      if (cached) return res.json(JSON.parse(cached));
-    } catch (e) {
-      console.warn('⚠️ Redis GET failed:', e.message);
-    }
-  }
+  // if (redis) {
+  //   try {
+  //     const cached = await redis.get(cacheKey);
+  //     if (cached) return res.json(JSON.parse(cached));
+  //   } catch (e) {
+  //     console.warn('⚠️ Redis GET failed:', e.message);
+  //   }
+  // }
 
   const quizzes = await Quiz.find()
     .populate('category', 'name')
     .populate('topic', 'name')
+    .populate('subTopic', 'name')   // <--- Add this!
     .populate('questions');
 
-  if (redis) {
-    redis.set(cacheKey, JSON.stringify(quizzes), 'EX', 3600).catch(() => { });
-  }
+  // if (redis) {
+  //   redis.set(cacheKey, JSON.stringify(quizzes), 'EX', 3600).catch(() => { });
+  // }
 
   res.json(quizzes);
 });
+
 
 // ─── GET QUIZ BY ID WITH CACHE ───────────────────────────────────────────────
 export const getQuizById = asyncHandler(async (req, res) => {
@@ -519,41 +523,46 @@ export const getPublicQuizzes = asyncHandler(async (req, res) => {
   const { category, topic, level, page = 1, limit = 12 } = req.query;
   const match = { isActive: true };
 
+  // Only add filters if valid
   if (category && mongoose.isValidObjectId(category)) match.category = category;
   if (topic && mongoose.isValidObjectId(topic)) match.topic = topic;
   if (level) match.level = level;
 
   const skip = (Number(page) - 1) * Number(limit);
 
-  const quizzes = await Quiz.find(match)
-    .populate('category', 'name')
-    .populate('topic', 'name')
-    .populate('questions', '_id') // only _id needed for count
-    .skip(skip)
-    .limit(Number(limit))
-    .sort({ createdAt: -1 });
+  // No Redis cache logic!
+  const quizzesRaw = await Quiz.find(match);
+console.log('BEFORE POPULATE', quizzesRaw[0]);
+const quizzes = await Quiz.find(match)
+  .populate('category', 'name')
+  .populate('topic', 'name')
+  .populate('subTopic', 'name');
+console.log('AFTER POPULATE', quizzes[0]);
 
-  const withCounts = quizzes.map(q => ({
-    ...q.toObject(),
-    questionCount: q.questions?.length || 0
-  }));
+  // Add questionCount field
+  quizzes.forEach(q => {
+    q.questionCount = q.questions?.length || 0;
+  });
 
+  // Get attempt counts (optional)
   const attemptCounts = await QuizAttempt.aggregate([
     { $match: { quiz: { $in: quizzes.map(q => q._id) } } },
     { $group: { _id: '$quiz', count: { $sum: 1 } } }
   ]);
-
   const attemptMap = Object.fromEntries(attemptCounts.map(a => [a._id.toString(), a.count]));
 
-  const finalQuizzes = withCounts.map(q => ({
-    ...q,
-    attemptCount: attemptMap[q._id.toString()] || 0
-  }));
+  quizzes.forEach(q => {
+    q.attemptCount = attemptMap[q._id.toString()] || 0;
+  });
 
   const total = await Quiz.countDocuments(match);
 
-  res.json({ quizzes: finalQuizzes, total, page: Number(page), limit: Number(limit) });
+  // Debug log for DEV (remove/comment in prod)
+  // console.log('Sample quiz:', quizzes[0]);
+
+  res.json({ quizzes, total, page: Number(page), limit: Number(limit) });
 });
+
 
 // ─── DISTINCT FILTER VALUES ───────────────────────────────────────────────────
 export const getDistinctCategories = asyncHandler(async (_req, res) => {
@@ -1051,3 +1060,18 @@ export const getTrendingQuizzes = asyncHandler(async (req, res) => {
 
   res.json(ordered);
 });
+
+
+// --- TEST POPULATE CONTROLLER ---
+export const getTestPopulatedQuizzes = async (req, res) => {
+  try {
+    const quizzes = await Quiz.find({})
+      .populate('category', 'name')
+      .populate('topic', 'name')
+      .populate('subTopic', 'name');
+    // Only return 3 for clarity
+    res.json({ quizzes: quizzes.slice(0, 3) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

@@ -1,0 +1,7686 @@
+[{
+  "_id": {
+    "$oid": "681af25d0f5d4203f5ba716b"
+  },
+  "title": "Variables",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628a"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "681da70856d37baa7d22e7a0"
+    },
+    {
+      "$oid": "681da70856d37baa7d22e7a1"
+    },
+    {
+      "$oid": "681da70856d37baa7d22e7a2"
+    },
+    {
+      "$oid": "681da70856d37baa7d22e7a3"
+    },
+    {
+      "$oid": "681da70856d37baa7d22e7a4"
+    },
+    {
+      "$oid": "681da70856d37baa7d22e7a5"
+    },
+    {
+      "$oid": "681da70856d37baa7d22e7a6"
+    },
+    {
+      "$oid": "681da70856d37baa7d22e7a7"
+    },
+    {
+      "$oid": "681da70856d37baa7d22e7a8"
+    },
+    {
+      "$oid": "681da70856d37baa7d22e7a9"
+    },
+    {
+      "$oid": "681da70856d37baa7d22e7aa"
+    },
+    {
+      "$oid": "681da70856d37baa7d22e7ab"
+    },
+    {
+      "$oid": "681da70856d37baa7d22e7ac"
+    },
+    {
+      "$oid": "681da70856d37baa7d22e7ad"
+    },
+    {
+      "$oid": "681da70856d37baa7d22e7ae"
+    },
+    {
+      "$oid": "681da70856d37baa7d22e7af"
+    },
+    {
+      "$oid": "681da70856d37baa7d22e7b0"
+    },
+    {
+      "$oid": "681da70856d37baa7d22e7b1"
+    },
+    {
+      "$oid": "681da70856d37baa7d22e7b2"
+    },
+    {
+      "$oid": "681da70856d37baa7d22e7b3"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 10,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-07T05:40:45.625Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-05T18:40:40.989Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681b26186d78b7826c2b3efa"
+  },
+  "title": "Data Types",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628a"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "681da76e56d37baa7d22e7be"
+    },
+    {
+      "$oid": "681da76e56d37baa7d22e7bf"
+    },
+    {
+      "$oid": "681da76e56d37baa7d22e7c0"
+    },
+    {
+      "$oid": "681da76e56d37baa7d22e7c1"
+    },
+    {
+      "$oid": "681da76e56d37baa7d22e7c2"
+    },
+    {
+      "$oid": "681da76e56d37baa7d22e7c3"
+    },
+    {
+      "$oid": "681da76e56d37baa7d22e7c4"
+    },
+    {
+      "$oid": "681da76e56d37baa7d22e7c5"
+    },
+    {
+      "$oid": "681da76e56d37baa7d22e7c6"
+    },
+    {
+      "$oid": "681da76e56d37baa7d22e7c7"
+    },
+    {
+      "$oid": "681da76e56d37baa7d22e7c8"
+    },
+    {
+      "$oid": "681da76e56d37baa7d22e7c9"
+    },
+    {
+      "$oid": "681da76e56d37baa7d22e7ca"
+    },
+    {
+      "$oid": "681da76e56d37baa7d22e7cb"
+    },
+    {
+      "$oid": "681da76e56d37baa7d22e7cc"
+    },
+    {
+      "$oid": "681da76e56d37baa7d22e7cd"
+    },
+    {
+      "$oid": "681da76e56d37baa7d22e7ce"
+    },
+    {
+      "$oid": "681da76e56d37baa7d22e7cf"
+    },
+    {
+      "$oid": "681da76e56d37baa7d22e7d0"
+    },
+    {
+      "$oid": "681da76e56d37baa7d22e7d1"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 10,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-07T09:21:28.945Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T08:57:36.614Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681b29a43f372645b46a20d1"
+  },
+  "title": "Operators",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628a"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "681da7a656d37baa7d22e7da"
+    },
+    {
+      "$oid": "681da7a656d37baa7d22e7db"
+    },
+    {
+      "$oid": "681da7a656d37baa7d22e7dc"
+    },
+    {
+      "$oid": "681da7a656d37baa7d22e7dd"
+    },
+    {
+      "$oid": "681da7a656d37baa7d22e7de"
+    },
+    {
+      "$oid": "681da7a656d37baa7d22e7df"
+    },
+    {
+      "$oid": "681da7a656d37baa7d22e7e0"
+    },
+    {
+      "$oid": "681da7a656d37baa7d22e7e1"
+    },
+    {
+      "$oid": "681da7a656d37baa7d22e7e2"
+    },
+    {
+      "$oid": "681da7a656d37baa7d22e7e3"
+    },
+    {
+      "$oid": "681da7a656d37baa7d22e7e4"
+    },
+    {
+      "$oid": "681da7a656d37baa7d22e7e5"
+    },
+    {
+      "$oid": "681da7a656d37baa7d22e7e6"
+    },
+    {
+      "$oid": "681da7a656d37baa7d22e7e7"
+    },
+    {
+      "$oid": "681da7a656d37baa7d22e7e8"
+    },
+    {
+      "$oid": "681da7a656d37baa7d22e7e9"
+    },
+    {
+      "$oid": "681da7a656d37baa7d22e7ea"
+    },
+    {
+      "$oid": "681da7a656d37baa7d22e7eb"
+    },
+    {
+      "$oid": "681da7a656d37baa7d22e7ec"
+    },
+    {
+      "$oid": "681da7a656d37baa7d22e7ed"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 10,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-07T09:36:36.769Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T08:58:27.160Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681b29ee3f372645b46a20e0"
+  },
+  "title": "Control Structures",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628a"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "681d7de256d37baa7d22e551"
+    },
+    {
+      "$oid": "681d7de256d37baa7d22e552"
+    },
+    {
+      "$oid": "681d7de256d37baa7d22e553"
+    },
+    {
+      "$oid": "681d7de256d37baa7d22e554"
+    },
+    {
+      "$oid": "681d7de256d37baa7d22e555"
+    },
+    {
+      "$oid": "681d7de256d37baa7d22e556"
+    },
+    {
+      "$oid": "681d7de256d37baa7d22e557"
+    },
+    {
+      "$oid": "681d7de256d37baa7d22e558"
+    },
+    {
+      "$oid": "681d7de256d37baa7d22e559"
+    },
+    {
+      "$oid": "681d7de256d37baa7d22e55a"
+    },
+    {
+      "$oid": "681d7de256d37baa7d22e55b"
+    },
+    {
+      "$oid": "681d7de256d37baa7d22e55c"
+    },
+    {
+      "$oid": "681d7de256d37baa7d22e55d"
+    },
+    {
+      "$oid": "681d7de256d37baa7d22e55e"
+    },
+    {
+      "$oid": "681d7de256d37baa7d22e55f"
+    },
+    {
+      "$oid": "681d7de256d37baa7d22e560"
+    },
+    {
+      "$oid": "681d7de256d37baa7d22e561"
+    },
+    {
+      "$oid": "681d7de256d37baa7d22e562"
+    },
+    {
+      "$oid": "681d7de256d37baa7d22e563"
+    },
+    {
+      "$oid": "681d7de256d37baa7d22e564"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 10,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-07T09:37:50.737Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T08:58:55.671Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681b45398833bd2e107630dd"
+  },
+  "title": "Loops",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628a"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "681d7e1656d37baa7d22e56d"
+    },
+    {
+      "$oid": "681d7e1656d37baa7d22e56e"
+    },
+    {
+      "$oid": "681d7e1656d37baa7d22e56f"
+    },
+    {
+      "$oid": "681d7e1656d37baa7d22e570"
+    },
+    {
+      "$oid": "681d7e1656d37baa7d22e571"
+    },
+    {
+      "$oid": "681d7e1656d37baa7d22e572"
+    },
+    {
+      "$oid": "681d7e1656d37baa7d22e573"
+    },
+    {
+      "$oid": "681d7e1656d37baa7d22e574"
+    },
+    {
+      "$oid": "681d7e1656d37baa7d22e575"
+    },
+    {
+      "$oid": "681d7e1656d37baa7d22e576"
+    },
+    {
+      "$oid": "681d7e1656d37baa7d22e577"
+    },
+    {
+      "$oid": "681d7e1656d37baa7d22e578"
+    },
+    {
+      "$oid": "681d7e1656d37baa7d22e579"
+    },
+    {
+      "$oid": "681d7e1656d37baa7d22e57a"
+    },
+    {
+      "$oid": "681d7e1656d37baa7d22e57b"
+    },
+    {
+      "$oid": "681d7e1656d37baa7d22e57c"
+    },
+    {
+      "$oid": "681d7e1656d37baa7d22e57d"
+    },
+    {
+      "$oid": "681d7e1656d37baa7d22e57e"
+    },
+    {
+      "$oid": "681d7e1656d37baa7d22e57f"
+    },
+    {
+      "$oid": "681d7e1656d37baa7d22e580"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 10,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-07T11:34:17.318Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T08:59:24.583Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681b51873da6aa0d526db170"
+  },
+  "title": "Functions",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628a"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "681d7e4856d37baa7d22e589"
+    },
+    {
+      "$oid": "681d7e4856d37baa7d22e58a"
+    },
+    {
+      "$oid": "681d7e4856d37baa7d22e58b"
+    },
+    {
+      "$oid": "681d7e4856d37baa7d22e58c"
+    },
+    {
+      "$oid": "681d7e4856d37baa7d22e58d"
+    },
+    {
+      "$oid": "681d7e4856d37baa7d22e58e"
+    },
+    {
+      "$oid": "681d7e4856d37baa7d22e58f"
+    },
+    {
+      "$oid": "681d7e4856d37baa7d22e590"
+    },
+    {
+      "$oid": "681d7e4856d37baa7d22e591"
+    },
+    {
+      "$oid": "681d7e4856d37baa7d22e592"
+    },
+    {
+      "$oid": "681d7e4856d37baa7d22e593"
+    },
+    {
+      "$oid": "681d7e4856d37baa7d22e594"
+    },
+    {
+      "$oid": "681d7e4856d37baa7d22e595"
+    },
+    {
+      "$oid": "681d7e4856d37baa7d22e596"
+    },
+    {
+      "$oid": "681d7e4856d37baa7d22e597"
+    },
+    {
+      "$oid": "681d7e4856d37baa7d22e598"
+    },
+    {
+      "$oid": "681d7e4856d37baa7d22e599"
+    },
+    {
+      "$oid": "681d7e4856d37baa7d22e59a"
+    },
+    {
+      "$oid": "681d7e4856d37baa7d22e59b"
+    },
+    {
+      "$oid": "681d7e4856d37baa7d22e59c"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 10,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-07T12:26:47.096Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T08:59:45.968Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681b524a3da6aa0d526db253"
+  },
+  "title": "Arrays e",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628a"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "681d7e7856d37baa7d22e5a5"
+    },
+    {
+      "$oid": "681d7e7856d37baa7d22e5a6"
+    },
+    {
+      "$oid": "681d7e7856d37baa7d22e5a7"
+    },
+    {
+      "$oid": "681d7e7856d37baa7d22e5a8"
+    },
+    {
+      "$oid": "681d7e7856d37baa7d22e5a9"
+    },
+    {
+      "$oid": "681d7e7856d37baa7d22e5aa"
+    },
+    {
+      "$oid": "681d7e7856d37baa7d22e5ab"
+    },
+    {
+      "$oid": "681d7e7856d37baa7d22e5ac"
+    },
+    {
+      "$oid": "681d7e7856d37baa7d22e5ad"
+    },
+    {
+      "$oid": "681d7e7856d37baa7d22e5ae"
+    },
+    {
+      "$oid": "681d7e7856d37baa7d22e5af"
+    },
+    {
+      "$oid": "681d7e7856d37baa7d22e5b0"
+    },
+    {
+      "$oid": "681d7e7856d37baa7d22e5b1"
+    },
+    {
+      "$oid": "681d7e7856d37baa7d22e5b2"
+    },
+    {
+      "$oid": "681d7e7856d37baa7d22e5b3"
+    },
+    {
+      "$oid": "681d7e7856d37baa7d22e5b4"
+    },
+    {
+      "$oid": "681d7e7856d37baa7d22e5b5"
+    },
+    {
+      "$oid": "681d7e7856d37baa7d22e5b6"
+    },
+    {
+      "$oid": "681d7e7856d37baa7d22e5b7"
+    },
+    {
+      "$oid": "681d7e7856d37baa7d22e5b8"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 10,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-07T12:30:02.847Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T18:43:08.965Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681b52bc3da6aa0d526db263"
+  },
+  "title": "DOM Manipulation",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628a"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "681d7f3e56d37baa7d22e5e7"
+    },
+    {
+      "$oid": "681d7f3e56d37baa7d22e5e8"
+    },
+    {
+      "$oid": "681d7f3e56d37baa7d22e5e9"
+    },
+    {
+      "$oid": "681d7f3e56d37baa7d22e5ea"
+    },
+    {
+      "$oid": "681d7f3e56d37baa7d22e5eb"
+    },
+    {
+      "$oid": "681d7f3e56d37baa7d22e5ec"
+    },
+    {
+      "$oid": "681d7f3e56d37baa7d22e5ed"
+    },
+    {
+      "$oid": "681d7f3e56d37baa7d22e5ee"
+    },
+    {
+      "$oid": "681d7f3e56d37baa7d22e5ef"
+    },
+    {
+      "$oid": "681d7f3e56d37baa7d22e5f0"
+    },
+    {
+      "$oid": "681d7f3e56d37baa7d22e5f1"
+    },
+    {
+      "$oid": "681d7f3e56d37baa7d22e5f2"
+    },
+    {
+      "$oid": "681d7f3e56d37baa7d22e5f3"
+    },
+    {
+      "$oid": "681d7f3e56d37baa7d22e5f4"
+    },
+    {
+      "$oid": "681d7f3e56d37baa7d22e5f5"
+    },
+    {
+      "$oid": "681d7f3e56d37baa7d22e5f6"
+    },
+    {
+      "$oid": "681d7f3e56d37baa7d22e5f7"
+    },
+    {
+      "$oid": "681d7f3e56d37baa7d22e5f8"
+    },
+    {
+      "$oid": "681d7f3e56d37baa7d22e5f9"
+    },
+    {
+      "$oid": "681d7f3e56d37baa7d22e5fa"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 10,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-07T12:31:56.342Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T09:00:41.481Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681b53083da6aa0d526db26b"
+  },
+  "title": "ES6",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628a"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "681dccfc02113fddcb10913f"
+    },
+    {
+      "$oid": "681dccfc02113fddcb109140"
+    },
+    {
+      "$oid": "681dccfc02113fddcb109141"
+    },
+    {
+      "$oid": "681dccfc02113fddcb109142"
+    },
+    {
+      "$oid": "681dccfc02113fddcb109143"
+    },
+    {
+      "$oid": "681dccfc02113fddcb109144"
+    },
+    {
+      "$oid": "681dccfc02113fddcb109145"
+    },
+    {
+      "$oid": "681dccfc02113fddcb109146"
+    },
+    {
+      "$oid": "681dccfc02113fddcb109147"
+    },
+    {
+      "$oid": "681dccfc02113fddcb109148"
+    },
+    {
+      "$oid": "681dccfc02113fddcb109149"
+    },
+    {
+      "$oid": "681dccfc02113fddcb10914a"
+    },
+    {
+      "$oid": "681dccfc02113fddcb10914b"
+    },
+    {
+      "$oid": "681dccfc02113fddcb10914c"
+    },
+    {
+      "$oid": "681dccfc02113fddcb10914d"
+    },
+    {
+      "$oid": "681dccfc02113fddcb10914e"
+    },
+    {
+      "$oid": "681dccfc02113fddcb10914f"
+    },
+    {
+      "$oid": "681dccfc02113fddcb109150"
+    },
+    {
+      "$oid": "681dccfc02113fddcb109151"
+    },
+    {
+      "$oid": "681dccfc02113fddcb109152"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 10,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-07T12:33:12.680Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T09:01:04.193Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681b53433da6aa0d526db272"
+  },
+  "title": "Scope and Hoisting",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628a"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "681ed8a053ce7dfafec42aea"
+    },
+    {
+      "$oid": "681ed8a053ce7dfafec42aeb"
+    },
+    {
+      "$oid": "681ed8a053ce7dfafec42aec"
+    },
+    {
+      "$oid": "681ed8a053ce7dfafec42aed"
+    },
+    {
+      "$oid": "681ed8a053ce7dfafec42aee"
+    },
+    {
+      "$oid": "681ed8a053ce7dfafec42aef"
+    },
+    {
+      "$oid": "681ed8a053ce7dfafec42af0"
+    },
+    {
+      "$oid": "681ed8a053ce7dfafec42af1"
+    },
+    {
+      "$oid": "681ed8a053ce7dfafec42af2"
+    },
+    {
+      "$oid": "681ed8a053ce7dfafec42af3"
+    },
+    {
+      "$oid": "681ed8a053ce7dfafec42af4"
+    },
+    {
+      "$oid": "681ed8a053ce7dfafec42af5"
+    },
+    {
+      "$oid": "681ed8a053ce7dfafec42af6"
+    },
+    {
+      "$oid": "681ed8a053ce7dfafec42af7"
+    },
+    {
+      "$oid": "681ed8a053ce7dfafec42af8"
+    },
+    {
+      "$oid": "681ed8a053ce7dfafec42af9"
+    },
+    {
+      "$oid": "681ed8a053ce7dfafec42afa"
+    },
+    {
+      "$oid": "681ed8a053ce7dfafec42afb"
+    },
+    {
+      "$oid": "681ed8a053ce7dfafec42afc"
+    },
+    {
+      "$oid": "681ed8a053ce7dfafec42afd"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 10,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-07T12:34:11.850Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T09:01:27.779Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681b539e3da6aa0d526db279"
+  },
+  "title": "Asynchronous JS",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628a"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "681eddcc53ce7dfafec42c1a"
+    },
+    {
+      "$oid": "681eddcc53ce7dfafec42c1b"
+    },
+    {
+      "$oid": "681eddcc53ce7dfafec42c1c"
+    },
+    {
+      "$oid": "681eddcc53ce7dfafec42c1d"
+    },
+    {
+      "$oid": "681eddcc53ce7dfafec42c1e"
+    },
+    {
+      "$oid": "681eddcc53ce7dfafec42c1f"
+    },
+    {
+      "$oid": "681eddcc53ce7dfafec42c20"
+    },
+    {
+      "$oid": "681eddcc53ce7dfafec42c21"
+    },
+    {
+      "$oid": "681eddcc53ce7dfafec42c22"
+    },
+    {
+      "$oid": "681eddcc53ce7dfafec42c23"
+    },
+    {
+      "$oid": "681eddcc53ce7dfafec42c24"
+    },
+    {
+      "$oid": "681eddcc53ce7dfafec42c25"
+    },
+    {
+      "$oid": "681eddcc53ce7dfafec42c26"
+    },
+    {
+      "$oid": "681eddcc53ce7dfafec42c27"
+    },
+    {
+      "$oid": "681eddcc53ce7dfafec42c28"
+    },
+    {
+      "$oid": "681eddcc53ce7dfafec42c29"
+    },
+    {
+      "$oid": "681eddcc53ce7dfafec42c2a"
+    },
+    {
+      "$oid": "681eddcc53ce7dfafec42c2b"
+    },
+    {
+      "$oid": "681eddcc53ce7dfafec42c2c"
+    },
+    {
+      "$oid": "681eddcc53ce7dfafec42c2d"
+    }
+  ],
+  "duration": 10,
+  "totalMarks": 30,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-07T12:35:42.720Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-12T09:33:24.599Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681b54043da6aa0d526db28c"
+  },
+  "title": "Advance Functions",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628a"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "681ede1153ce7dfafec42c36"
+    },
+    {
+      "$oid": "681ede1153ce7dfafec42c37"
+    },
+    {
+      "$oid": "681ede1153ce7dfafec42c38"
+    },
+    {
+      "$oid": "681ede1153ce7dfafec42c39"
+    },
+    {
+      "$oid": "681ede1153ce7dfafec42c3a"
+    },
+    {
+      "$oid": "681ede1153ce7dfafec42c3b"
+    },
+    {
+      "$oid": "681ede1153ce7dfafec42c3c"
+    },
+    {
+      "$oid": "681ede1153ce7dfafec42c3d"
+    },
+    {
+      "$oid": "681ede1153ce7dfafec42c3e"
+    },
+    {
+      "$oid": "681ede1153ce7dfafec42c3f"
+    },
+    {
+      "$oid": "681ede1153ce7dfafec42c40"
+    },
+    {
+      "$oid": "681ede1153ce7dfafec42c41"
+    },
+    {
+      "$oid": "681ede1153ce7dfafec42c42"
+    },
+    {
+      "$oid": "681ede1153ce7dfafec42c43"
+    },
+    {
+      "$oid": "681ede1153ce7dfafec42c44"
+    },
+    {
+      "$oid": "681ede1153ce7dfafec42c45"
+    },
+    {
+      "$oid": "681ede1153ce7dfafec42c46"
+    },
+    {
+      "$oid": "681ede1153ce7dfafec42c47"
+    },
+    {
+      "$oid": "681ede1153ce7dfafec42c48"
+    },
+    {
+      "$oid": "681ede1153ce7dfafec42c49"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 10,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-07T12:37:24.378Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T09:03:39.986Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681b549c3da6aa0d526db2a7"
+  },
+  "title": "Error Handling",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628a"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "681ede3d53ce7dfafec42c52"
+    },
+    {
+      "$oid": "681ede3d53ce7dfafec42c53"
+    },
+    {
+      "$oid": "681ede3d53ce7dfafec42c54"
+    },
+    {
+      "$oid": "681ede3d53ce7dfafec42c55"
+    },
+    {
+      "$oid": "681ede3d53ce7dfafec42c56"
+    },
+    {
+      "$oid": "681ede3d53ce7dfafec42c57"
+    },
+    {
+      "$oid": "681ede3d53ce7dfafec42c58"
+    },
+    {
+      "$oid": "681ede3d53ce7dfafec42c59"
+    },
+    {
+      "$oid": "681ede3d53ce7dfafec42c5a"
+    },
+    {
+      "$oid": "681ede3d53ce7dfafec42c5b"
+    },
+    {
+      "$oid": "681ede3d53ce7dfafec42c5c"
+    },
+    {
+      "$oid": "681ede3d53ce7dfafec42c5d"
+    },
+    {
+      "$oid": "681ede3d53ce7dfafec42c5e"
+    },
+    {
+      "$oid": "681ede3d53ce7dfafec42c5f"
+    },
+    {
+      "$oid": "681ede3d53ce7dfafec42c60"
+    },
+    {
+      "$oid": "681ede3d53ce7dfafec42c61"
+    },
+    {
+      "$oid": "681ede3d53ce7dfafec42c62"
+    },
+    {
+      "$oid": "681ede3d53ce7dfafec42c63"
+    },
+    {
+      "$oid": "681ede3d53ce7dfafec42c64"
+    },
+    {
+      "$oid": "681ede3d53ce7dfafec42c65"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 10,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-07T12:39:56.053Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T09:04:05.958Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681b54c13da6aa0d526db2ae"
+  },
+  "title": "Storage and APIs",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628a"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "681ede8853ce7dfafec42c85"
+    },
+    {
+      "$oid": "681ede8853ce7dfafec42c86"
+    },
+    {
+      "$oid": "681ede8853ce7dfafec42c87"
+    },
+    {
+      "$oid": "681ede8853ce7dfafec42c88"
+    },
+    {
+      "$oid": "681ede8853ce7dfafec42c89"
+    },
+    {
+      "$oid": "681ede8853ce7dfafec42c8a"
+    },
+    {
+      "$oid": "681ede8853ce7dfafec42c8b"
+    },
+    {
+      "$oid": "681ede8853ce7dfafec42c8c"
+    },
+    {
+      "$oid": "681ede8853ce7dfafec42c8d"
+    },
+    {
+      "$oid": "681ede8853ce7dfafec42c8e"
+    },
+    {
+      "$oid": "681ede8853ce7dfafec42c8f"
+    },
+    {
+      "$oid": "681ede8853ce7dfafec42c90"
+    },
+    {
+      "$oid": "681ede8853ce7dfafec42c91"
+    },
+    {
+      "$oid": "681ede8853ce7dfafec42c92"
+    },
+    {
+      "$oid": "681ede8853ce7dfafec42c93"
+    },
+    {
+      "$oid": "681ede8853ce7dfafec42c94"
+    },
+    {
+      "$oid": "681ede8853ce7dfafec42c95"
+    },
+    {
+      "$oid": "681ede8853ce7dfafec42c96"
+    },
+    {
+      "$oid": "681ede8853ce7dfafec42c97"
+    },
+    {
+      "$oid": "681ede8853ce7dfafec42c98"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 10,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-07T12:40:33.788Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T09:04:30.701Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681edf0d53ce7dfafec42c9f"
+  },
+  "title": " Data Types",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628b"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "681ee52c53ce7dfafec42d61"
+    },
+    {
+      "$oid": "681ee52c53ce7dfafec42d62"
+    },
+    {
+      "$oid": "681ee52c53ce7dfafec42d63"
+    },
+    {
+      "$oid": "681ee52c53ce7dfafec42d64"
+    },
+    {
+      "$oid": "681ee52c53ce7dfafec42d65"
+    },
+    {
+      "$oid": "681ee52c53ce7dfafec42d66"
+    },
+    {
+      "$oid": "681ee52c53ce7dfafec42d67"
+    },
+    {
+      "$oid": "681ee52c53ce7dfafec42d68"
+    },
+    {
+      "$oid": "681ee52c53ce7dfafec42d69"
+    },
+    {
+      "$oid": "681ee52c53ce7dfafec42d6a"
+    },
+    {
+      "$oid": "681ee52c53ce7dfafec42d6b"
+    },
+    {
+      "$oid": "681ee52c53ce7dfafec42d6c"
+    },
+    {
+      "$oid": "681ee52c53ce7dfafec42d6d"
+    },
+    {
+      "$oid": "681ee52c53ce7dfafec42d6e"
+    },
+    {
+      "$oid": "681ee52c53ce7dfafec42d6f"
+    },
+    {
+      "$oid": "681ee52c53ce7dfafec42d70"
+    },
+    {
+      "$oid": "681ee52c53ce7dfafec42d71"
+    },
+    {
+      "$oid": "681ee52c53ce7dfafec42d72"
+    },
+    {
+      "$oid": "681ee52c53ce7dfafec42d73"
+    },
+    {
+      "$oid": "681ee52c53ce7dfafec42d74"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 10,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-10T05:07:25.725Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T09:07:08.925Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681edf3153ce7dfafec42ca7"
+  },
+  "title": "Control Flow",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628b"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "681ef550639b6d31469cf5b1"
+    },
+    {
+      "$oid": "681ef550639b6d31469cf5b2"
+    },
+    {
+      "$oid": "681ef550639b6d31469cf5b3"
+    },
+    {
+      "$oid": "681ef550639b6d31469cf5b4"
+    },
+    {
+      "$oid": "681ef550639b6d31469cf5b5"
+    },
+    {
+      "$oid": "681ef550639b6d31469cf5b6"
+    },
+    {
+      "$oid": "681ef550639b6d31469cf5b7"
+    },
+    {
+      "$oid": "681ef550639b6d31469cf5b8"
+    },
+    {
+      "$oid": "681ef550639b6d31469cf5b9"
+    },
+    {
+      "$oid": "681ef550639b6d31469cf5ba"
+    },
+    {
+      "$oid": "681ef550639b6d31469cf5bb"
+    },
+    {
+      "$oid": "681ef550639b6d31469cf5bc"
+    },
+    {
+      "$oid": "681ef550639b6d31469cf5bd"
+    },
+    {
+      "$oid": "681ef550639b6d31469cf5be"
+    },
+    {
+      "$oid": "681ef550639b6d31469cf5bf"
+    },
+    {
+      "$oid": "681ef550639b6d31469cf5c0"
+    },
+    {
+      "$oid": "681ef550639b6d31469cf5c1"
+    },
+    {
+      "$oid": "681ef550639b6d31469cf5c2"
+    },
+    {
+      "$oid": "681ef550639b6d31469cf5c3"
+    },
+    {
+      "$oid": "681ef550639b6d31469cf5c4"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 10,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-10T05:08:01.324Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T09:07:46.117Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681edf4b53ce7dfafec42caf"
+  },
+  "title": "Functions",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628b"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "681ef58e639b6d31469cf656"
+    },
+    {
+      "$oid": "681ef58e639b6d31469cf657"
+    },
+    {
+      "$oid": "681ef58e639b6d31469cf658"
+    },
+    {
+      "$oid": "681ef58e639b6d31469cf659"
+    },
+    {
+      "$oid": "681ef58e639b6d31469cf65a"
+    },
+    {
+      "$oid": "681ef58e639b6d31469cf65b"
+    },
+    {
+      "$oid": "681ef58e639b6d31469cf65c"
+    },
+    {
+      "$oid": "681ef58e639b6d31469cf65d"
+    },
+    {
+      "$oid": "681ef58e639b6d31469cf65e"
+    },
+    {
+      "$oid": "681ef58e639b6d31469cf65f"
+    },
+    {
+      "$oid": "681ef58e639b6d31469cf660"
+    },
+    {
+      "$oid": "681ef58e639b6d31469cf661"
+    },
+    {
+      "$oid": "681ef58e639b6d31469cf662"
+    },
+    {
+      "$oid": "681ef58e639b6d31469cf663"
+    },
+    {
+      "$oid": "681ef58e639b6d31469cf664"
+    },
+    {
+      "$oid": "681ef58e639b6d31469cf665"
+    },
+    {
+      "$oid": "681ef58e639b6d31469cf666"
+    },
+    {
+      "$oid": "681ef58e639b6d31469cf667"
+    },
+    {
+      "$oid": "681ef58e639b6d31469cf668"
+    },
+    {
+      "$oid": "681ef58e639b6d31469cf669"
+    }
+  ],
+  "duration": 10,
+  "totalMarks": 30,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-10T05:08:27.212Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-12T09:33:24.827Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681edf9153ce7dfafec42cb9"
+  },
+  "title": "Data Structures",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628b"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "681ef5c0639b6d31469cf672"
+    },
+    {
+      "$oid": "681ef5c0639b6d31469cf673"
+    },
+    {
+      "$oid": "681ef5c0639b6d31469cf674"
+    },
+    {
+      "$oid": "681ef5c0639b6d31469cf675"
+    },
+    {
+      "$oid": "681ef5c0639b6d31469cf676"
+    },
+    {
+      "$oid": "681ef5c0639b6d31469cf677"
+    },
+    {
+      "$oid": "681ef5c0639b6d31469cf678"
+    },
+    {
+      "$oid": "681ef5c0639b6d31469cf679"
+    },
+    {
+      "$oid": "681ef5c0639b6d31469cf67a"
+    },
+    {
+      "$oid": "681ef5c0639b6d31469cf67b"
+    },
+    {
+      "$oid": "681ef5c0639b6d31469cf67c"
+    },
+    {
+      "$oid": "681ef5c0639b6d31469cf67d"
+    },
+    {
+      "$oid": "681ef5c0639b6d31469cf67e"
+    },
+    {
+      "$oid": "681ef5c0639b6d31469cf67f"
+    },
+    {
+      "$oid": "681ef5c0639b6d31469cf680"
+    },
+    {
+      "$oid": "681ef5c0639b6d31469cf681"
+    },
+    {
+      "$oid": "681ef5c0639b6d31469cf682"
+    },
+    {
+      "$oid": "681ef5c0639b6d31469cf683"
+    },
+    {
+      "$oid": "681ef5c0639b6d31469cf684"
+    },
+    {
+      "$oid": "681ef5c0639b6d31469cf685"
+    }
+  ],
+  "duration": 10,
+  "totalMarks": 20,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-10T05:09:37.107Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-12T09:33:24.867Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681edfc053ce7dfafec42cc1"
+  },
+  "title": "Error Handling",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628b"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "681ef6c4639b6d31469cf71d"
+    },
+    {
+      "$oid": "681ef6c4639b6d31469cf71e"
+    },
+    {
+      "$oid": "681ef6c4639b6d31469cf71f"
+    },
+    {
+      "$oid": "681ef6c4639b6d31469cf720"
+    },
+    {
+      "$oid": "681ef6c4639b6d31469cf721"
+    },
+    {
+      "$oid": "681ef6c4639b6d31469cf722"
+    },
+    {
+      "$oid": "681ef6c4639b6d31469cf723"
+    },
+    {
+      "$oid": "681ef6c4639b6d31469cf724"
+    },
+    {
+      "$oid": "681ef6c4639b6d31469cf725"
+    },
+    {
+      "$oid": "681ef6c4639b6d31469cf726"
+    },
+    {
+      "$oid": "681ef6c4639b6d31469cf727"
+    },
+    {
+      "$oid": "681ef6c4639b6d31469cf728"
+    },
+    {
+      "$oid": "681ef6c4639b6d31469cf729"
+    },
+    {
+      "$oid": "681ef6c4639b6d31469cf72a"
+    },
+    {
+      "$oid": "681ef6c4639b6d31469cf72b"
+    },
+    {
+      "$oid": "681ef6c4639b6d31469cf72c"
+    },
+    {
+      "$oid": "681ef6c4639b6d31469cf72d"
+    },
+    {
+      "$oid": "681ef6c4639b6d31469cf72e"
+    },
+    {
+      "$oid": "681ef6c4639b6d31469cf72f"
+    },
+    {
+      "$oid": "681ef6c4639b6d31469cf730"
+    }
+  ],
+  "duration": 10,
+  "totalMarks": 20,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-10T05:10:24.045Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-12T09:33:24.906Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681edfd353ce7dfafec42cc9"
+  },
+  "title": "File Handling",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628b"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "681ef710639b6d31469cf7b9"
+    },
+    {
+      "$oid": "681ef710639b6d31469cf7ba"
+    },
+    {
+      "$oid": "681ef710639b6d31469cf7bb"
+    },
+    {
+      "$oid": "681ef710639b6d31469cf7bc"
+    },
+    {
+      "$oid": "681ef710639b6d31469cf7bd"
+    },
+    {
+      "$oid": "681ef710639b6d31469cf7be"
+    },
+    {
+      "$oid": "681ef710639b6d31469cf7bf"
+    },
+    {
+      "$oid": "681ef710639b6d31469cf7c0"
+    },
+    {
+      "$oid": "681ef710639b6d31469cf7c1"
+    },
+    {
+      "$oid": "681ef710639b6d31469cf7c2"
+    },
+    {
+      "$oid": "681ef710639b6d31469cf7c3"
+    },
+    {
+      "$oid": "681ef710639b6d31469cf7c4"
+    },
+    {
+      "$oid": "681ef710639b6d31469cf7c5"
+    },
+    {
+      "$oid": "681ef710639b6d31469cf7c6"
+    },
+    {
+      "$oid": "681ef710639b6d31469cf7c7"
+    },
+    {
+      "$oid": "681ef710639b6d31469cf7c8"
+    },
+    {
+      "$oid": "681ef710639b6d31469cf7c9"
+    },
+    {
+      "$oid": "681ef710639b6d31469cf7ca"
+    },
+    {
+      "$oid": "681ef710639b6d31469cf7cb"
+    },
+    {
+      "$oid": "681ef710639b6d31469cf7cc"
+    }
+  ],
+  "duration": 10,
+  "totalMarks": 20,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-10T05:10:43.032Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-12T09:33:24.943Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681edfee53ce7dfafec42cd1"
+  },
+  "title": "Object-Oriented Programming (OOP)",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628b"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "681ef8ae639b6d31469cf7da"
+    },
+    {
+      "$oid": "681ef8ae639b6d31469cf7db"
+    },
+    {
+      "$oid": "681ef8ae639b6d31469cf7dc"
+    },
+    {
+      "$oid": "681ef8ae639b6d31469cf7dd"
+    },
+    {
+      "$oid": "681ef8ae639b6d31469cf7de"
+    },
+    {
+      "$oid": "681ef8ae639b6d31469cf7df"
+    },
+    {
+      "$oid": "681ef8ae639b6d31469cf7e0"
+    },
+    {
+      "$oid": "681ef8ae639b6d31469cf7e1"
+    },
+    {
+      "$oid": "681ef8ae639b6d31469cf7e2"
+    },
+    {
+      "$oid": "681ef8ae639b6d31469cf7e3"
+    },
+    {
+      "$oid": "681ef8ae639b6d31469cf7e4"
+    },
+    {
+      "$oid": "681ef8ae639b6d31469cf7e5"
+    },
+    {
+      "$oid": "681ef8ae639b6d31469cf7e6"
+    },
+    {
+      "$oid": "681ef8ae639b6d31469cf7e7"
+    },
+    {
+      "$oid": "681ef8ae639b6d31469cf7e8"
+    },
+    {
+      "$oid": "681ef8ae639b6d31469cf7e9"
+    },
+    {
+      "$oid": "681ef8ae639b6d31469cf7ea"
+    },
+    {
+      "$oid": "681ef8ae639b6d31469cf7eb"
+    },
+    {
+      "$oid": "681ef8ae639b6d31469cf7ec"
+    },
+    {
+      "$oid": "681ef8ae639b6d31469cf7ed"
+    },
+    {
+      "$oid": "681ef8ae639b6d31469cf7ee"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 10,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-10T05:11:10.793Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T09:02:02.845Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681ee00a53ce7dfafec42cda"
+  },
+  "title": "Modules and Packages",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628b"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "681ef8f4639b6d31469cf7f7"
+    },
+    {
+      "$oid": "681ef8f4639b6d31469cf7f8"
+    },
+    {
+      "$oid": "681ef8f4639b6d31469cf7f9"
+    },
+    {
+      "$oid": "681ef8f4639b6d31469cf7fa"
+    },
+    {
+      "$oid": "681ef8f4639b6d31469cf7fb"
+    },
+    {
+      "$oid": "681ef8f4639b6d31469cf7fc"
+    },
+    {
+      "$oid": "681ef8f4639b6d31469cf7fd"
+    },
+    {
+      "$oid": "681ef8f4639b6d31469cf7fe"
+    },
+    {
+      "$oid": "681ef8f4639b6d31469cf7ff"
+    },
+    {
+      "$oid": "681ef8f4639b6d31469cf800"
+    },
+    {
+      "$oid": "681ef8f4639b6d31469cf801"
+    },
+    {
+      "$oid": "681ef8f4639b6d31469cf802"
+    },
+    {
+      "$oid": "681ef8f4639b6d31469cf803"
+    },
+    {
+      "$oid": "681ef8f4639b6d31469cf804"
+    },
+    {
+      "$oid": "681ef8f4639b6d31469cf805"
+    },
+    {
+      "$oid": "681ef8f4639b6d31469cf806"
+    },
+    {
+      "$oid": "681ef8f4639b6d31469cf807"
+    },
+    {
+      "$oid": "681ef8f4639b6d31469cf808"
+    },
+    {
+      "$oid": "681ef8f4639b6d31469cf809"
+    },
+    {
+      "$oid": "681ef8f4639b6d31469cf80a"
+    }
+  ],
+  "duration": 10,
+  "totalMarks": 20,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-10T05:11:38.550Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-12T09:33:25.022Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681ee03053ce7dfafec42ce2"
+  },
+  "title": "Lambda Functions and Higher-order Functions",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628b"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "681efa73639b6d31469cf89d"
+    },
+    {
+      "$oid": "681efa73639b6d31469cf89e"
+    },
+    {
+      "$oid": "681efa73639b6d31469cf89f"
+    },
+    {
+      "$oid": "681efa73639b6d31469cf8a0"
+    },
+    {
+      "$oid": "681efa73639b6d31469cf8a1"
+    },
+    {
+      "$oid": "681efa73639b6d31469cf8a2"
+    },
+    {
+      "$oid": "681efa73639b6d31469cf8a3"
+    },
+    {
+      "$oid": "681efa73639b6d31469cf8a4"
+    },
+    {
+      "$oid": "681efa73639b6d31469cf8a5"
+    },
+    {
+      "$oid": "681efa73639b6d31469cf8a6"
+    },
+    {
+      "$oid": "681efa73639b6d31469cf8a7"
+    },
+    {
+      "$oid": "681efa73639b6d31469cf8a8"
+    },
+    {
+      "$oid": "681efa73639b6d31469cf8a9"
+    },
+    {
+      "$oid": "681efa73639b6d31469cf8aa"
+    },
+    {
+      "$oid": "681efa73639b6d31469cf8ab"
+    },
+    {
+      "$oid": "681efa73639b6d31469cf8ac"
+    },
+    {
+      "$oid": "681efa73639b6d31469cf8ad"
+    },
+    {
+      "$oid": "681efa73639b6d31469cf8ae"
+    },
+    {
+      "$oid": "681efa73639b6d31469cf8af"
+    },
+    {
+      "$oid": "681efa73639b6d31469cf8b0"
+    }
+  ],
+  "duration": 10,
+  "totalMarks": 20,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-10T05:12:16.158Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-12T09:33:25.058Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681ee06553ce7dfafec42cea"
+  },
+  "title": "Basic OOPS",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628b"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "681f276f8eeb49f597d4c3e2"
+    },
+    {
+      "$oid": "681f276f8eeb49f597d4c3e3"
+    },
+    {
+      "$oid": "681f276f8eeb49f597d4c3e4"
+    },
+    {
+      "$oid": "681f276f8eeb49f597d4c3e5"
+    },
+    {
+      "$oid": "681f276f8eeb49f597d4c3e6"
+    },
+    {
+      "$oid": "681f276f8eeb49f597d4c3e7"
+    },
+    {
+      "$oid": "681f276f8eeb49f597d4c3e8"
+    },
+    {
+      "$oid": "681f276f8eeb49f597d4c3e9"
+    },
+    {
+      "$oid": "681f276f8eeb49f597d4c3ea"
+    },
+    {
+      "$oid": "681f276f8eeb49f597d4c3eb"
+    },
+    {
+      "$oid": "681f276f8eeb49f597d4c3ec"
+    },
+    {
+      "$oid": "681f276f8eeb49f597d4c3ed"
+    },
+    {
+      "$oid": "681f276f8eeb49f597d4c3ee"
+    },
+    {
+      "$oid": "681f276f8eeb49f597d4c3ef"
+    },
+    {
+      "$oid": "681f276f8eeb49f597d4c3f0"
+    },
+    {
+      "$oid": "681f276f8eeb49f597d4c3f1"
+    },
+    {
+      "$oid": "681f276f8eeb49f597d4c3f2"
+    },
+    {
+      "$oid": "681f276f8eeb49f597d4c3f3"
+    },
+    {
+      "$oid": "681f276f8eeb49f597d4c3f4"
+    },
+    {
+      "$oid": "681f276f8eeb49f597d4c3f5"
+    }
+  ],
+  "duration": 10,
+  "totalMarks": 30,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-10T05:13:09.274Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-12T09:33:25.099Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681ee07953ce7dfafec42cf2"
+  },
+  "title": "Advanced OOP Concepts",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628b"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "681f27d18eeb49f597d4c3ff"
+    },
+    {
+      "$oid": "681f27d18eeb49f597d4c400"
+    },
+    {
+      "$oid": "681f27d18eeb49f597d4c401"
+    },
+    {
+      "$oid": "681f27d18eeb49f597d4c402"
+    },
+    {
+      "$oid": "681f27d18eeb49f597d4c403"
+    },
+    {
+      "$oid": "681f27d18eeb49f597d4c404"
+    },
+    {
+      "$oid": "681f27d18eeb49f597d4c405"
+    },
+    {
+      "$oid": "681f27d18eeb49f597d4c406"
+    },
+    {
+      "$oid": "681f27d18eeb49f597d4c407"
+    },
+    {
+      "$oid": "681f27d18eeb49f597d4c408"
+    },
+    {
+      "$oid": "681f27d18eeb49f597d4c409"
+    },
+    {
+      "$oid": "681f27d18eeb49f597d4c40a"
+    },
+    {
+      "$oid": "681f27d18eeb49f597d4c40b"
+    },
+    {
+      "$oid": "681f27d18eeb49f597d4c40c"
+    },
+    {
+      "$oid": "681f27d18eeb49f597d4c40d"
+    },
+    {
+      "$oid": "681f27d18eeb49f597d4c40e"
+    },
+    {
+      "$oid": "681f27d18eeb49f597d4c40f"
+    },
+    {
+      "$oid": "681f27d18eeb49f597d4c410"
+    },
+    {
+      "$oid": "681f27d18eeb49f597d4c411"
+    },
+    {
+      "$oid": "681f27d18eeb49f597d4c412"
+    }
+  ],
+  "duration": 10,
+  "totalMarks": 20,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-10T05:13:29.199Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-12T09:33:25.138Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681ee09253ce7dfafec42cfa"
+  },
+  "title": "Multithreading and Multiprocessing",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628b"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "681f29958eeb49f597d4c446"
+    },
+    {
+      "$oid": "681f29958eeb49f597d4c447"
+    },
+    {
+      "$oid": "681f29958eeb49f597d4c448"
+    },
+    {
+      "$oid": "681f29958eeb49f597d4c449"
+    },
+    {
+      "$oid": "681f29958eeb49f597d4c44a"
+    },
+    {
+      "$oid": "681f29958eeb49f597d4c44b"
+    },
+    {
+      "$oid": "681f29958eeb49f597d4c44c"
+    },
+    {
+      "$oid": "681f29958eeb49f597d4c44d"
+    },
+    {
+      "$oid": "681f29958eeb49f597d4c44e"
+    },
+    {
+      "$oid": "681f29958eeb49f597d4c44f"
+    },
+    {
+      "$oid": "681f29958eeb49f597d4c450"
+    },
+    {
+      "$oid": "681f29958eeb49f597d4c451"
+    },
+    {
+      "$oid": "681f29958eeb49f597d4c452"
+    },
+    {
+      "$oid": "681f29958eeb49f597d4c453"
+    },
+    {
+      "$oid": "681f29958eeb49f597d4c454"
+    },
+    {
+      "$oid": "681f29958eeb49f597d4c455"
+    },
+    {
+      "$oid": "681f29958eeb49f597d4c456"
+    },
+    {
+      "$oid": "681f29958eeb49f597d4c457"
+    },
+    {
+      "$oid": "681f29958eeb49f597d4c458"
+    },
+    {
+      "$oid": "681f29958eeb49f597d4c459"
+    }
+  ],
+  "duration": 10,
+  "totalMarks": 20,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-10T05:13:54.126Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-12T09:33:25.175Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681ee0b253ce7dfafec42d02"
+  },
+  "title": "Database Integration",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628b"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "681f3b2b03a7f26596863de9"
+    },
+    {
+      "$oid": "681f3b2b03a7f26596863dea"
+    },
+    {
+      "$oid": "681f3b2b03a7f26596863deb"
+    },
+    {
+      "$oid": "681f3b2b03a7f26596863dec"
+    },
+    {
+      "$oid": "681f3b2b03a7f26596863ded"
+    },
+    {
+      "$oid": "681f3b2b03a7f26596863dee"
+    },
+    {
+      "$oid": "681f3b2b03a7f26596863def"
+    },
+    {
+      "$oid": "681f3b2b03a7f26596863df0"
+    },
+    {
+      "$oid": "681f3b2b03a7f26596863df1"
+    },
+    {
+      "$oid": "681f3b2b03a7f26596863df2"
+    },
+    {
+      "$oid": "681f3b2b03a7f26596863df3"
+    },
+    {
+      "$oid": "681f3b2b03a7f26596863df4"
+    },
+    {
+      "$oid": "681f3b2b03a7f26596863df5"
+    },
+    {
+      "$oid": "681f3b2b03a7f26596863df6"
+    },
+    {
+      "$oid": "681f3b2b03a7f26596863df7"
+    },
+    {
+      "$oid": "681f3b2b03a7f26596863df8"
+    },
+    {
+      "$oid": "681f3b2b03a7f26596863df9"
+    },
+    {
+      "$oid": "681f3b2b03a7f26596863dfa"
+    },
+    {
+      "$oid": "681f3b2b03a7f26596863dfb"
+    },
+    {
+      "$oid": "681f3b2b03a7f26596863dfc"
+    }
+  ],
+  "duration": 10,
+  "totalMarks": 19,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-10T05:14:26.426Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-12T09:33:25.212Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681ee0d153ce7dfafec42d0a"
+  },
+  "title": "Function Annotations",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628b"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "682329ad79342c1c915e957a"
+    },
+    {
+      "$oid": "682329ad79342c1c915e957b"
+    },
+    {
+      "$oid": "682329ad79342c1c915e957c"
+    },
+    {
+      "$oid": "682329ad79342c1c915e957d"
+    },
+    {
+      "$oid": "682329ad79342c1c915e957e"
+    },
+    {
+      "$oid": "682329ad79342c1c915e957f"
+    },
+    {
+      "$oid": "682329ad79342c1c915e9580"
+    },
+    {
+      "$oid": "682329ad79342c1c915e9581"
+    },
+    {
+      "$oid": "682329ad79342c1c915e9582"
+    },
+    {
+      "$oid": "682329ad79342c1c915e9583"
+    },
+    {
+      "$oid": "682329ad79342c1c915e9584"
+    },
+    {
+      "$oid": "682329ad79342c1c915e9585"
+    },
+    {
+      "$oid": "682329ad79342c1c915e9586"
+    },
+    {
+      "$oid": "682329ad79342c1c915e9587"
+    },
+    {
+      "$oid": "682329ad79342c1c915e9588"
+    },
+    {
+      "$oid": "682329ad79342c1c915e9589"
+    },
+    {
+      "$oid": "682329ad79342c1c915e958a"
+    },
+    {
+      "$oid": "682329ad79342c1c915e958b"
+    },
+    {
+      "$oid": "682329ad79342c1c915e958c"
+    },
+    {
+      "$oid": "682329ad79342c1c915e958d"
+    }
+  ],
+  "duration": 10,
+  "totalMarks": 40,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-10T05:14:57.880Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T11:14:53.437Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681ee0e253ce7dfafec42d12"
+  },
+  "title": "Asynchronous Programming",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628b"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "682329fd79342c1c915e95f3"
+    },
+    {
+      "$oid": "682329fd79342c1c915e95f4"
+    },
+    {
+      "$oid": "682329fd79342c1c915e95f5"
+    },
+    {
+      "$oid": "682329fd79342c1c915e95f6"
+    },
+    {
+      "$oid": "682329fd79342c1c915e95f7"
+    },
+    {
+      "$oid": "682329fd79342c1c915e95f8"
+    },
+    {
+      "$oid": "682329fd79342c1c915e95f9"
+    },
+    {
+      "$oid": "682329fd79342c1c915e95fa"
+    },
+    {
+      "$oid": "682329fd79342c1c915e95fb"
+    },
+    {
+      "$oid": "682329fd79342c1c915e95fc"
+    },
+    {
+      "$oid": "682329fd79342c1c915e95fd"
+    },
+    {
+      "$oid": "682329fd79342c1c915e95fe"
+    },
+    {
+      "$oid": "682329fd79342c1c915e95ff"
+    },
+    {
+      "$oid": "682329fd79342c1c915e9600"
+    },
+    {
+      "$oid": "682329fd79342c1c915e9601"
+    },
+    {
+      "$oid": "682329fd79342c1c915e9602"
+    },
+    {
+      "$oid": "682329fd79342c1c915e9603"
+    },
+    {
+      "$oid": "682329fd79342c1c915e9604"
+    },
+    {
+      "$oid": "682329fd79342c1c915e9605"
+    },
+    {
+      "$oid": "682329fd79342c1c915e9606"
+    }
+  ],
+  "duration": 10,
+  "totalMarks": 20,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-10T05:15:14.891Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T11:16:13.614Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681ee10053ce7dfafec42d1a"
+  },
+  "title": "Advanced Data Structures and Algorithms",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628b"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "681f3ce503a7f26596863e5b"
+    },
+    {
+      "$oid": "681f3ce503a7f26596863e5c"
+    },
+    {
+      "$oid": "681f3ce503a7f26596863e5d"
+    },
+    {
+      "$oid": "681f3ce503a7f26596863e5e"
+    },
+    {
+      "$oid": "681f3ce503a7f26596863e5f"
+    },
+    {
+      "$oid": "681f3ce503a7f26596863e60"
+    },
+    {
+      "$oid": "681f3ce503a7f26596863e61"
+    },
+    {
+      "$oid": "681f3ce503a7f26596863e62"
+    },
+    {
+      "$oid": "681f3ce503a7f26596863e63"
+    },
+    {
+      "$oid": "681f3ce503a7f26596863e64"
+    },
+    {
+      "$oid": "681f3ce503a7f26596863e65"
+    },
+    {
+      "$oid": "681f3ce503a7f26596863e66"
+    },
+    {
+      "$oid": "681f3ce503a7f26596863e67"
+    },
+    {
+      "$oid": "681f3ce503a7f26596863e68"
+    },
+    {
+      "$oid": "681f3ce503a7f26596863e69"
+    },
+    {
+      "$oid": "681f3ce503a7f26596863e6a"
+    },
+    {
+      "$oid": "681f3ce503a7f26596863e6b"
+    },
+    {
+      "$oid": "681f3ce503a7f26596863e6c"
+    },
+    {
+      "$oid": "681f3ce503a7f26596863e6d"
+    },
+    {
+      "$oid": "681f3ce503a7f26596863e6e"
+    }
+  ],
+  "duration": 10,
+  "totalMarks": 20,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-10T05:15:44.977Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-12T09:33:25.331Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "681ee11853ce7dfafec42d22"
+  },
+  "title": "Functional Programming",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628b"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "681f3db403a7f26596863e89"
+    },
+    {
+      "$oid": "681f3db403a7f26596863e8a"
+    },
+    {
+      "$oid": "681f3db403a7f26596863e8b"
+    },
+    {
+      "$oid": "681f3db403a7f26596863e8c"
+    },
+    {
+      "$oid": "681f3db403a7f26596863e8d"
+    },
+    {
+      "$oid": "681f3db403a7f26596863e8e"
+    },
+    {
+      "$oid": "681f3db403a7f26596863e8f"
+    },
+    {
+      "$oid": "681f3db403a7f26596863e90"
+    },
+    {
+      "$oid": "681f3db403a7f26596863e91"
+    },
+    {
+      "$oid": "681f3db403a7f26596863e92"
+    },
+    {
+      "$oid": "681f3db403a7f26596863e93"
+    },
+    {
+      "$oid": "681f3db403a7f26596863e94"
+    },
+    {
+      "$oid": "681f3db403a7f26596863e95"
+    },
+    {
+      "$oid": "681f3db403a7f26596863e96"
+    },
+    {
+      "$oid": "681f3db403a7f26596863e97"
+    },
+    {
+      "$oid": "681f3db403a7f26596863e98"
+    },
+    {
+      "$oid": "681f3db403a7f26596863e99"
+    },
+    {
+      "$oid": "681f3db403a7f26596863e9a"
+    },
+    {
+      "$oid": "681f3db403a7f26596863e9b"
+    },
+    {
+      "$oid": "681f3db403a7f26596863e9c"
+    }
+  ],
+  "duration": 10,
+  "totalMarks": 30,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-10T05:16:08.485Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-12T09:33:25.375Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6820da52582885b1d851e86b"
+  },
+  "title": "HTML Tags and Structure",
+  "category": {
+    "$oid": "6821b119dec32f08aabd6295"
+  },
+  "topic": {
+    "$oid": "6821b11adec32f08aabd6298"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "682308c3f9a7f9e0eca30e98"
+    },
+    {
+      "$oid": "682308c3f9a7f9e0eca30e99"
+    },
+    {
+      "$oid": "682308c3f9a7f9e0eca30e9a"
+    },
+    {
+      "$oid": "682308c3f9a7f9e0eca30e9b"
+    },
+    {
+      "$oid": "682308c3f9a7f9e0eca30e9c"
+    },
+    {
+      "$oid": "682308c3f9a7f9e0eca30e9d"
+    },
+    {
+      "$oid": "682308c3f9a7f9e0eca30e9e"
+    },
+    {
+      "$oid": "682308c3f9a7f9e0eca30e9f"
+    },
+    {
+      "$oid": "682308c3f9a7f9e0eca30ea0"
+    },
+    {
+      "$oid": "682308c3f9a7f9e0eca30ea1"
+    },
+    {
+      "$oid": "682308c3f9a7f9e0eca30ea2"
+    },
+    {
+      "$oid": "682308c3f9a7f9e0eca30ea3"
+    },
+    {
+      "$oid": "682308c3f9a7f9e0eca30ea4"
+    },
+    {
+      "$oid": "682308c3f9a7f9e0eca30ea5"
+    },
+    {
+      "$oid": "682308c3f9a7f9e0eca30ea6"
+    },
+    {
+      "$oid": "682308c3f9a7f9e0eca30ea7"
+    },
+    {
+      "$oid": "682308c3f9a7f9e0eca30ea8"
+    },
+    {
+      "$oid": "682308c3f9a7f9e0eca30ea9"
+    },
+    {
+      "$oid": "682308c3f9a7f9e0eca30eaa"
+    },
+    {
+      "$oid": "682308c3f9a7f9e0eca30eab"
+    }
+  ],
+  "duration": 4,
+  "totalMarks": 30,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:11:46.359Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T08:54:27.948Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820da52582885b1d851e86c"
+  },
+  "title": "Headings, Paragraphs, Lists",
+  "category": {
+    "$oid": "6821b119dec32f08aabd6295"
+  },
+  "topic": {
+    "$oid": "6821b11adec32f08aabd6298"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "68230926f9a7f9e0eca30ecb"
+    },
+    {
+      "$oid": "68230926f9a7f9e0eca30ecc"
+    },
+    {
+      "$oid": "68230926f9a7f9e0eca30ecd"
+    },
+    {
+      "$oid": "68230926f9a7f9e0eca30ece"
+    },
+    {
+      "$oid": "68230926f9a7f9e0eca30ecf"
+    },
+    {
+      "$oid": "68230926f9a7f9e0eca30ed0"
+    },
+    {
+      "$oid": "68230926f9a7f9e0eca30ed1"
+    },
+    {
+      "$oid": "68230926f9a7f9e0eca30ed2"
+    },
+    {
+      "$oid": "68230926f9a7f9e0eca30ed3"
+    },
+    {
+      "$oid": "68230926f9a7f9e0eca30ed4"
+    },
+    {
+      "$oid": "68230926f9a7f9e0eca30ed5"
+    },
+    {
+      "$oid": "68230926f9a7f9e0eca30ed6"
+    },
+    {
+      "$oid": "68230926f9a7f9e0eca30ed7"
+    },
+    {
+      "$oid": "68230926f9a7f9e0eca30ed8"
+    },
+    {
+      "$oid": "68230926f9a7f9e0eca30ed9"
+    },
+    {
+      "$oid": "68230926f9a7f9e0eca30eda"
+    },
+    {
+      "$oid": "68230926f9a7f9e0eca30edb"
+    },
+    {
+      "$oid": "68230926f9a7f9e0eca30edc"
+    },
+    {
+      "$oid": "68230926f9a7f9e0eca30edd"
+    },
+    {
+      "$oid": "68230926f9a7f9e0eca30ede"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 30,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:11:46.359Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T08:56:06.450Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820da52582885b1d851e86d"
+  },
+  "title": "Global and Specific Attributes",
+  "category": {
+    "$oid": "6821b119dec32f08aabd6295"
+  },
+  "topic": {
+    "$oid": "6821b11adec32f08aabd6298"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "682309f7f9a7f9e0eca30f47"
+    },
+    {
+      "$oid": "682309f7f9a7f9e0eca30f48"
+    },
+    {
+      "$oid": "682309f7f9a7f9e0eca30f49"
+    },
+    {
+      "$oid": "682309f7f9a7f9e0eca30f4a"
+    },
+    {
+      "$oid": "682309f7f9a7f9e0eca30f4b"
+    },
+    {
+      "$oid": "682309f7f9a7f9e0eca30f4c"
+    },
+    {
+      "$oid": "682309f7f9a7f9e0eca30f4d"
+    },
+    {
+      "$oid": "682309f7f9a7f9e0eca30f4e"
+    },
+    {
+      "$oid": "682309f7f9a7f9e0eca30f4f"
+    },
+    {
+      "$oid": "682309f7f9a7f9e0eca30f50"
+    },
+    {
+      "$oid": "682309f7f9a7f9e0eca30f51"
+    },
+    {
+      "$oid": "682309f7f9a7f9e0eca30f52"
+    },
+    {
+      "$oid": "682309f7f9a7f9e0eca30f53"
+    },
+    {
+      "$oid": "682309f7f9a7f9e0eca30f54"
+    },
+    {
+      "$oid": "682309f7f9a7f9e0eca30f55"
+    },
+    {
+      "$oid": "682309f7f9a7f9e0eca30f56"
+    },
+    {
+      "$oid": "682309f7f9a7f9e0eca30f57"
+    },
+    {
+      "$oid": "682309f7f9a7f9e0eca30f58"
+    },
+    {
+      "$oid": "682309f7f9a7f9e0eca30f59"
+    },
+    {
+      "$oid": "682309f7f9a7f9e0eca30f5a"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 30,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:11:46.359Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T08:59:35.761Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820da52582885b1d851e86e"
+  },
+  "title": "Form Tags and Inputs",
+  "category": {
+    "$oid": "6821b119dec32f08aabd6295"
+  },
+  "topic": {
+    "$oid": "6821b11adec32f08aabd6298"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "68230b1ff9a7f9e0eca31002"
+    },
+    {
+      "$oid": "68230b1ff9a7f9e0eca31003"
+    },
+    {
+      "$oid": "68230b1ff9a7f9e0eca31004"
+    },
+    {
+      "$oid": "68230b1ff9a7f9e0eca31005"
+    },
+    {
+      "$oid": "68230b1ff9a7f9e0eca31006"
+    },
+    {
+      "$oid": "68230b1ff9a7f9e0eca31007"
+    },
+    {
+      "$oid": "68230b1ff9a7f9e0eca31008"
+    },
+    {
+      "$oid": "68230b1ff9a7f9e0eca31009"
+    },
+    {
+      "$oid": "68230b1ff9a7f9e0eca3100a"
+    },
+    {
+      "$oid": "68230b1ff9a7f9e0eca3100b"
+    },
+    {
+      "$oid": "68230b1ff9a7f9e0eca3100c"
+    },
+    {
+      "$oid": "68230b1ff9a7f9e0eca3100d"
+    },
+    {
+      "$oid": "68230b1ff9a7f9e0eca3100e"
+    },
+    {
+      "$oid": "68230b1ff9a7f9e0eca3100f"
+    },
+    {
+      "$oid": "68230b1ff9a7f9e0eca31010"
+    },
+    {
+      "$oid": "68230b1ff9a7f9e0eca31011"
+    },
+    {
+      "$oid": "68230b1ff9a7f9e0eca31012"
+    },
+    {
+      "$oid": "68230b1ff9a7f9e0eca31013"
+    },
+    {
+      "$oid": "68230b1ff9a7f9e0eca31014"
+    },
+    {
+      "$oid": "68230b1ff9a7f9e0eca31015"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:11:46.359Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-14T19:45:33.519Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820da52582885b1d851e86f"
+  },
+  "title": "Images, Audio, Video",
+  "category": {
+    "$oid": "6821b119dec32f08aabd6295"
+  },
+  "topic": {
+    "$oid": "6821b11adec32f08aabd6298"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "68230cedf9a7f9e0eca31085"
+    },
+    {
+      "$oid": "68230cedf9a7f9e0eca31086"
+    },
+    {
+      "$oid": "68230cedf9a7f9e0eca31087"
+    },
+    {
+      "$oid": "68230cedf9a7f9e0eca31088"
+    },
+    {
+      "$oid": "68230cedf9a7f9e0eca31089"
+    },
+    {
+      "$oid": "68230cedf9a7f9e0eca3108a"
+    },
+    {
+      "$oid": "68230cedf9a7f9e0eca3108b"
+    },
+    {
+      "$oid": "68230cedf9a7f9e0eca3108c"
+    },
+    {
+      "$oid": "68230cedf9a7f9e0eca3108d"
+    },
+    {
+      "$oid": "68230cedf9a7f9e0eca3108e"
+    },
+    {
+      "$oid": "68230cedf9a7f9e0eca3108f"
+    },
+    {
+      "$oid": "68230cedf9a7f9e0eca31090"
+    },
+    {
+      "$oid": "68230cedf9a7f9e0eca31091"
+    },
+    {
+      "$oid": "68230cedf9a7f9e0eca31092"
+    },
+    {
+      "$oid": "68230cedf9a7f9e0eca31093"
+    },
+    {
+      "$oid": "68230cedf9a7f9e0eca31094"
+    },
+    {
+      "$oid": "68230cedf9a7f9e0eca31095"
+    },
+    {
+      "$oid": "68230cedf9a7f9e0eca31096"
+    },
+    {
+      "$oid": "68230cedf9a7f9e0eca31097"
+    },
+    {
+      "$oid": "68230cedf9a7f9e0eca31098"
+    }
+  ],
+  "duration": 6,
+  "totalMarks": 30,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:11:46.359Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T09:12:14.145Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820da52582885b1d851e870"
+  },
+  "title": "Anchor Tags, Navigation",
+  "category": {
+    "$oid": "6821b119dec32f08aabd6295"
+  },
+  "topic": {
+    "$oid": "6821b11adec32f08aabd6298"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "68230d2ff9a7f9e0eca310b5"
+    },
+    {
+      "$oid": "68230d2ff9a7f9e0eca310b6"
+    },
+    {
+      "$oid": "68230d2ff9a7f9e0eca310b7"
+    },
+    {
+      "$oid": "68230d2ff9a7f9e0eca310b8"
+    },
+    {
+      "$oid": "68230d2ff9a7f9e0eca310b9"
+    },
+    {
+      "$oid": "68230d2ff9a7f9e0eca310ba"
+    },
+    {
+      "$oid": "68230d2ff9a7f9e0eca310bb"
+    },
+    {
+      "$oid": "68230d2ff9a7f9e0eca310bc"
+    },
+    {
+      "$oid": "68230d2ff9a7f9e0eca310bd"
+    },
+    {
+      "$oid": "68230d2ff9a7f9e0eca310be"
+    },
+    {
+      "$oid": "68230d2ff9a7f9e0eca310bf"
+    },
+    {
+      "$oid": "68230d2ff9a7f9e0eca310c0"
+    },
+    {
+      "$oid": "68230d2ff9a7f9e0eca310c1"
+    },
+    {
+      "$oid": "68230d2ff9a7f9e0eca310c2"
+    },
+    {
+      "$oid": "68230d2ff9a7f9e0eca310c3"
+    },
+    {
+      "$oid": "68230d2ff9a7f9e0eca310c4"
+    },
+    {
+      "$oid": "68230d2ff9a7f9e0eca310c5"
+    },
+    {
+      "$oid": "68230d2ff9a7f9e0eca310c6"
+    },
+    {
+      "$oid": "68230d2ff9a7f9e0eca310c7"
+    },
+    {
+      "$oid": "68230d2ff9a7f9e0eca310c8"
+    }
+  ],
+  "duration": 4,
+  "totalMarks": 30,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:11:46.359Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T09:13:20.017Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e8e9"
+  },
+  "title": "Collections Framework",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b119dec32f08aabd6291"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "68230fa9f9a7f9e0eca3112d"
+    },
+    {
+      "$oid": "68230fa9f9a7f9e0eca3112e"
+    },
+    {
+      "$oid": "68230fa9f9a7f9e0eca3112f"
+    },
+    {
+      "$oid": "68230fa9f9a7f9e0eca31130"
+    },
+    {
+      "$oid": "68230fa9f9a7f9e0eca31131"
+    },
+    {
+      "$oid": "68230fa9f9a7f9e0eca31132"
+    },
+    {
+      "$oid": "68230fa9f9a7f9e0eca31133"
+    },
+    {
+      "$oid": "68230fa9f9a7f9e0eca31134"
+    },
+    {
+      "$oid": "68230fa9f9a7f9e0eca31135"
+    },
+    {
+      "$oid": "68230fa9f9a7f9e0eca31136"
+    },
+    {
+      "$oid": "68230fa9f9a7f9e0eca31137"
+    },
+    {
+      "$oid": "68230fa9f9a7f9e0eca31138"
+    },
+    {
+      "$oid": "68230fa9f9a7f9e0eca31139"
+    },
+    {
+      "$oid": "68230fa9f9a7f9e0eca3113a"
+    },
+    {
+      "$oid": "68230fa9f9a7f9e0eca3113b"
+    },
+    {
+      "$oid": "68230fa9f9a7f9e0eca3113c"
+    },
+    {
+      "$oid": "68230fa9f9a7f9e0eca3113d"
+    },
+    {
+      "$oid": "68230fa9f9a7f9e0eca3113e"
+    },
+    {
+      "$oid": "68230fa9f9a7f9e0eca3113f"
+    },
+    {
+      "$oid": "68230fa9f9a7f9e0eca31140"
+    }
+  ],
+  "duration": 6,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.742Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T09:23:54.015Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e8ea"
+  },
+  "title": "Ownership & Borrowing",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b119dec32f08aabd6292"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "6823288b79342c1c915e9505"
+    },
+    {
+      "$oid": "6823288b79342c1c915e9506"
+    },
+    {
+      "$oid": "6823288b79342c1c915e9507"
+    },
+    {
+      "$oid": "6823288b79342c1c915e9508"
+    },
+    {
+      "$oid": "6823288b79342c1c915e9509"
+    },
+    {
+      "$oid": "6823288b79342c1c915e950a"
+    },
+    {
+      "$oid": "6823288b79342c1c915e950b"
+    },
+    {
+      "$oid": "6823288b79342c1c915e950c"
+    },
+    {
+      "$oid": "6823288b79342c1c915e950d"
+    },
+    {
+      "$oid": "6823288b79342c1c915e950e"
+    },
+    {
+      "$oid": "6823288b79342c1c915e950f"
+    },
+    {
+      "$oid": "6823288b79342c1c915e9510"
+    },
+    {
+      "$oid": "6823288b79342c1c915e9511"
+    },
+    {
+      "$oid": "6823288b79342c1c915e9512"
+    },
+    {
+      "$oid": "6823288b79342c1c915e9513"
+    },
+    {
+      "$oid": "6823288b79342c1c915e9514"
+    },
+    {
+      "$oid": "6823288b79342c1c915e9515"
+    },
+    {
+      "$oid": "6823288b79342c1c915e9516"
+    },
+    {
+      "$oid": "6823288b79342c1c915e9517"
+    },
+    {
+      "$oid": "6823288b79342c1c915e9518"
+    }
+  ],
+  "duration": 7,
+  "totalMarks": 40,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.742Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T11:10:03.591Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e8ec"
+  },
+  "title": "Selectors, Box Model",
+  "category": {
+    "$oid": "6821b119dec32f08aabd6295"
+  },
+  "topic": {
+    "$oid": "6821b11adec32f08aabd6299"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "68232b1f79342c1c915e9681"
+    },
+    {
+      "$oid": "68232b1f79342c1c915e9682"
+    },
+    {
+      "$oid": "68232b1f79342c1c915e9683"
+    },
+    {
+      "$oid": "68232b1f79342c1c915e9684"
+    },
+    {
+      "$oid": "68232b1f79342c1c915e9685"
+    },
+    {
+      "$oid": "68232b1f79342c1c915e9686"
+    },
+    {
+      "$oid": "68232b1f79342c1c915e9687"
+    },
+    {
+      "$oid": "68232b1f79342c1c915e9688"
+    },
+    {
+      "$oid": "68232b1f79342c1c915e9689"
+    },
+    {
+      "$oid": "68232b1f79342c1c915e968a"
+    },
+    {
+      "$oid": "68232b1f79342c1c915e968b"
+    },
+    {
+      "$oid": "68232b1f79342c1c915e968c"
+    },
+    {
+      "$oid": "68232b1f79342c1c915e968d"
+    },
+    {
+      "$oid": "68232b1f79342c1c915e968e"
+    },
+    {
+      "$oid": "68232b1f79342c1c915e968f"
+    },
+    {
+      "$oid": "68232b1f79342c1c915e9690"
+    },
+    {
+      "$oid": "68232b1f79342c1c915e9691"
+    },
+    {
+      "$oid": "68232b1f79342c1c915e9692"
+    },
+    {
+      "$oid": "68232b1f79342c1c915e9693"
+    },
+    {
+      "$oid": "68232b1f79342c1c915e9694"
+    }
+  ],
+  "duration": 4,
+  "totalMarks": 30,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.742Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T11:21:03.908Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e8ed"
+  },
+  "title": "Grid & Components",
+  "category": {
+    "$oid": "6821b119dec32f08aabd6295"
+  },
+  "topic": {
+    "$oid": "6821b11adec32f08aabd629a"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "68231210f9a7f9e0eca3121b"
+    },
+    {
+      "$oid": "68231210f9a7f9e0eca3121c"
+    },
+    {
+      "$oid": "68231210f9a7f9e0eca3121d"
+    },
+    {
+      "$oid": "68231210f9a7f9e0eca3121e"
+    },
+    {
+      "$oid": "68231210f9a7f9e0eca3121f"
+    },
+    {
+      "$oid": "68231210f9a7f9e0eca31220"
+    },
+    {
+      "$oid": "68231210f9a7f9e0eca31221"
+    },
+    {
+      "$oid": "68231210f9a7f9e0eca31222"
+    },
+    {
+      "$oid": "68231210f9a7f9e0eca31223"
+    },
+    {
+      "$oid": "68231210f9a7f9e0eca31224"
+    },
+    {
+      "$oid": "68231210f9a7f9e0eca31225"
+    },
+    {
+      "$oid": "68231210f9a7f9e0eca31226"
+    },
+    {
+      "$oid": "68231210f9a7f9e0eca31227"
+    },
+    {
+      "$oid": "68231210f9a7f9e0eca31228"
+    },
+    {
+      "$oid": "68231210f9a7f9e0eca31229"
+    },
+    {
+      "$oid": "68231210f9a7f9e0eca3122a"
+    },
+    {
+      "$oid": "68231210f9a7f9e0eca3122b"
+    },
+    {
+      "$oid": "68231210f9a7f9e0eca3122c"
+    },
+    {
+      "$oid": "68231210f9a7f9e0eca3122d"
+    },
+    {
+      "$oid": "68231210f9a7f9e0eca3122e"
+    }
+  ],
+  "duration": 6,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.742Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T09:34:09.171Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e8ee"
+  },
+  "title": "Utility Classes",
+  "category": {
+    "$oid": "6821b119dec32f08aabd6295"
+  },
+  "topic": {
+    "$oid": "6821b11adec32f08aabd629b"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "68231328f9a7f9e0eca312b6"
+    },
+    {
+      "$oid": "68231328f9a7f9e0eca312b7"
+    },
+    {
+      "$oid": "68231328f9a7f9e0eca312b8"
+    },
+    {
+      "$oid": "68231328f9a7f9e0eca312b9"
+    },
+    {
+      "$oid": "68231328f9a7f9e0eca312ba"
+    },
+    {
+      "$oid": "68231328f9a7f9e0eca312bb"
+    },
+    {
+      "$oid": "68231328f9a7f9e0eca312bc"
+    },
+    {
+      "$oid": "68231328f9a7f9e0eca312bd"
+    },
+    {
+      "$oid": "68231328f9a7f9e0eca312be"
+    },
+    {
+      "$oid": "68231328f9a7f9e0eca312bf"
+    },
+    {
+      "$oid": "68231328f9a7f9e0eca312c0"
+    },
+    {
+      "$oid": "68231328f9a7f9e0eca312c1"
+    },
+    {
+      "$oid": "68231328f9a7f9e0eca312c2"
+    },
+    {
+      "$oid": "68231328f9a7f9e0eca312c3"
+    },
+    {
+      "$oid": "68231328f9a7f9e0eca312c4"
+    },
+    {
+      "$oid": "68231328f9a7f9e0eca312c5"
+    },
+    {
+      "$oid": "68231328f9a7f9e0eca312c6"
+    },
+    {
+      "$oid": "68231328f9a7f9e0eca312c7"
+    },
+    {
+      "$oid": "68231328f9a7f9e0eca312c8"
+    },
+    {
+      "$oid": "68231328f9a7f9e0eca312c9"
+    }
+  ],
+  "duration": 6,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.742Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T09:38:48.246Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e8ef"
+  },
+  "title": "DOM Manipulation",
+  "category": {
+    "$oid": "6821b119dec32f08aabd6295"
+  },
+  "topic": {
+    "$oid": "6821b11adec32f08aabd629c"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "68232b8679342c1c915e9710"
+    },
+    {
+      "$oid": "68232b8679342c1c915e9711"
+    },
+    {
+      "$oid": "68232b8679342c1c915e9712"
+    },
+    {
+      "$oid": "68232b8679342c1c915e9713"
+    },
+    {
+      "$oid": "68232b8679342c1c915e9714"
+    },
+    {
+      "$oid": "68232b8679342c1c915e9715"
+    },
+    {
+      "$oid": "68232b8679342c1c915e9716"
+    },
+    {
+      "$oid": "68232b8679342c1c915e9717"
+    },
+    {
+      "$oid": "68232b8679342c1c915e9718"
+    },
+    {
+      "$oid": "68232b8679342c1c915e9719"
+    },
+    {
+      "$oid": "68232b8679342c1c915e971a"
+    },
+    {
+      "$oid": "68232b8679342c1c915e971b"
+    },
+    {
+      "$oid": "68232b8679342c1c915e971c"
+    },
+    {
+      "$oid": "68232b8679342c1c915e971d"
+    },
+    {
+      "$oid": "68232b8679342c1c915e971e"
+    },
+    {
+      "$oid": "68232b8679342c1c915e971f"
+    },
+    {
+      "$oid": "68232b8679342c1c915e9720"
+    },
+    {
+      "$oid": "68232b8679342c1c915e9721"
+    },
+    {
+      "$oid": "68232b8679342c1c915e9722"
+    },
+    {
+      "$oid": "68232b8679342c1c915e9723"
+    }
+  ],
+  "duration": 10,
+  "totalMarks": 21,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.742Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T11:22:46.490Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e8f0"
+  },
+  "title": "Components and JSX",
+  "category": {
+    "$oid": "6821b11adec32f08aabd62a1"
+  },
+  "topic": {
+    "$oid": "6821b11adec32f08aabd62a2"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "68232be979342c1c915e9731"
+    },
+    {
+      "$oid": "68232be979342c1c915e9732"
+    },
+    {
+      "$oid": "68232be979342c1c915e9733"
+    },
+    {
+      "$oid": "68232be979342c1c915e9734"
+    },
+    {
+      "$oid": "68232be979342c1c915e9735"
+    },
+    {
+      "$oid": "68232be979342c1c915e9736"
+    },
+    {
+      "$oid": "68232be979342c1c915e9737"
+    },
+    {
+      "$oid": "68232be979342c1c915e9738"
+    },
+    {
+      "$oid": "68232be979342c1c915e9739"
+    },
+    {
+      "$oid": "68232be979342c1c915e973a"
+    },
+    {
+      "$oid": "68232be979342c1c915e973b"
+    },
+    {
+      "$oid": "68232be979342c1c915e973c"
+    },
+    {
+      "$oid": "68232be979342c1c915e973d"
+    },
+    {
+      "$oid": "68232be979342c1c915e973e"
+    },
+    {
+      "$oid": "68232be979342c1c915e973f"
+    },
+    {
+      "$oid": "68232be979342c1c915e9740"
+    },
+    {
+      "$oid": "68232be979342c1c915e9741"
+    },
+    {
+      "$oid": "68232be979342c1c915e9742"
+    },
+    {
+      "$oid": "68232be979342c1c915e9743"
+    },
+    {
+      "$oid": "68232be979342c1c915e9744"
+    }
+  ],
+  "duration": 6,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.742Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T11:24:25.547Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e8f1"
+  },
+  "title": "Reactivity System",
+  "category": {
+    "$oid": "6821b11adec32f08aabd62a1"
+  },
+  "topic": {
+    "$oid": "6821b11bdec32f08aabd62a3"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "68232c4e79342c1c915e9752"
+    },
+    {
+      "$oid": "68232c4e79342c1c915e9753"
+    },
+    {
+      "$oid": "68232c4e79342c1c915e9754"
+    },
+    {
+      "$oid": "68232c4e79342c1c915e9755"
+    },
+    {
+      "$oid": "68232c4e79342c1c915e9756"
+    },
+    {
+      "$oid": "68232c4e79342c1c915e9757"
+    },
+    {
+      "$oid": "68232c4e79342c1c915e9758"
+    },
+    {
+      "$oid": "68232c4e79342c1c915e9759"
+    },
+    {
+      "$oid": "68232c4e79342c1c915e975a"
+    },
+    {
+      "$oid": "68232c4e79342c1c915e975b"
+    },
+    {
+      "$oid": "68232c4e79342c1c915e975c"
+    },
+    {
+      "$oid": "68232c4e79342c1c915e975d"
+    },
+    {
+      "$oid": "68232c4e79342c1c915e975e"
+    },
+    {
+      "$oid": "68232c4e79342c1c915e975f"
+    },
+    {
+      "$oid": "68232c4e79342c1c915e9760"
+    },
+    {
+      "$oid": "68232c4e79342c1c915e9761"
+    },
+    {
+      "$oid": "68232c4e79342c1c915e9762"
+    },
+    {
+      "$oid": "68232c4e79342c1c915e9763"
+    },
+    {
+      "$oid": "68232c4e79342c1c915e9764"
+    },
+    {
+      "$oid": "68232c4e79342c1c915e9765"
+    }
+  ],
+  "duration": 6,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.742Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T11:26:06.715Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e8f2"
+  },
+  "title": "Stores and Lifecycle",
+  "category": {
+    "$oid": "6821b11adec32f08aabd62a1"
+  },
+  "topic": {
+    "$oid": "6821b11bdec32f08aabd62a4"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "68232cb979342c1c915e9773"
+    },
+    {
+      "$oid": "68232cb979342c1c915e9774"
+    },
+    {
+      "$oid": "68232cb979342c1c915e9775"
+    },
+    {
+      "$oid": "68232cb979342c1c915e9776"
+    },
+    {
+      "$oid": "68232cb979342c1c915e9777"
+    },
+    {
+      "$oid": "68232cb979342c1c915e9778"
+    },
+    {
+      "$oid": "68232cb979342c1c915e9779"
+    },
+    {
+      "$oid": "68232cb979342c1c915e977a"
+    },
+    {
+      "$oid": "68232cb979342c1c915e977b"
+    },
+    {
+      "$oid": "68232cb979342c1c915e977c"
+    },
+    {
+      "$oid": "68232cb979342c1c915e977d"
+    },
+    {
+      "$oid": "68232cb979342c1c915e977e"
+    },
+    {
+      "$oid": "68232cb979342c1c915e977f"
+    },
+    {
+      "$oid": "68232cb979342c1c915e9780"
+    },
+    {
+      "$oid": "68232cb979342c1c915e9781"
+    },
+    {
+      "$oid": "68232cb979342c1c915e9782"
+    },
+    {
+      "$oid": "68232cb979342c1c915e9783"
+    },
+    {
+      "$oid": "68232cb979342c1c915e9784"
+    },
+    {
+      "$oid": "68232cb979342c1c915e9785"
+    },
+    {
+      "$oid": "68232cb979342c1c915e9786"
+    }
+  ],
+  "duration": 6,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.742Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T11:27:53.520Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e8f3"
+  },
+  "title": "Routing and SSR",
+  "category": {
+    "$oid": "6821b11adec32f08aabd62a1"
+  },
+  "topic": {
+    "$oid": "6821b11bdec32f08aabd62a5"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "68232d6479342c1c915e9812"
+    },
+    {
+      "$oid": "68232d6479342c1c915e9813"
+    },
+    {
+      "$oid": "68232d6479342c1c915e9814"
+    },
+    {
+      "$oid": "68232d6479342c1c915e9815"
+    },
+    {
+      "$oid": "68232d6479342c1c915e9816"
+    },
+    {
+      "$oid": "68232d6479342c1c915e9817"
+    },
+    {
+      "$oid": "68232d6479342c1c915e9818"
+    },
+    {
+      "$oid": "68232d6479342c1c915e9819"
+    },
+    {
+      "$oid": "68232d6479342c1c915e981a"
+    },
+    {
+      "$oid": "68232d6479342c1c915e981b"
+    },
+    {
+      "$oid": "68232d6479342c1c915e981c"
+    },
+    {
+      "$oid": "68232d6479342c1c915e981d"
+    },
+    {
+      "$oid": "68232d6479342c1c915e981e"
+    },
+    {
+      "$oid": "68232d6479342c1c915e981f"
+    },
+    {
+      "$oid": "68232d6479342c1c915e9820"
+    },
+    {
+      "$oid": "68232d6479342c1c915e9821"
+    },
+    {
+      "$oid": "68232d6479342c1c915e9822"
+    },
+    {
+      "$oid": "68232d6479342c1c915e9823"
+    },
+    {
+      "$oid": "68232d6479342c1c915e9824"
+    },
+    {
+      "$oid": "68232d6479342c1c915e9825"
+    }
+  ],
+  "duration": 7,
+  "totalMarks": 40,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.742Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T11:30:44.256Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e8f4"
+  },
+  "title": "Services and DI",
+  "category": {
+    "$oid": "6821b11adec32f08aabd62a1"
+  },
+  "topic": {
+    "$oid": "6821b11bdec32f08aabd62a6"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "68232e1a79342c1c915e98ae"
+    },
+    {
+      "$oid": "68232e1a79342c1c915e98af"
+    },
+    {
+      "$oid": "68232e1a79342c1c915e98b0"
+    },
+    {
+      "$oid": "68232e1a79342c1c915e98b1"
+    },
+    {
+      "$oid": "68232e1a79342c1c915e98b2"
+    },
+    {
+      "$oid": "68232e1a79342c1c915e98b3"
+    },
+    {
+      "$oid": "68232e1a79342c1c915e98b4"
+    },
+    {
+      "$oid": "68232e1a79342c1c915e98b5"
+    },
+    {
+      "$oid": "68232e1a79342c1c915e98b6"
+    },
+    {
+      "$oid": "68232e1a79342c1c915e98b7"
+    },
+    {
+      "$oid": "68232e1a79342c1c915e98b8"
+    },
+    {
+      "$oid": "68232e1a79342c1c915e98b9"
+    },
+    {
+      "$oid": "68232e1a79342c1c915e98ba"
+    },
+    {
+      "$oid": "68232e1a79342c1c915e98bb"
+    },
+    {
+      "$oid": "68232e1a79342c1c915e98bc"
+    },
+    {
+      "$oid": "68232e1a79342c1c915e98bd"
+    },
+    {
+      "$oid": "68232e1a79342c1c915e98be"
+    },
+    {
+      "$oid": "68232e1a79342c1c915e98bf"
+    },
+    {
+      "$oid": "68232e1a79342c1c915e98c0"
+    },
+    {
+      "$oid": "68232e1a79342c1c915e98c1"
+    }
+  ],
+  "duration": 7,
+  "totalMarks": 40,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.742Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T11:33:46.277Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e8f5"
+  },
+  "title": "Event Loop",
+  "category": {
+    "$oid": "6821b11bdec32f08aabd62a7"
+  },
+  "topic": {
+    "$oid": "6821b11bdec32f08aabd62a8"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "68232fc379342c1c915e9a16"
+    },
+    {
+      "$oid": "68232fc379342c1c915e9a17"
+    },
+    {
+      "$oid": "68232fc379342c1c915e9a18"
+    },
+    {
+      "$oid": "68232fc379342c1c915e9a19"
+    },
+    {
+      "$oid": "68232fc379342c1c915e9a1a"
+    },
+    {
+      "$oid": "68232fc379342c1c915e9a1b"
+    },
+    {
+      "$oid": "68232fc379342c1c915e9a1c"
+    },
+    {
+      "$oid": "68232fc379342c1c915e9a1d"
+    },
+    {
+      "$oid": "68232fc379342c1c915e9a1e"
+    },
+    {
+      "$oid": "68232fc379342c1c915e9a1f"
+    },
+    {
+      "$oid": "68232fc379342c1c915e9a20"
+    },
+    {
+      "$oid": "68232fc379342c1c915e9a21"
+    },
+    {
+      "$oid": "68232fc379342c1c915e9a22"
+    },
+    {
+      "$oid": "68232fc379342c1c915e9a23"
+    },
+    {
+      "$oid": "68232fc379342c1c915e9a24"
+    },
+    {
+      "$oid": "68232fc379342c1c915e9a25"
+    },
+    {
+      "$oid": "68232fc379342c1c915e9a26"
+    },
+    {
+      "$oid": "68232fc379342c1c915e9a27"
+    },
+    {
+      "$oid": "68232fc379342c1c915e9a28"
+    },
+    {
+      "$oid": "68232fc379342c1c915e9a29"
+    }
+  ],
+  "duration": 6,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-13T11:40:51.778Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e8f6"
+  },
+  "title": "Routing and Middleware",
+  "category": {
+    "$oid": "6821b11bdec32f08aabd62a7"
+  },
+  "topic": {
+    "$oid": "6821b11bdec32f08aabd62a9"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "68247d32d9a86db02f727d15"
+    },
+    {
+      "$oid": "68247d32d9a86db02f727d16"
+    },
+    {
+      "$oid": "68247d32d9a86db02f727d17"
+    },
+    {
+      "$oid": "68247d32d9a86db02f727d18"
+    },
+    {
+      "$oid": "68247d32d9a86db02f727d19"
+    },
+    {
+      "$oid": "68247d32d9a86db02f727d1a"
+    },
+    {
+      "$oid": "68247d32d9a86db02f727d1b"
+    },
+    {
+      "$oid": "68247d32d9a86db02f727d1c"
+    },
+    {
+      "$oid": "68247d32d9a86db02f727d1d"
+    },
+    {
+      "$oid": "68247d32d9a86db02f727d1e"
+    },
+    {
+      "$oid": "68247d32d9a86db02f727d1f"
+    },
+    {
+      "$oid": "68247d32d9a86db02f727d20"
+    },
+    {
+      "$oid": "68247d32d9a86db02f727d21"
+    },
+    {
+      "$oid": "68247d32d9a86db02f727d22"
+    },
+    {
+      "$oid": "68247d32d9a86db02f727d23"
+    },
+    {
+      "$oid": "68247d32d9a86db02f727d24"
+    },
+    {
+      "$oid": "68247d32d9a86db02f727d25"
+    },
+    {
+      "$oid": "68247d32d9a86db02f727d26"
+    },
+    {
+      "$oid": "68247d32d9a86db02f727d27"
+    },
+    {
+      "$oid": "68247d32d9a86db02f727d28"
+    }
+  ],
+  "duration": 6,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-14T11:23:30.685Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e8f7"
+  },
+  "title": "ORM and Views",
+  "category": {
+    "$oid": "6821b11bdec32f08aabd62a7"
+  },
+  "topic": {
+    "$oid": "6821b11bdec32f08aabd62aa"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "68247d7cd9a86db02f727d38"
+    },
+    {
+      "$oid": "68247d7cd9a86db02f727d39"
+    },
+    {
+      "$oid": "68247d7cd9a86db02f727d3a"
+    },
+    {
+      "$oid": "68247d7cd9a86db02f727d3b"
+    },
+    {
+      "$oid": "68247d7cd9a86db02f727d3c"
+    },
+    {
+      "$oid": "68247d7cd9a86db02f727d3d"
+    },
+    {
+      "$oid": "68247d7cd9a86db02f727d3e"
+    },
+    {
+      "$oid": "68247d7cd9a86db02f727d3f"
+    },
+    {
+      "$oid": "68247d7cd9a86db02f727d40"
+    },
+    {
+      "$oid": "68247d7cd9a86db02f727d41"
+    },
+    {
+      "$oid": "68247d7cd9a86db02f727d42"
+    },
+    {
+      "$oid": "68247d7cd9a86db02f727d43"
+    },
+    {
+      "$oid": "68247d7cd9a86db02f727d44"
+    },
+    {
+      "$oid": "68247d7cd9a86db02f727d45"
+    },
+    {
+      "$oid": "68247d7cd9a86db02f727d46"
+    },
+    {
+      "$oid": "68247d7cd9a86db02f727d47"
+    },
+    {
+      "$oid": "68247d7cd9a86db02f727d48"
+    },
+    {
+      "$oid": "68247d7cd9a86db02f727d49"
+    },
+    {
+      "$oid": "68247d7cd9a86db02f727d4a"
+    },
+    {
+      "$oid": "68247d7cd9a86db02f727d4b"
+    }
+  ],
+  "duration": 6,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-14T11:24:45.223Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e8f8"
+  },
+  "title": "APIs and Blueprints",
+  "category": {
+    "$oid": "6821b11bdec32f08aabd62a7"
+  },
+  "topic": {
+    "$oid": "6821b11bdec32f08aabd62ab"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "68247ebcd9a86db02f727d66"
+    },
+    {
+      "$oid": "68247ebcd9a86db02f727d67"
+    },
+    {
+      "$oid": "68247ebcd9a86db02f727d68"
+    },
+    {
+      "$oid": "68247ebcd9a86db02f727d69"
+    },
+    {
+      "$oid": "68247ebcd9a86db02f727d6a"
+    },
+    {
+      "$oid": "68247ebcd9a86db02f727d6b"
+    },
+    {
+      "$oid": "68247ebcd9a86db02f727d6c"
+    },
+    {
+      "$oid": "68247ebcd9a86db02f727d6d"
+    },
+    {
+      "$oid": "68247ebcd9a86db02f727d6e"
+    },
+    {
+      "$oid": "68247ebcd9a86db02f727d6f"
+    },
+    {
+      "$oid": "68247ebcd9a86db02f727d70"
+    },
+    {
+      "$oid": "68247ebcd9a86db02f727d71"
+    },
+    {
+      "$oid": "68247ebcd9a86db02f727d72"
+    },
+    {
+      "$oid": "68247ebcd9a86db02f727d73"
+    },
+    {
+      "$oid": "68247ebcd9a86db02f727d74"
+    },
+    {
+      "$oid": "68247ebcd9a86db02f727d75"
+    },
+    {
+      "$oid": "68247ebcd9a86db02f727d76"
+    },
+    {
+      "$oid": "68247ebcd9a86db02f727d77"
+    },
+    {
+      "$oid": "68247ebcd9a86db02f727d78"
+    },
+    {
+      "$oid": "68247ebcd9a86db02f727d79"
+    }
+  ],
+  "duration": 6,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-14T11:30:04.469Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e8f9"
+  },
+  "title": "REST APIs",
+  "category": {
+    "$oid": "6821b11bdec32f08aabd62a7"
+  },
+  "topic": {
+    "$oid": "6821b11cdec32f08aabd62ac"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "68247f08d9a86db02f727d89"
+    },
+    {
+      "$oid": "68247f08d9a86db02f727d8a"
+    },
+    {
+      "$oid": "68247f08d9a86db02f727d8b"
+    },
+    {
+      "$oid": "68247f08d9a86db02f727d8c"
+    },
+    {
+      "$oid": "68247f08d9a86db02f727d8d"
+    },
+    {
+      "$oid": "68247f08d9a86db02f727d8e"
+    },
+    {
+      "$oid": "68247f08d9a86db02f727d8f"
+    },
+    {
+      "$oid": "68247f08d9a86db02f727d90"
+    },
+    {
+      "$oid": "68247f08d9a86db02f727d91"
+    },
+    {
+      "$oid": "68247f08d9a86db02f727d92"
+    },
+    {
+      "$oid": "68247f08d9a86db02f727d93"
+    },
+    {
+      "$oid": "68247f08d9a86db02f727d94"
+    },
+    {
+      "$oid": "68247f08d9a86db02f727d95"
+    },
+    {
+      "$oid": "68247f08d9a86db02f727d96"
+    },
+    {
+      "$oid": "68247f08d9a86db02f727d97"
+    },
+    {
+      "$oid": "68247f08d9a86db02f727d98"
+    },
+    {
+      "$oid": "68247f08d9a86db02f727d99"
+    },
+    {
+      "$oid": "68247f08d9a86db02f727d9a"
+    },
+    {
+      "$oid": "68247f08d9a86db02f727d9b"
+    },
+    {
+      "$oid": "68247f08d9a86db02f727d9c"
+    }
+  ],
+  "duration": 7,
+  "totalMarks": 40,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-14T11:31:20.475Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e8fa"
+  },
+  "title": "CRUD Operations",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62ad"
+  },
+  "topic": {
+    "$oid": "6821b11cdec32f08aabd62ae"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "68247f59d9a86db02f727dad"
+    },
+    {
+      "$oid": "68247f59d9a86db02f727dae"
+    },
+    {
+      "$oid": "68247f59d9a86db02f727daf"
+    },
+    {
+      "$oid": "68247f59d9a86db02f727db0"
+    },
+    {
+      "$oid": "68247f59d9a86db02f727db1"
+    },
+    {
+      "$oid": "68247f59d9a86db02f727db2"
+    },
+    {
+      "$oid": "68247f59d9a86db02f727db3"
+    },
+    {
+      "$oid": "68247f59d9a86db02f727db4"
+    },
+    {
+      "$oid": "68247f59d9a86db02f727db5"
+    },
+    {
+      "$oid": "68247f59d9a86db02f727db6"
+    },
+    {
+      "$oid": "68247f59d9a86db02f727db7"
+    },
+    {
+      "$oid": "68247f59d9a86db02f727db8"
+    },
+    {
+      "$oid": "68247f59d9a86db02f727db9"
+    },
+    {
+      "$oid": "68247f59d9a86db02f727dba"
+    },
+    {
+      "$oid": "68247f59d9a86db02f727dbb"
+    },
+    {
+      "$oid": "68247f59d9a86db02f727dbc"
+    },
+    {
+      "$oid": "68247f59d9a86db02f727dbd"
+    },
+    {
+      "$oid": "68247f59d9a86db02f727dbe"
+    },
+    {
+      "$oid": "68247f59d9a86db02f727dbf"
+    },
+    {
+      "$oid": "68247f59d9a86db02f727dc0"
+    }
+  ],
+  "duration": 6,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-14T11:32:41.756Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e8fb"
+  },
+  "title": "Joins and Queries",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62ad"
+  },
+  "topic": {
+    "$oid": "6821b11cdec32f08aabd62af"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "68247fbad9a86db02f727ddd"
+    },
+    {
+      "$oid": "68247fbad9a86db02f727dde"
+    },
+    {
+      "$oid": "68247fbad9a86db02f727ddf"
+    },
+    {
+      "$oid": "68247fbad9a86db02f727de0"
+    },
+    {
+      "$oid": "68247fbad9a86db02f727de1"
+    },
+    {
+      "$oid": "68247fbad9a86db02f727de2"
+    },
+    {
+      "$oid": "68247fbad9a86db02f727de3"
+    },
+    {
+      "$oid": "68247fbad9a86db02f727de4"
+    },
+    {
+      "$oid": "68247fbad9a86db02f727de5"
+    },
+    {
+      "$oid": "68247fbad9a86db02f727de6"
+    },
+    {
+      "$oid": "68247fbad9a86db02f727de7"
+    },
+    {
+      "$oid": "68247fbad9a86db02f727de8"
+    },
+    {
+      "$oid": "68247fbad9a86db02f727de9"
+    },
+    {
+      "$oid": "68247fbad9a86db02f727dea"
+    },
+    {
+      "$oid": "68247fbad9a86db02f727deb"
+    },
+    {
+      "$oid": "68247fbad9a86db02f727dec"
+    },
+    {
+      "$oid": "68247fbad9a86db02f727ded"
+    },
+    {
+      "$oid": "68247fbad9a86db02f727dee"
+    },
+    {
+      "$oid": "68247fbad9a86db02f727def"
+    },
+    {
+      "$oid": "68247fbad9a86db02f727df0"
+    }
+  ],
+  "duration": 6,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-14T11:34:18.280Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e8fc"
+  },
+  "title": "Indexes and Constraints",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62ad"
+  },
+  "topic": {
+    "$oid": "6821b11cdec32f08aabd62b0"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "6824817dd9a86db02f727ef4"
+    },
+    {
+      "$oid": "6824817dd9a86db02f727ef5"
+    },
+    {
+      "$oid": "6824817dd9a86db02f727ef6"
+    },
+    {
+      "$oid": "6824817dd9a86db02f727ef7"
+    },
+    {
+      "$oid": "6824817dd9a86db02f727ef8"
+    },
+    {
+      "$oid": "6824817dd9a86db02f727ef9"
+    },
+    {
+      "$oid": "6824817dd9a86db02f727efa"
+    },
+    {
+      "$oid": "6824817dd9a86db02f727efb"
+    },
+    {
+      "$oid": "6824817dd9a86db02f727efc"
+    },
+    {
+      "$oid": "6824817dd9a86db02f727efd"
+    },
+    {
+      "$oid": "6824817dd9a86db02f727efe"
+    },
+    {
+      "$oid": "6824817dd9a86db02f727eff"
+    },
+    {
+      "$oid": "6824817dd9a86db02f727f00"
+    },
+    {
+      "$oid": "6824817dd9a86db02f727f01"
+    },
+    {
+      "$oid": "6824817dd9a86db02f727f02"
+    },
+    {
+      "$oid": "6824817dd9a86db02f727f03"
+    },
+    {
+      "$oid": "6824817dd9a86db02f727f04"
+    },
+    {
+      "$oid": "6824817dd9a86db02f727f05"
+    },
+    {
+      "$oid": "6824817dd9a86db02f727f06"
+    },
+    {
+      "$oid": "6824817dd9a86db02f727f07"
+    }
+  ],
+  "duration": 7,
+  "totalMarks": 40,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-14T11:41:49.979Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e8fd"
+  },
+  "title": "Realtime DB and Firestore",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62ad"
+  },
+  "topic": {
+    "$oid": "6821b11cdec32f08aabd62b1"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "682481e9d9a86db02f727f17"
+    },
+    {
+      "$oid": "682481e9d9a86db02f727f18"
+    },
+    {
+      "$oid": "682481e9d9a86db02f727f19"
+    },
+    {
+      "$oid": "682481e9d9a86db02f727f1a"
+    },
+    {
+      "$oid": "682481e9d9a86db02f727f1b"
+    },
+    {
+      "$oid": "682481e9d9a86db02f727f1c"
+    },
+    {
+      "$oid": "682481e9d9a86db02f727f1d"
+    },
+    {
+      "$oid": "682481e9d9a86db02f727f1e"
+    },
+    {
+      "$oid": "682481e9d9a86db02f727f1f"
+    },
+    {
+      "$oid": "682481e9d9a86db02f727f20"
+    },
+    {
+      "$oid": "682481e9d9a86db02f727f21"
+    },
+    {
+      "$oid": "682481e9d9a86db02f727f22"
+    },
+    {
+      "$oid": "682481e9d9a86db02f727f23"
+    },
+    {
+      "$oid": "682481e9d9a86db02f727f24"
+    },
+    {
+      "$oid": "682481e9d9a86db02f727f25"
+    },
+    {
+      "$oid": "682481e9d9a86db02f727f26"
+    },
+    {
+      "$oid": "682481e9d9a86db02f727f27"
+    },
+    {
+      "$oid": "682481e9d9a86db02f727f28"
+    },
+    {
+      "$oid": "682481e9d9a86db02f727f29"
+    },
+    {
+      "$oid": "682481e9d9a86db02f727f2a"
+    }
+  ],
+  "duration": 6,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-14T11:43:37.594Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e8fe"
+  },
+  "title": "Caching and Pub/Sub",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62ad"
+  },
+  "topic": {
+    "$oid": "6821b11cdec32f08aabd62b2"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "6824824bd9a86db02f727f3a"
+    },
+    {
+      "$oid": "6824824bd9a86db02f727f3b"
+    },
+    {
+      "$oid": "6824824bd9a86db02f727f3c"
+    },
+    {
+      "$oid": "6824824bd9a86db02f727f3d"
+    },
+    {
+      "$oid": "6824824bd9a86db02f727f3e"
+    },
+    {
+      "$oid": "6824824bd9a86db02f727f3f"
+    },
+    {
+      "$oid": "6824824bd9a86db02f727f40"
+    },
+    {
+      "$oid": "6824824bd9a86db02f727f41"
+    },
+    {
+      "$oid": "6824824bd9a86db02f727f42"
+    },
+    {
+      "$oid": "6824824bd9a86db02f727f43"
+    },
+    {
+      "$oid": "6824824bd9a86db02f727f44"
+    },
+    {
+      "$oid": "6824824bd9a86db02f727f45"
+    },
+    {
+      "$oid": "6824824bd9a86db02f727f46"
+    },
+    {
+      "$oid": "6824824bd9a86db02f727f47"
+    },
+    {
+      "$oid": "6824824bd9a86db02f727f48"
+    },
+    {
+      "$oid": "6824824bd9a86db02f727f49"
+    },
+    {
+      "$oid": "6824824bd9a86db02f727f4a"
+    },
+    {
+      "$oid": "6824824bd9a86db02f727f4b"
+    },
+    {
+      "$oid": "6824824bd9a86db02f727f4c"
+    },
+    {
+      "$oid": "6824824bd9a86db02f727f4d"
+    }
+  ],
+  "duration": 7,
+  "totalMarks": 40,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-14T11:45:15.409Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e8ff"
+  },
+  "title": "Containers and Volumes",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62b3"
+  },
+  "topic": {
+    "$oid": "6821b11cdec32f08aabd62b4"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "682482b4d9a86db02f727f71"
+    },
+    {
+      "$oid": "682482b4d9a86db02f727f72"
+    },
+    {
+      "$oid": "682482b4d9a86db02f727f73"
+    },
+    {
+      "$oid": "682482b4d9a86db02f727f74"
+    },
+    {
+      "$oid": "682482b4d9a86db02f727f75"
+    },
+    {
+      "$oid": "682482b4d9a86db02f727f76"
+    },
+    {
+      "$oid": "682482b4d9a86db02f727f77"
+    },
+    {
+      "$oid": "682482b4d9a86db02f727f78"
+    },
+    {
+      "$oid": "682482b4d9a86db02f727f79"
+    },
+    {
+      "$oid": "682482b4d9a86db02f727f7a"
+    },
+    {
+      "$oid": "682482b4d9a86db02f727f7b"
+    },
+    {
+      "$oid": "682482b4d9a86db02f727f7c"
+    },
+    {
+      "$oid": "682482b4d9a86db02f727f7d"
+    },
+    {
+      "$oid": "682482b4d9a86db02f727f7e"
+    },
+    {
+      "$oid": "682482b4d9a86db02f727f7f"
+    },
+    {
+      "$oid": "682482b4d9a86db02f727f80"
+    },
+    {
+      "$oid": "682482b4d9a86db02f727f81"
+    },
+    {
+      "$oid": "682482b4d9a86db02f727f82"
+    },
+    {
+      "$oid": "682482b4d9a86db02f727f83"
+    },
+    {
+      "$oid": "682482b4d9a86db02f727f84"
+    }
+  ],
+  "duration": 6,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-14T11:47:01.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e901"
+  },
+  "title": "Branching and Merging",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62b3"
+  },
+  "topic": {
+    "$oid": "6821b11cdec32f08aabd62b6"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "6825b1515c30678892186a55"
+    },
+    {
+      "$oid": "6825b1515c30678892186a56"
+    },
+    {
+      "$oid": "6825b1515c30678892186a57"
+    },
+    {
+      "$oid": "6825b1515c30678892186a58"
+    },
+    {
+      "$oid": "6825b1515c30678892186a59"
+    },
+    {
+      "$oid": "6825b1515c30678892186a5a"
+    },
+    {
+      "$oid": "6825b1515c30678892186a5b"
+    },
+    {
+      "$oid": "6825b1515c30678892186a5c"
+    },
+    {
+      "$oid": "6825b1515c30678892186a5d"
+    },
+    {
+      "$oid": "6825b1515c30678892186a5e"
+    },
+    {
+      "$oid": "6825b1515c30678892186a5f"
+    },
+    {
+      "$oid": "6825b1515c30678892186a60"
+    },
+    {
+      "$oid": "6825b1515c30678892186a61"
+    },
+    {
+      "$oid": "6825b1515c30678892186a62"
+    },
+    {
+      "$oid": "6825b1515c30678892186a63"
+    },
+    {
+      "$oid": "6825b1515c30678892186a64"
+    },
+    {
+      "$oid": "6825b1515c30678892186a65"
+    },
+    {
+      "$oid": "6825b1515c30678892186a66"
+    },
+    {
+      "$oid": "6825b1515c30678892186a67"
+    },
+    {
+      "$oid": "6825b1515c30678892186a68"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 30,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-15T09:18:09.494Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e902"
+  },
+  "title": "CI/CD Basics",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62b3"
+  },
+  "topic": {
+    "$oid": "6821b11ddec32f08aabd62b7"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "6825b1ac5c30678892186a78"
+    },
+    {
+      "$oid": "6825b1ac5c30678892186a79"
+    },
+    {
+      "$oid": "6825b1ac5c30678892186a7a"
+    },
+    {
+      "$oid": "6825b1ac5c30678892186a7b"
+    },
+    {
+      "$oid": "6825b1ac5c30678892186a7c"
+    },
+    {
+      "$oid": "6825b1ac5c30678892186a7d"
+    },
+    {
+      "$oid": "6825b1ac5c30678892186a7e"
+    },
+    {
+      "$oid": "6825b1ac5c30678892186a7f"
+    },
+    {
+      "$oid": "6825b1ac5c30678892186a80"
+    },
+    {
+      "$oid": "6825b1ac5c30678892186a81"
+    },
+    {
+      "$oid": "6825b1ac5c30678892186a82"
+    },
+    {
+      "$oid": "6825b1ac5c30678892186a83"
+    },
+    {
+      "$oid": "6825b1ac5c30678892186a84"
+    },
+    {
+      "$oid": "6825b1ac5c30678892186a85"
+    },
+    {
+      "$oid": "6825b1ac5c30678892186a86"
+    },
+    {
+      "$oid": "6825b1ac5c30678892186a87"
+    },
+    {
+      "$oid": "6825b1ac5c30678892186a88"
+    },
+    {
+      "$oid": "6825b1ac5c30678892186a89"
+    },
+    {
+      "$oid": "6825b1ac5c30678892186a8a"
+    },
+    {
+      "$oid": "6825b1ac5c30678892186a8b"
+    }
+  ],
+  "duration": 6,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-15T09:19:40.432Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e903"
+  },
+  "title": "Pipelines and Jobs",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62b3"
+  },
+  "topic": {
+    "$oid": "6821b11ddec32f08aabd62b8"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "6825b2075c30678892186a9b"
+    },
+    {
+      "$oid": "6825b2075c30678892186a9c"
+    },
+    {
+      "$oid": "6825b2075c30678892186a9d"
+    },
+    {
+      "$oid": "6825b2075c30678892186a9e"
+    },
+    {
+      "$oid": "6825b2075c30678892186a9f"
+    },
+    {
+      "$oid": "6825b2075c30678892186aa0"
+    },
+    {
+      "$oid": "6825b2075c30678892186aa1"
+    },
+    {
+      "$oid": "6825b2075c30678892186aa2"
+    },
+    {
+      "$oid": "6825b2075c30678892186aa3"
+    },
+    {
+      "$oid": "6825b2075c30678892186aa4"
+    },
+    {
+      "$oid": "6825b2075c30678892186aa5"
+    },
+    {
+      "$oid": "6825b2075c30678892186aa6"
+    },
+    {
+      "$oid": "6825b2075c30678892186aa7"
+    },
+    {
+      "$oid": "6825b2075c30678892186aa8"
+    },
+    {
+      "$oid": "6825b2075c30678892186aa9"
+    },
+    {
+      "$oid": "6825b2075c30678892186aaa"
+    },
+    {
+      "$oid": "6825b2075c30678892186aab"
+    },
+    {
+      "$oid": "6825b2075c30678892186aac"
+    },
+    {
+      "$oid": "6825b2075c30678892186aad"
+    },
+    {
+      "$oid": "6825b2075c30678892186aae"
+    }
+  ],
+  "duration": 7,
+  "totalMarks": 40,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-15T09:21:12.195Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e904"
+  },
+  "title": "EC2 and S3",
+  "category": {
+    "$oid": "6821b11ddec32f08aabd62b9"
+  },
+  "topic": {
+    "$oid": "6821b11ddec32f08aabd62ba"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "6825b2525c30678892186abe"
+    },
+    {
+      "$oid": "6825b2525c30678892186abf"
+    },
+    {
+      "$oid": "6825b2525c30678892186ac0"
+    },
+    {
+      "$oid": "6825b2525c30678892186ac1"
+    },
+    {
+      "$oid": "6825b2525c30678892186ac2"
+    },
+    {
+      "$oid": "6825b2525c30678892186ac3"
+    },
+    {
+      "$oid": "6825b2525c30678892186ac4"
+    },
+    {
+      "$oid": "6825b2525c30678892186ac5"
+    },
+    {
+      "$oid": "6825b2525c30678892186ac6"
+    },
+    {
+      "$oid": "6825b2525c30678892186ac7"
+    },
+    {
+      "$oid": "6825b2525c30678892186ac8"
+    },
+    {
+      "$oid": "6825b2525c30678892186ac9"
+    },
+    {
+      "$oid": "6825b2525c30678892186aca"
+    },
+    {
+      "$oid": "6825b2525c30678892186acb"
+    },
+    {
+      "$oid": "6825b2525c30678892186acc"
+    },
+    {
+      "$oid": "6825b2525c30678892186acd"
+    },
+    {
+      "$oid": "6825b2525c30678892186ace"
+    },
+    {
+      "$oid": "6825b2525c30678892186acf"
+    },
+    {
+      "$oid": "6825b2525c30678892186ad0"
+    },
+    {
+      "$oid": "6825b2525c30678892186ad1"
+    }
+  ],
+  "duration": 7,
+  "totalMarks": 40,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-15T09:22:26.521Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e905"
+  },
+  "title": "App Services and Functions",
+  "category": {
+    "$oid": "6821b11ddec32f08aabd62b9"
+  },
+  "topic": {
+    "$oid": "6821b11ddec32f08aabd62bb"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "6825b29b5c30678892186b09"
+    },
+    {
+      "$oid": "6825b29b5c30678892186b0a"
+    },
+    {
+      "$oid": "6825b29b5c30678892186b0b"
+    },
+    {
+      "$oid": "6825b29b5c30678892186b0c"
+    },
+    {
+      "$oid": "6825b29b5c30678892186b0d"
+    },
+    {
+      "$oid": "6825b29b5c30678892186b0e"
+    },
+    {
+      "$oid": "6825b29b5c30678892186b0f"
+    },
+    {
+      "$oid": "6825b29b5c30678892186b10"
+    },
+    {
+      "$oid": "6825b29b5c30678892186b11"
+    },
+    {
+      "$oid": "6825b29b5c30678892186b12"
+    },
+    {
+      "$oid": "6825b29b5c30678892186b13"
+    },
+    {
+      "$oid": "6825b29b5c30678892186b14"
+    },
+    {
+      "$oid": "6825b29b5c30678892186b15"
+    },
+    {
+      "$oid": "6825b29b5c30678892186b16"
+    },
+    {
+      "$oid": "6825b29b5c30678892186b17"
+    },
+    {
+      "$oid": "6825b29b5c30678892186b18"
+    },
+    {
+      "$oid": "6825b29b5c30678892186b19"
+    },
+    {
+      "$oid": "6825b29b5c30678892186b1a"
+    },
+    {
+      "$oid": "6825b29b5c30678892186b1b"
+    },
+    {
+      "$oid": "6825b29b5c30678892186b1c"
+    }
+  ],
+  "duration": 7,
+  "totalMarks": 40,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-15T09:23:40.141Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e906"
+  },
+  "title": "Compute Engine, BigQuery",
+  "category": {
+    "$oid": "6821b11ddec32f08aabd62b9"
+  },
+  "topic": {
+    "$oid": "6821b11ddec32f08aabd62bc"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "6825b2e15c30678892186b2c"
+    },
+    {
+      "$oid": "6825b2e15c30678892186b2d"
+    },
+    {
+      "$oid": "6825b2e15c30678892186b2e"
+    },
+    {
+      "$oid": "6825b2e15c30678892186b2f"
+    },
+    {
+      "$oid": "6825b2e15c30678892186b30"
+    },
+    {
+      "$oid": "6825b2e15c30678892186b31"
+    },
+    {
+      "$oid": "6825b2e15c30678892186b32"
+    },
+    {
+      "$oid": "6825b2e15c30678892186b33"
+    },
+    {
+      "$oid": "6825b2e15c30678892186b34"
+    },
+    {
+      "$oid": "6825b2e15c30678892186b35"
+    },
+    {
+      "$oid": "6825b2e15c30678892186b36"
+    },
+    {
+      "$oid": "6825b2e15c30678892186b37"
+    },
+    {
+      "$oid": "6825b2e15c30678892186b38"
+    },
+    {
+      "$oid": "6825b2e15c30678892186b39"
+    },
+    {
+      "$oid": "6825b2e15c30678892186b3a"
+    },
+    {
+      "$oid": "6825b2e15c30678892186b3b"
+    },
+    {
+      "$oid": "6825b2e15c30678892186b3c"
+    },
+    {
+      "$oid": "6825b2e15c30678892186b3d"
+    },
+    {
+      "$oid": "6825b2e15c30678892186b3e"
+    },
+    {
+      "$oid": "6825b2e15c30678892186b3f"
+    }
+  ],
+  "duration": 7,
+  "totalMarks": 40,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-15T09:24:49.343Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e907"
+  },
+  "title": "CDN and DNS",
+  "category": {
+    "$oid": "6821b11ddec32f08aabd62b9"
+  },
+  "topic": {
+    "$oid": "6821b11ddec32f08aabd62bd"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "6825b41c5c30678892186b5d"
+    },
+    {
+      "$oid": "6825b41c5c30678892186b5e"
+    },
+    {
+      "$oid": "6825b41c5c30678892186b5f"
+    },
+    {
+      "$oid": "6825b41c5c30678892186b60"
+    },
+    {
+      "$oid": "6825b41c5c30678892186b61"
+    },
+    {
+      "$oid": "6825b41c5c30678892186b62"
+    },
+    {
+      "$oid": "6825b41c5c30678892186b63"
+    },
+    {
+      "$oid": "6825b41c5c30678892186b64"
+    },
+    {
+      "$oid": "6825b41c5c30678892186b65"
+    },
+    {
+      "$oid": "6825b41c5c30678892186b66"
+    },
+    {
+      "$oid": "6825b41c5c30678892186b67"
+    },
+    {
+      "$oid": "6825b41c5c30678892186b68"
+    },
+    {
+      "$oid": "6825b41c5c30678892186b69"
+    },
+    {
+      "$oid": "6825b41c5c30678892186b6a"
+    },
+    {
+      "$oid": "6825b41c5c30678892186b6b"
+    },
+    {
+      "$oid": "6825b41c5c30678892186b6c"
+    },
+    {
+      "$oid": "6825b41c5c30678892186b6d"
+    },
+    {
+      "$oid": "6825b41c5c30678892186b6e"
+    },
+    {
+      "$oid": "6825b41c5c30678892186b6f"
+    },
+    {
+      "$oid": "6825b41c5c30678892186b70"
+    }
+  ],
+  "duration": 6,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-15T09:30:04.563Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e908"
+  },
+  "title": "Deploying Static Sites",
+  "category": {
+    "$oid": "6821b11ddec32f08aabd62b9"
+  },
+  "topic": {
+    "$oid": "6821b11ddec32f08aabd62be"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "6825b49b5c30678892186bcc"
+    },
+    {
+      "$oid": "6825b49b5c30678892186bcd"
+    },
+    {
+      "$oid": "6825b49b5c30678892186bce"
+    },
+    {
+      "$oid": "6825b49b5c30678892186bcf"
+    },
+    {
+      "$oid": "6825b49b5c30678892186bd0"
+    },
+    {
+      "$oid": "6825b49b5c30678892186bd1"
+    },
+    {
+      "$oid": "6825b49b5c30678892186bd2"
+    },
+    {
+      "$oid": "6825b49b5c30678892186bd3"
+    },
+    {
+      "$oid": "6825b49b5c30678892186bd4"
+    },
+    {
+      "$oid": "6825b49b5c30678892186bd5"
+    },
+    {
+      "$oid": "6825b49b5c30678892186bd6"
+    },
+    {
+      "$oid": "6825b49b5c30678892186bd7"
+    },
+    {
+      "$oid": "6825b49b5c30678892186bd8"
+    },
+    {
+      "$oid": "6825b49b5c30678892186bd9"
+    },
+    {
+      "$oid": "6825b49b5c30678892186bda"
+    },
+    {
+      "$oid": "6825b49b5c30678892186bdb"
+    },
+    {
+      "$oid": "6825b49b5c30678892186bdc"
+    },
+    {
+      "$oid": "6825b49b5c30678892186bdd"
+    },
+    {
+      "$oid": "6825b49b5c30678892186bde"
+    },
+    {
+      "$oid": "6825b49b5c30678892186bdf"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 30,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-15T09:32:11.437Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e90b"
+  },
+  "title": "Inheritance, Polymorphism",
+  "category": {
+    "$oid": "6821b11ddec32f08aabd62bf"
+  },
+  "topic": {
+    "$oid": "6821b11edec32f08aabd62c2"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "682709790fabf28c78941878"
+    },
+    {
+      "$oid": "682709790fabf28c78941879"
+    },
+    {
+      "$oid": "682709790fabf28c7894187a"
+    },
+    {
+      "$oid": "682709790fabf28c7894187b"
+    },
+    {
+      "$oid": "682709790fabf28c7894187c"
+    },
+    {
+      "$oid": "682709790fabf28c7894187d"
+    },
+    {
+      "$oid": "682709790fabf28c7894187e"
+    },
+    {
+      "$oid": "682709790fabf28c7894187f"
+    },
+    {
+      "$oid": "682709790fabf28c78941880"
+    },
+    {
+      "$oid": "682709790fabf28c78941881"
+    },
+    {
+      "$oid": "682709790fabf28c78941882"
+    },
+    {
+      "$oid": "682709790fabf28c78941883"
+    },
+    {
+      "$oid": "682709790fabf28c78941884"
+    },
+    {
+      "$oid": "682709790fabf28c78941885"
+    },
+    {
+      "$oid": "682709790fabf28c78941886"
+    },
+    {
+      "$oid": "682709790fabf28c78941887"
+    },
+    {
+      "$oid": "682709790fabf28c78941888"
+    },
+    {
+      "$oid": "682709790fabf28c78941889"
+    },
+    {
+      "$oid": "682709790fabf28c7894188a"
+    },
+    {
+      "$oid": "682709790fabf28c7894188b"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 30,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-16T09:46:34.055Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e90c"
+  },
+  "title": "Normalization and Transactions",
+  "category": {
+    "$oid": "6821b11ddec32f08aabd62bf"
+  },
+  "topic": {
+    "$oid": "6821b11edec32f08aabd62c3"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "682709c80fabf28c7894189b"
+    },
+    {
+      "$oid": "682709c80fabf28c7894189c"
+    },
+    {
+      "$oid": "682709c80fabf28c7894189d"
+    },
+    {
+      "$oid": "682709c80fabf28c7894189e"
+    },
+    {
+      "$oid": "682709c80fabf28c7894189f"
+    },
+    {
+      "$oid": "682709c80fabf28c789418a0"
+    },
+    {
+      "$oid": "682709c80fabf28c789418a1"
+    },
+    {
+      "$oid": "682709c80fabf28c789418a2"
+    },
+    {
+      "$oid": "682709c80fabf28c789418a3"
+    },
+    {
+      "$oid": "682709c80fabf28c789418a4"
+    },
+    {
+      "$oid": "682709c80fabf28c789418a5"
+    },
+    {
+      "$oid": "682709c80fabf28c789418a6"
+    },
+    {
+      "$oid": "682709c80fabf28c789418a7"
+    },
+    {
+      "$oid": "682709c80fabf28c789418a8"
+    },
+    {
+      "$oid": "682709c80fabf28c789418a9"
+    },
+    {
+      "$oid": "682709c80fabf28c789418aa"
+    },
+    {
+      "$oid": "682709c80fabf28c789418ab"
+    },
+    {
+      "$oid": "682709c80fabf28c789418ac"
+    },
+    {
+      "$oid": "682709c80fabf28c789418ad"
+    },
+    {
+      "$oid": "682709c80fabf28c789418ae"
+    }
+  ],
+  "duration": 6,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-16T09:47:52.823Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e90d"
+  },
+  "title": "Processes, Scheduling",
+  "category": {
+    "$oid": "6821b11ddec32f08aabd62bf"
+  },
+  "topic": {
+    "$oid": "6821b11edec32f08aabd62c4"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "68270a150fabf28c789418be"
+    },
+    {
+      "$oid": "68270a150fabf28c789418bf"
+    },
+    {
+      "$oid": "68270a150fabf28c789418c0"
+    },
+    {
+      "$oid": "68270a150fabf28c789418c1"
+    },
+    {
+      "$oid": "68270a150fabf28c789418c2"
+    },
+    {
+      "$oid": "68270a150fabf28c789418c3"
+    },
+    {
+      "$oid": "68270a150fabf28c789418c4"
+    },
+    {
+      "$oid": "68270a150fabf28c789418c5"
+    },
+    {
+      "$oid": "68270a150fabf28c789418c6"
+    },
+    {
+      "$oid": "68270a150fabf28c789418c7"
+    },
+    {
+      "$oid": "68270a150fabf28c789418c8"
+    },
+    {
+      "$oid": "68270a150fabf28c789418c9"
+    },
+    {
+      "$oid": "68270a150fabf28c789418ca"
+    },
+    {
+      "$oid": "68270a150fabf28c789418cb"
+    },
+    {
+      "$oid": "68270a150fabf28c789418cc"
+    },
+    {
+      "$oid": "68270a150fabf28c789418cd"
+    },
+    {
+      "$oid": "68270a150fabf28c789418ce"
+    },
+    {
+      "$oid": "68270a150fabf28c789418cf"
+    },
+    {
+      "$oid": "68270a150fabf28c789418d0"
+    },
+    {
+      "$oid": "68270a150fabf28c789418d1"
+    }
+  ],
+  "duration": 8,
+  "totalMarks": 45,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-16T09:49:09.585Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e90f"
+  },
+  "title": "Recon and Exploitation",
+  "category": {
+    "$oid": "6821b11edec32f08aabd62c5"
+  },
+  "topic": {
+    "$oid": "6821b11edec32f08aabd62c7"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "68270a7c0fabf28c789418e1"
+    },
+    {
+      "$oid": "68270a7c0fabf28c789418e2"
+    },
+    {
+      "$oid": "68270a7c0fabf28c789418e3"
+    },
+    {
+      "$oid": "68270a7c0fabf28c789418e4"
+    },
+    {
+      "$oid": "68270a7c0fabf28c789418e5"
+    },
+    {
+      "$oid": "68270a7c0fabf28c789418e6"
+    },
+    {
+      "$oid": "68270a7c0fabf28c789418e7"
+    },
+    {
+      "$oid": "68270a7c0fabf28c789418e8"
+    },
+    {
+      "$oid": "68270a7c0fabf28c789418e9"
+    },
+    {
+      "$oid": "68270a7c0fabf28c789418ea"
+    },
+    {
+      "$oid": "68270a7c0fabf28c789418eb"
+    },
+    {
+      "$oid": "68270a7c0fabf28c789418ec"
+    },
+    {
+      "$oid": "68270a7c0fabf28c789418ed"
+    },
+    {
+      "$oid": "68270a7c0fabf28c789418ee"
+    },
+    {
+      "$oid": "68270a7c0fabf28c789418ef"
+    },
+    {
+      "$oid": "68270a7c0fabf28c789418f0"
+    },
+    {
+      "$oid": "68270a7c0fabf28c789418f1"
+    },
+    {
+      "$oid": "68270a7c0fabf28c789418f2"
+    },
+    {
+      "$oid": "68270a7c0fabf28c789418f3"
+    },
+    {
+      "$oid": "68270a7c0fabf28c789418f4"
+    }
+  ],
+  "duration": 8,
+  "totalMarks": 45,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-16T09:50:53.055Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820ddbe582885b1d851e910"
+  },
+  "title": "Firewalls and IDS",
+  "category": {
+    "$oid": "6821b11edec32f08aabd62c5"
+  },
+  "topic": {
+    "$oid": "6821b11edec32f08aabd62c8"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "68270adb0fabf28c78941904"
+    },
+    {
+      "$oid": "68270adb0fabf28c78941905"
+    },
+    {
+      "$oid": "68270adb0fabf28c78941906"
+    },
+    {
+      "$oid": "68270adb0fabf28c78941907"
+    },
+    {
+      "$oid": "68270adb0fabf28c78941908"
+    },
+    {
+      "$oid": "68270adb0fabf28c78941909"
+    },
+    {
+      "$oid": "68270adb0fabf28c7894190a"
+    },
+    {
+      "$oid": "68270adb0fabf28c7894190b"
+    },
+    {
+      "$oid": "68270adb0fabf28c7894190c"
+    },
+    {
+      "$oid": "68270adb0fabf28c7894190d"
+    },
+    {
+      "$oid": "68270adb0fabf28c7894190e"
+    },
+    {
+      "$oid": "68270adb0fabf28c7894190f"
+    },
+    {
+      "$oid": "68270adb0fabf28c78941910"
+    },
+    {
+      "$oid": "68270adb0fabf28c78941911"
+    },
+    {
+      "$oid": "68270adb0fabf28c78941912"
+    },
+    {
+      "$oid": "68270adb0fabf28c78941913"
+    },
+    {
+      "$oid": "68270adb0fabf28c78941914"
+    },
+    {
+      "$oid": "68270adb0fabf28c78941915"
+    },
+    {
+      "$oid": "68270adb0fabf28c78941916"
+    },
+    {
+      "$oid": "68270adb0fabf28c78941917"
+    }
+  ],
+  "duration": 6,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:26:22.743Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-16T09:52:27.577Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820e501582885b1d851ea7c"
+  },
+  "title": "Firebase Storage",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62ad"
+  },
+  "topic": {
+    "$oid": "6821b11cdec32f08aabd62b1"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "68270b540fabf28c78941930"
+    },
+    {
+      "$oid": "68270b540fabf28c78941931"
+    },
+    {
+      "$oid": "68270b540fabf28c78941932"
+    },
+    {
+      "$oid": "68270b540fabf28c78941933"
+    },
+    {
+      "$oid": "68270b540fabf28c78941934"
+    },
+    {
+      "$oid": "68270b540fabf28c78941935"
+    },
+    {
+      "$oid": "68270b540fabf28c78941936"
+    },
+    {
+      "$oid": "68270b540fabf28c78941937"
+    },
+    {
+      "$oid": "68270b540fabf28c78941938"
+    },
+    {
+      "$oid": "68270b540fabf28c78941939"
+    },
+    {
+      "$oid": "68270b540fabf28c7894193a"
+    },
+    {
+      "$oid": "68270b540fabf28c7894193b"
+    },
+    {
+      "$oid": "68270b540fabf28c7894193c"
+    },
+    {
+      "$oid": "68270b540fabf28c7894193d"
+    },
+    {
+      "$oid": "68270b540fabf28c7894193e"
+    },
+    {
+      "$oid": "68270b540fabf28c7894193f"
+    },
+    {
+      "$oid": "68270b540fabf28c78941940"
+    },
+    {
+      "$oid": "68270b540fabf28c78941941"
+    },
+    {
+      "$oid": "68270b540fabf28c78941942"
+    },
+    {
+      "$oid": "68270b540fabf28c78941943"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:57:21.214Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-16T09:54:28.605Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820e501582885b1d851ea7d"
+  },
+  "title": "Firebase Security Rules",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62ad"
+  },
+  "topic": {
+    "$oid": "6821b11cdec32f08aabd62b1"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "68270bc40fabf28c7894196e"
+    },
+    {
+      "$oid": "68270bc40fabf28c7894196f"
+    },
+    {
+      "$oid": "68270bc40fabf28c78941970"
+    },
+    {
+      "$oid": "68270bc40fabf28c78941971"
+    },
+    {
+      "$oid": "68270bc40fabf28c78941972"
+    },
+    {
+      "$oid": "68270bc40fabf28c78941973"
+    },
+    {
+      "$oid": "68270bc40fabf28c78941974"
+    },
+    {
+      "$oid": "68270bc40fabf28c78941975"
+    },
+    {
+      "$oid": "68270bc40fabf28c78941976"
+    },
+    {
+      "$oid": "68270bc40fabf28c78941977"
+    },
+    {
+      "$oid": "68270bc40fabf28c78941978"
+    },
+    {
+      "$oid": "68270bc40fabf28c78941979"
+    },
+    {
+      "$oid": "68270bc40fabf28c7894197a"
+    },
+    {
+      "$oid": "68270bc40fabf28c7894197b"
+    },
+    {
+      "$oid": "68270bc40fabf28c7894197c"
+    },
+    {
+      "$oid": "68270bc40fabf28c7894197d"
+    },
+    {
+      "$oid": "68270bc40fabf28c7894197e"
+    },
+    {
+      "$oid": "68270bc40fabf28c7894197f"
+    },
+    {
+      "$oid": "68270bc40fabf28c78941980"
+    },
+    {
+      "$oid": "68270bc40fabf28c78941981"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:57:21.214Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-16T09:56:20.270Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820e501582885b1d851ea7e"
+  },
+  "title": "Firebase Cloud Functions",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62ad"
+  },
+  "topic": {
+    "$oid": "6821b11cdec32f08aabd62b1"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "68270c4d0fabf28c78941991"
+    },
+    {
+      "$oid": "68270c4d0fabf28c78941992"
+    },
+    {
+      "$oid": "68270c4d0fabf28c78941993"
+    },
+    {
+      "$oid": "68270c4d0fabf28c78941994"
+    },
+    {
+      "$oid": "68270c4d0fabf28c78941995"
+    },
+    {
+      "$oid": "68270c4d0fabf28c78941996"
+    },
+    {
+      "$oid": "68270c4d0fabf28c78941997"
+    },
+    {
+      "$oid": "68270c4d0fabf28c78941998"
+    },
+    {
+      "$oid": "68270c4d0fabf28c78941999"
+    },
+    {
+      "$oid": "68270c4d0fabf28c7894199a"
+    },
+    {
+      "$oid": "68270c4d0fabf28c7894199b"
+    },
+    {
+      "$oid": "68270c4d0fabf28c7894199c"
+    },
+    {
+      "$oid": "68270c4d0fabf28c7894199d"
+    },
+    {
+      "$oid": "68270c4d0fabf28c7894199e"
+    },
+    {
+      "$oid": "68270c4d0fabf28c7894199f"
+    },
+    {
+      "$oid": "68270c4d0fabf28c789419a0"
+    },
+    {
+      "$oid": "68270c4d0fabf28c789419a1"
+    },
+    {
+      "$oid": "68270c4d0fabf28c789419a2"
+    },
+    {
+      "$oid": "68270c4d0fabf28c789419a3"
+    },
+    {
+      "$oid": "68270c4d0fabf28c789419a4"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:57:21.214Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-16T09:58:37.826Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820e501582885b1d851ea80"
+  },
+  "title": "Firestore Indexing and Queries",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62ad"
+  },
+  "topic": {
+    "$oid": "6821b11cdec32f08aabd62b1"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "68270cad0fabf28c789419b7"
+    },
+    {
+      "$oid": "68270cad0fabf28c789419b8"
+    },
+    {
+      "$oid": "68270cad0fabf28c789419b9"
+    },
+    {
+      "$oid": "68270cad0fabf28c789419ba"
+    },
+    {
+      "$oid": "68270cad0fabf28c789419bb"
+    },
+    {
+      "$oid": "68270cad0fabf28c789419bc"
+    },
+    {
+      "$oid": "68270cad0fabf28c789419bd"
+    },
+    {
+      "$oid": "68270cad0fabf28c789419be"
+    },
+    {
+      "$oid": "68270cad0fabf28c789419bf"
+    },
+    {
+      "$oid": "68270cad0fabf28c789419c0"
+    },
+    {
+      "$oid": "68270cad0fabf28c789419c1"
+    },
+    {
+      "$oid": "68270cad0fabf28c789419c2"
+    },
+    {
+      "$oid": "68270cad0fabf28c789419c3"
+    },
+    {
+      "$oid": "68270cad0fabf28c789419c4"
+    },
+    {
+      "$oid": "68270cad0fabf28c789419c5"
+    },
+    {
+      "$oid": "68270cad0fabf28c789419c6"
+    },
+    {
+      "$oid": "68270cad0fabf28c789419c7"
+    },
+    {
+      "$oid": "68270cad0fabf28c789419c8"
+    },
+    {
+      "$oid": "68270cad0fabf28c789419c9"
+    },
+    {
+      "$oid": "68270cad0fabf28c789419ca"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:57:21.214Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-16T10:00:14.025Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820e501582885b1d851ea81"
+  },
+  "title": "Firebase Realtime Triggers",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62ad"
+  },
+  "topic": {
+    "$oid": "6821b11cdec32f08aabd62b1"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "68270d010fabf28c789419da"
+    },
+    {
+      "$oid": "68270d010fabf28c789419db"
+    },
+    {
+      "$oid": "68270d010fabf28c789419dc"
+    },
+    {
+      "$oid": "68270d010fabf28c789419dd"
+    },
+    {
+      "$oid": "68270d010fabf28c789419de"
+    },
+    {
+      "$oid": "68270d010fabf28c789419df"
+    },
+    {
+      "$oid": "68270d010fabf28c789419e0"
+    },
+    {
+      "$oid": "68270d010fabf28c789419e1"
+    },
+    {
+      "$oid": "68270d010fabf28c789419e2"
+    },
+    {
+      "$oid": "68270d010fabf28c789419e3"
+    },
+    {
+      "$oid": "68270d010fabf28c789419e4"
+    },
+    {
+      "$oid": "68270d010fabf28c789419e5"
+    },
+    {
+      "$oid": "68270d010fabf28c789419e6"
+    },
+    {
+      "$oid": "68270d010fabf28c789419e7"
+    },
+    {
+      "$oid": "68270d010fabf28c789419e8"
+    },
+    {
+      "$oid": "68270d010fabf28c789419e9"
+    },
+    {
+      "$oid": "68270d010fabf28c789419ea"
+    },
+    {
+      "$oid": "68270d010fabf28c789419eb"
+    },
+    {
+      "$oid": "68270d010fabf28c789419ec"
+    },
+    {
+      "$oid": "68270d010fabf28c789419ed"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:57:21.214Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-16T10:01:37.609Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820e501582885b1d851ea83"
+  },
+  "title": "Firebase Authentication",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62ad"
+  },
+  "topic": {
+    "$oid": "6821b11cdec32f08aabd62b1"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "68270da80fabf28c78941a20"
+    },
+    {
+      "$oid": "68270da80fabf28c78941a21"
+    },
+    {
+      "$oid": "68270da80fabf28c78941a22"
+    },
+    {
+      "$oid": "68270da80fabf28c78941a23"
+    },
+    {
+      "$oid": "68270da80fabf28c78941a24"
+    },
+    {
+      "$oid": "68270da80fabf28c78941a25"
+    },
+    {
+      "$oid": "68270da80fabf28c78941a26"
+    },
+    {
+      "$oid": "68270da80fabf28c78941a27"
+    },
+    {
+      "$oid": "68270da80fabf28c78941a28"
+    },
+    {
+      "$oid": "68270da80fabf28c78941a29"
+    },
+    {
+      "$oid": "68270da80fabf28c78941a2a"
+    },
+    {
+      "$oid": "68270da80fabf28c78941a2b"
+    },
+    {
+      "$oid": "68270da80fabf28c78941a2c"
+    },
+    {
+      "$oid": "68270da80fabf28c78941a2d"
+    },
+    {
+      "$oid": "68270da80fabf28c78941a2e"
+    },
+    {
+      "$oid": "68270da80fabf28c78941a2f"
+    },
+    {
+      "$oid": "68270da80fabf28c78941a30"
+    },
+    {
+      "$oid": "68270da80fabf28c78941a31"
+    },
+    {
+      "$oid": "68270da80fabf28c78941a32"
+    },
+    {
+      "$oid": "68270da80fabf28c78941a33"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:57:21.214Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-16T10:04:24.420Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6820e501582885b1d851ea87"
+  },
+  "title": "Firebase Hosting",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62ad"
+  },
+  "topic": {
+    "$oid": "6821b11cdec32f08aabd62b1"
+  },
+  "level": "Expert",
+  "questions": [
+    {
+      "$oid": "68270f870fabf28c78941aca"
+    },
+    {
+      "$oid": "68270f870fabf28c78941acb"
+    },
+    {
+      "$oid": "68270f870fabf28c78941acc"
+    },
+    {
+      "$oid": "68270f870fabf28c78941acd"
+    },
+    {
+      "$oid": "68270f870fabf28c78941ace"
+    },
+    {
+      "$oid": "68270f870fabf28c78941acf"
+    },
+    {
+      "$oid": "68270f870fabf28c78941ad0"
+    },
+    {
+      "$oid": "68270f870fabf28c78941ad1"
+    },
+    {
+      "$oid": "68270f870fabf28c78941ad2"
+    },
+    {
+      "$oid": "68270f870fabf28c78941ad3"
+    },
+    {
+      "$oid": "68270f870fabf28c78941ad4"
+    },
+    {
+      "$oid": "68270f870fabf28c78941ad5"
+    },
+    {
+      "$oid": "68270f870fabf28c78941ad6"
+    },
+    {
+      "$oid": "68270f870fabf28c78941ad7"
+    },
+    {
+      "$oid": "68270f870fabf28c78941ad8"
+    },
+    {
+      "$oid": "68270f870fabf28c78941ad9"
+    },
+    {
+      "$oid": "68270f870fabf28c78941ada"
+    },
+    {
+      "$oid": "68270f870fabf28c78941adb"
+    },
+    {
+      "$oid": "68270f870fabf28c78941adc"
+    },
+    {
+      "$oid": "68270f870fabf28c78941add"
+    }
+  ],
+  "duration": 5,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-11T17:57:21.214Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-16T10:12:23.254Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6828e21905f59063c76af6cc"
+  },
+  "title": "TCP IP",
+  "category": {
+    "$oid": "6828dec505f59063c76af569"
+  },
+  "topic": {
+    "$oid": "6828df1f05f59063c76af5cf"
+  },
+  "level": "Beginner",
+  "questions": [
+    {
+      "$oid": "6842712a4937475c1dccc981"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc982"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc983"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc984"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc985"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc986"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc987"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc988"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc989"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc98a"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc98b"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc98c"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc98d"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc98e"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc98f"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc990"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc991"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc992"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc993"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc994"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc995"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc996"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc997"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc998"
+    },
+    {
+      "$oid": "6842712a4937475c1dccc999"
+    }
+  ],
+  "duration": 2,
+  "totalMarks": 35,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-05-17T19:23:05.193Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-06T04:40:10.728Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae1b"
+  },
+  "title": "JavaScript Fundamentals",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628a"
+  },
+  "level": "Beginner",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.239Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.239Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae1c"
+  },
+  "title": "Python Fundamentals",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b118dec32f08aabd628b"
+  },
+  "level": "Intermediate",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.239Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.239Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae1e"
+  },
+  "title": "Java Fundamentals",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b119dec32f08aabd6291"
+  },
+  "level": "Beginner",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.239Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.239Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae1f"
+  },
+  "title": "Rust Fundamentals",
+  "category": {
+    "$oid": "6821b118dec32f08aabd6289"
+  },
+  "topic": {
+    "$oid": "6821b119dec32f08aabd6292"
+  },
+  "level": "Beginner",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.239Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.239Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae20"
+  },
+  "title": "HTML Fundamentals",
+  "category": {
+    "$oid": "6821b119dec32f08aabd6295"
+  },
+  "topic": {
+    "$oid": "6821b11adec32f08aabd6298"
+  },
+  "level": "Beginner",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.239Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.239Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae21"
+  },
+  "title": "CSS Fundamentals",
+  "category": {
+    "$oid": "6821b119dec32f08aabd6295"
+  },
+  "topic": {
+    "$oid": "6821b11adec32f08aabd6299"
+  },
+  "level": "Beginner",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.239Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.239Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae23"
+  },
+  "title": "Tailwind CSS Fundamentals",
+  "category": {
+    "$oid": "6821b119dec32f08aabd6295"
+  },
+  "topic": {
+    "$oid": "6821b11adec32f08aabd629b"
+  },
+  "level": "Intermediate",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.239Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.239Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae26"
+  },
+  "title": "Commands, File System Fundamentals",
+  "category": {
+    "$oid": "6821b11adec32f08aabd629f"
+  },
+  "topic": {
+    "$oid": "6821b11adec32f08aabd62a0"
+  },
+  "level": "Beginner",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.239Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.239Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae28"
+  },
+  "title": "Vue Fundamentals",
+  "category": {
+    "$oid": "6821b11adec32f08aabd62a1"
+  },
+  "topic": {
+    "$oid": "6821b11bdec32f08aabd62a3"
+  },
+  "level": "Intermediate",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.239Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.239Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae29"
+  },
+  "title": "Svelte Fundamentals",
+  "category": {
+    "$oid": "6821b11adec32f08aabd62a1"
+  },
+  "topic": {
+    "$oid": "6821b11bdec32f08aabd62a4"
+  },
+  "level": "Intermediate",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.239Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.239Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae2d"
+  },
+  "title": "Express.js Fundamentals",
+  "category": {
+    "$oid": "6821b11bdec32f08aabd62a7"
+  },
+  "topic": {
+    "$oid": "6821b11bdec32f08aabd62a9"
+  },
+  "level": "Intermediate",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.239Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.239Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae2e"
+  },
+  "title": "Django Fundamentals",
+  "category": {
+    "$oid": "6821b11bdec32f08aabd62a7"
+  },
+  "topic": {
+    "$oid": "6821b11bdec32f08aabd62aa"
+  },
+  "level": "Intermediate",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae2f"
+  },
+  "title": "Flask Fundamentals",
+  "category": {
+    "$oid": "6821b11bdec32f08aabd62a7"
+  },
+  "topic": {
+    "$oid": "6821b11bdec32f08aabd62ab"
+  },
+  "level": "Beginner",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae33"
+  },
+  "title": "PostgreSQL Fundamentals",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62ad"
+  },
+  "topic": {
+    "$oid": "6821b11cdec32f08aabd62b0"
+  },
+  "level": "Beginner",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae34"
+  },
+  "title": "Firebase Fundamentals",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62ad"
+  },
+  "topic": {
+    "$oid": "6821b11cdec32f08aabd62b1"
+  },
+  "level": "Intermediate",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae35"
+  },
+  "title": "Redis Fundamentals",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62ad"
+  },
+  "topic": {
+    "$oid": "6821b11cdec32f08aabd62b2"
+  },
+  "level": "Intermediate",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae37"
+  },
+  "title": "Kubernetes Fundamentals",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62b3"
+  },
+  "topic": {
+    "$oid": "6821b11cdec32f08aabd62b5"
+  },
+  "level": "Intermediate",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae38"
+  },
+  "title": "Git Fundamentals",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62b3"
+  },
+  "topic": {
+    "$oid": "6821b11cdec32f08aabd62b6"
+  },
+  "level": "Beginner",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae39"
+  },
+  "title": "GitHub Actions Fundamentals",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62b3"
+  },
+  "topic": {
+    "$oid": "6821b11ddec32f08aabd62b7"
+  },
+  "level": "Beginner",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae3a"
+  },
+  "title": "Jenkins Fundamentals",
+  "category": {
+    "$oid": "6821b11cdec32f08aabd62b3"
+  },
+  "topic": {
+    "$oid": "6821b11ddec32f08aabd62b8"
+  },
+  "level": "Beginner",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae3b"
+  },
+  "title": "AWS Fundamentals",
+  "category": {
+    "$oid": "6821b11ddec32f08aabd62b9"
+  },
+  "topic": {
+    "$oid": "6821b11ddec32f08aabd62ba"
+  },
+  "level": "Beginner",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae3d"
+  },
+  "title": "GCP Fundamentals",
+  "category": {
+    "$oid": "6821b11ddec32f08aabd62b9"
+  },
+  "topic": {
+    "$oid": "6821b11ddec32f08aabd62bc"
+  },
+  "level": "Intermediate",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae3f"
+  },
+  "title": "Netlify Fundamentals",
+  "category": {
+    "$oid": "6821b11ddec32f08aabd62b9"
+  },
+  "topic": {
+    "$oid": "6821b11ddec32f08aabd62be"
+  },
+  "level": "Intermediate",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae40"
+  },
+  "title": "Data Structures Fundamentals",
+  "category": {
+    "$oid": "6821b11ddec32f08aabd62bf"
+  },
+  "topic": {
+    "$oid": "6821b11edec32f08aabd62c0"
+  },
+  "level": "Beginner",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae41"
+  },
+  "title": "Algorithms Fundamentals",
+  "category": {
+    "$oid": "6821b11ddec32f08aabd62bf"
+  },
+  "topic": {
+    "$oid": "6821b11edec32f08aabd62c1"
+  },
+  "level": "Intermediate",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae42"
+  },
+  "title": "OOP Fundamentals",
+  "category": {
+    "$oid": "6821b11ddec32f08aabd62bf"
+  },
+  "topic": {
+    "$oid": "6821b11edec32f08aabd62c2"
+  },
+  "level": "Intermediate",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae44"
+  },
+  "title": "Operating Systems Fundamentals",
+  "category": {
+    "$oid": "6821b11ddec32f08aabd62bf"
+  },
+  "topic": {
+    "$oid": "6821b11edec32f08aabd62c4"
+  },
+  "level": "Beginner",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae45"
+  },
+  "title": "Cybersecurity Fundamentals",
+  "category": {
+    "$oid": "6821b11edec32f08aabd62c5"
+  },
+  "topic": {
+    "$oid": "6821b11edec32f08aabd62c6"
+  },
+  "level": "Intermediate",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.240Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae48"
+  },
+  "title": "OWASP Fundamentals",
+  "category": {
+    "$oid": "6821b11edec32f08aabd62c5"
+  },
+  "topic": {
+    "$oid": "6821b11edec32f08aabd62c9"
+  },
+  "level": "Intermediate",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.241Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.241Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae49"
+  },
+  "title": "SSL/TLS Fundamentals",
+  "category": {
+    "$oid": "6821b11edec32f08aabd62c5"
+  },
+  "topic": {
+    "$oid": "6821b11fdec32f08aabd62ca"
+  },
+  "level": "Intermediate",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.241Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.241Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae4a"
+  },
+  "title": "OSI model Fundamentals",
+  "category": {
+    "$oid": "6828dec505f59063c76af569"
+  },
+  "topic": {
+    "$oid": "6828df0305f59063c76af5a7"
+  },
+  "level": "Intermediate",
+  "questions": [],
+  "duration": 3,
+  "totalMarks": 10,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.241Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-19T10:41:09.241Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "682b0ac5cccc5b6d3c27ae4b"
+  },
+  "title": "protocols Fundamentals",
+  "category": {
+    "$oid": "6828dec505f59063c76af569"
+  },
+  "topic": {
+    "$oid": "6828df1005f59063c76af5bb"
+  },
+  "level": "Intermediate",
+  "questions": [
+    {
+      "$oid": "684272464937475c1dccc9b3"
+    },
+    {
+      "$oid": "684272464937475c1dccc9b4"
+    },
+    {
+      "$oid": "684272464937475c1dccc9b5"
+    },
+    {
+      "$oid": "684272464937475c1dccc9b6"
+    },
+    {
+      "$oid": "684272464937475c1dccc9b7"
+    },
+    {
+      "$oid": "684272464937475c1dccc9b8"
+    },
+    {
+      "$oid": "684272464937475c1dccc9b9"
+    },
+    {
+      "$oid": "684272464937475c1dccc9ba"
+    },
+    {
+      "$oid": "684272464937475c1dccc9bb"
+    },
+    {
+      "$oid": "684272464937475c1dccc9bc"
+    },
+    {
+      "$oid": "684272464937475c1dccc9bd"
+    },
+    {
+      "$oid": "684272464937475c1dccc9be"
+    },
+    {
+      "$oid": "684272464937475c1dccc9bf"
+    },
+    {
+      "$oid": "684272464937475c1dccc9c0"
+    },
+    {
+      "$oid": "684272464937475c1dccc9c1"
+    },
+    {
+      "$oid": "684272464937475c1dccc9c2"
+    },
+    {
+      "$oid": "684272464937475c1dccc9c3"
+    },
+    {
+      "$oid": "684272464937475c1dccc9c4"
+    },
+    {
+      "$oid": "684272464937475c1dccc9c5"
+    },
+    {
+      "$oid": "684272464937475c1dccc9c6"
+    },
+    {
+      "$oid": "684272464937475c1dccc9c7"
+    },
+    {
+      "$oid": "684272464937475c1dccc9c8"
+    },
+    {
+      "$oid": "684272464937475c1dccc9c9"
+    },
+    {
+      "$oid": "684272464937475c1dccc9ca"
+    },
+    {
+      "$oid": "684272464937475c1dccc9cb"
+    }
+  ],
+  "duration": 3,
+  "totalMarks": 35,
+  "isActive": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-05-19T10:41:09.241Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-06T04:44:55.054Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "683eaf80733f0cac937d8d54"
+  },
+  "title": "Testing Title",
+  "category": {
+    "$oid": "6821b11bdec32f08aabd62a7"
+  },
+  "topic": {
+    "$oid": "6821b11bdec32f08aabd62aa"
+  },
+  "level": "Beginner",
+  "questions": [],
+  "duration": 10,
+  "totalMarks": 10,
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-06-03T08:17:04.154Z"
+  },
+  "updatedAt": {
+    "$date": "2025-06-03T08:17:04.154Z"
+  },
+  "__v": 0
+}]

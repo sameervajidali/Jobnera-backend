@@ -46,6 +46,7 @@ const PORT = process.env.PORT || 5000;
 // Silence Mongoose strictQuery deprecation warning
 mongoose.set('strictQuery', true);
 
+
 // Create HTTP server from your Express app
 const server = http.createServer(app);
 

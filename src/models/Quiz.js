@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import './SubTopic.js'; 
 
 const quizSchema = new mongoose.Schema(
   {
@@ -18,6 +19,13 @@ const quizSchema = new mongoose.Schema(
       ref: "Topic",
       required: true 
     },
+    // Reference to SubTopic document (NEW!)
+    subTopic: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: "SubTopic",
+      required: true // (or false, if not strictly required)
+    },
+
 
     // Difficulty level enum
     level: {

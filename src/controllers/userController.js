@@ -53,7 +53,7 @@ export const getUserDashboard = asyncHandler(async (req, res) => {
 
   const history = attempts.map(a => ({
     quizId: a.quiz._id,
-    title: a.quiz.title,
+    title: a.quiz.subTopic.name,
     score: a.score,
     correct: a.correctAnswers,
     totalQs: a.totalQuestions,
