@@ -38,5 +38,15 @@ const subTopicSchema = new mongoose.Schema({
   toJSON: { virtuals: true },
   toObject: { virtuals: true },
 });
+
+// after you define the schema, add:
+subTopicSchema.post('save', async function (doc) {
+  // doc is the newly-created SubTopic
+  await Quiz.updateMany(
+    { topic: doc.topic },
+    { $push: { subTopics: doc._id } }
+  );
+});
+
 subTopicSchema.index({ name: 1, topic: 1 }, { unique: true });
 export default mongoose.model('SubTopic', subTopicSchema);
