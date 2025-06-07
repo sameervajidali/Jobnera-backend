@@ -20,18 +20,17 @@ categorySchema.pre('save', function(next) {
   next();
 });
 
-// Cascade delete: when deleting a category, delete all topics under it
-categorySchema.pre('findOneAndDelete', async function(next) {
-  const cat = await this.model.findOne(this.getFilter());
-  if (cat) {
-    const Topic = mongoose.model('Topic');
-    const topics = await Topic.find({ category: cat._id });
-    for (const t of topics) {
-      await t.deleteOne(); // Topic's own hook handles subtopics & quizzes
-    }
+// 🚨 Cascade delete: Remove all topics (+ their subtopics/quizzes) on category delete
+categorySchema.post('findOneAndDelete', async function (doc) {
+  if (!doc) return;
+  // Find all topics in this category
+  const topics = await Topic.find({ category: doc._id });
+  // For each topic, trigger its own cascade
+  for (const topic of topics) {
+    await topic.deleteOne();
   }
-  next();
 });
+
 
 // Virtual stat: topic count
 categorySchema.virtual('topicCount', {

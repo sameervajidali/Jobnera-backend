@@ -1,4 +1,3 @@
-// src/models/SubTopic.js
 import mongoose from 'mongoose';
 import Quiz from './Quiz.js';
 
@@ -11,28 +10,10 @@ const subTopicSchema = new mongoose.Schema({
   order: { type: Number, default: 0, min: 0, max: 999 }
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
-// Keep all quizzes in sync with subtopics
-subTopicSchema.post('save', async function (doc) {
-  await Quiz.updateMany(
-    { topic: doc.topic },
-    { $addToSet: { subTopics: doc._id } }
-  );
-});
+// 🚨 Cascade delete: Remove all quizzes that reference this subtopic
 subTopicSchema.post('findOneAndDelete', async function (doc) {
-  if (doc) {
-    await Quiz.updateMany(
-      { topic: doc.topic },
-      { $pull: { subTopics: doc._id } }
-    );
-  }
-});
-
-// Virtual: quiz count
-subTopicSchema.virtual('quizCount', {
-  ref: 'Quiz',
-  localField: '_id',
-  foreignField: 'subTopic',
-  count: true
+  if (!doc) return;
+  await Quiz.deleteMany({ subTopic: doc._id });
 });
 
 subTopicSchema.index({ name: 1, topic: 1 }, { unique: true });

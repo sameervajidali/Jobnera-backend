@@ -20,16 +20,16 @@ topicSchema.pre('save', function (next) {
   next();
 });
 
-// Cascade delete: when deleting a topic, delete all subtopics & quizzes under it
-topicSchema.pre('findOneAndDelete', async function(next) {
-  const topic = await this.model.findOne(this.getFilter());
-  if (topic) {
-    const SubTopic = mongoose.model('SubTopic');
-    const Quiz = mongoose.model('Quiz');
-    await SubTopic.deleteMany({ topic: topic._id });
-    await Quiz.deleteMany({ topic: topic._id });
-  }
-  next();
+// 🚨 Cascade delete: Remove all subtopics & quizzes on topic delete
+topicSchema.post('findOneAndDelete', async function (doc) {
+  if (!doc) return;
+  // Get all subtopics under this topic
+  const subtopics = await SubTopic.find({ topic: doc._id });
+  const subtopicIds = subtopics.map(st => st._id);
+  // Delete all quizzes under these subtopics
+  await Quiz.deleteMany({ subTopic: { $in: subtopicIds } });
+  // Delete the subtopics
+  await SubTopic.deleteMany({ topic: doc._id });
 });
 
 // Virtual stat: subtopic count
