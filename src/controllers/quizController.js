@@ -326,111 +326,81 @@ export const bulkUploadQuestions = asyncHandler(async (req, res) => {
 const DIFFICULTY_ENUM = ['beginner', 'intermediate', 'expert'];
 
 export const bulkUploadFromFile = asyncHandler(async (req, res) => {
-  const { quizId } = req.params; // assuming you already validated with zod
+  const { quizId } = idParamSchema.parse(req.params);
   if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
 
   const ext = path.extname(req.file.originalname).toLowerCase();
-  let rows;
+  let rows = [];
 
-  // STEP 1: Parse file, robustly
   try {
     if (ext === '.csv') {
       rows = await csv().fromString(req.file.buffer.toString());
     } else if (ext === '.xlsx' || ext === '.xls') {
-      // Allow for raw Buffer OR already a string
-      let buffer = req.file.buffer;
-      if (!(buffer instanceof Buffer)) buffer = Buffer.from(buffer);
-      const workbook = XLSX.read(buffer, { type: 'buffer' });
+      const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
       rows = XLSX.utils.sheet_to_json(sheet);
     } else {
       return res.status(400).json({ message: 'Unsupported file format. Please upload CSV or XLSX.' });
     }
   } catch (e) {
-    return res.status(400).json({ message: 'Invalid file format or corrupted file.' });
+    return res.status(400).json({ message: 'Invalid file format or corrupted file.', error: e.message });
   }
 
-  if (!Array.isArray(rows) || rows.length === 0)
-    return res.status(400).json({ message: 'Uploaded file is empty or malformed.' });
+  if (!rows.length) return res.status(400).json({ message: 'Uploaded file is empty.' });
 
   const session = await mongoose.startSession();
   session.startTransaction();
 
-  const created = [];
-  const errors = [];
-
   try {
-    // Map and validate each row
-    for (let index = 0; index < rows.length; index++) {
-      const r = rows[index];
-      try {
-        // Check all required columns
-        if (!r.question || !r.option1 || !r.option2 || !r.option3 || !r.option4 || r.correctAnswer === undefined)
-          throw new Error('Missing required fields (question/options/correctAnswer)');
-
-        // Normalize difficulty: default to 'intermediate'
-        let diff = String(r.difficulty || '').trim().toLowerCase();
-        if (!DIFFICULTY_ENUM.includes(diff)) diff = 'intermediate';
-
-        // Validate correctAnswer is a number [0-3]
-        const correctIndex = Number(r.correctAnswer);
+    const docs = rows
+      .map((r, index) => {
         if (
-          isNaN(correctIndex) ||
-          correctIndex < 0 ||
-          correctIndex > 3
+          !r.question || !r.option1 || !r.option2 || !r.option3 || !r.option4 ||
+          typeof r.correctAnswer === "undefined" || r.correctAnswer === ""
         ) {
-          throw new Error('correctAnswer must be 0, 1, 2, or 3 (zero-based index)');
+          return null;
         }
+        // Only allow specific difficulty values (ensure case matches your schema exactly!)
+        const allowedDifficulties = ['beginner', 'intermediate', 'expert'];
+        let difficulty = String(r.difficulty || '').toLowerCase();
+        if (!allowedDifficulties.includes(difficulty)) difficulty = 'intermediate';
 
-        // Prepare doc
-        const doc = {
+        return {
           quiz: quizId,
-          text: r.question.trim(),
-          options: [r.option1, r.option2, r.option3, r.option4].map((s = '') => String(s).trim()),
-          correctIndex,
+          text: String(r.question).trim(),
+          options: [r.option1, r.option2, r.option3, r.option4].map(s => String(s).trim()),
+          correctIndex: Number(r.correctAnswer),
           topicTag: r.topic?.trim() || '',
           explanation: r.explanation?.trim() || '',
-          difficulty: diff
+          difficulty
         };
+      })
+      .filter(Boolean); // remove nulls
 
-        // Save
-        const q = await Question.create([doc], { session });
-        created.push(q[0]);
-      } catch (rowErr) {
-        errors.push({
-          row: index + 1,
-          question: r.question,
-          error: rowErr.message
-        });
-      }
-    }
+    if (!docs.length) throw new Error('No valid questions to upload.');
 
-    // Update Quiz only if at least one was created
-    if (created.length) {
-      await Quiz.findByIdAndUpdate(
-        quizId,
-        {
-          $push: { questions: created.map(q => q._id) },
-          $inc: { totalMarks: created.length }
-        },
-        { session }
-      );
-    }
+    const created = await Question.insertMany(docs, { session });
+
+    await Quiz.findByIdAndUpdate(
+      quizId,
+      {
+        $push: { questions: created.map(x => x._id) },
+        $inc: { totalMarks: created.length }
+      },
+      { session }
+    );
 
     await session.commitTransaction();
 
-    if (typeof redis !== 'undefined' && redis) {
+    if (redis) {
       redis.del(`quiz:${quizId}`).catch(() => {});
       redis.del('quizzes:all').catch(() => {});
     }
 
-    res.status(errors.length ? 207 : 201).json({
-      message: `Bulk upload complete. ${created.length} added, ${errors.length} errors.`,
-      created: created.length,
-      errors
-    });
+    res.status(201).json({ message: `Bulk upload successful, ${created.length} questions added.`, count: created.length });
   } catch (e) {
     await session.abortTransaction();
+    console.error('CSV Upload Error:', e);
     res.status(500).json({ message: 'Bulk file upload failed', error: e.message });
   } finally {
     session.endSession();
