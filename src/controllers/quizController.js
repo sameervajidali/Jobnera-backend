@@ -1,25 +1,31 @@
-
-import mongoose from 'mongoose';
-import Redis from 'ioredis';
-import SubTopic from '../models/SubTopic.js';
+// Core Node.js
 import path from 'path';
 
+// 3rd Party
+import csv from 'csvtojson';
+import XLSX from 'xlsx';
+import mongoose from 'mongoose';
+import { Parser } from 'json2csv';
+import { z } from 'zod';
+import Redis from 'ioredis';
+
+// App Utils
+import asyncHandler from '../utils/asyncHandler.js';
+
+// Models
+import Quiz from '../models/Quiz.js';
 import Question from '../models/Question.js';
+import SubTopic from '../models/SubTopic.js';
+import Topic from '../models/Topic.js';
+import Category from '../models/Category.js';
 import QuizAttempt from '../models/QuizAttempt.js';
 import LeaderboardEntry from '../models/LeaderboardEntry.js';
-import asyncHandler from '../utils/asyncHandler.js';
-import { Parser } from 'json2csv';
-import csv from 'csvtojson';
-import { z } from 'zod';
-import Topic from '../models/Topic.js';
-import Quiz from '../models/Quiz.js'; 
 import AuditLog from '../models/AuditLog.js';
-import Category from '../models/Category.js';
 import QuizAssignment from '../models/QuizAssignment.js';
-
 import User from '../models/User.js';
-import ExportLog from '../models/ExportLog.js';  // Hypothetical model to track exports
-import Alert from '../models/Alert.js';          // Hypothetical alert config/record model
+import ExportLog from '../models/ExportLog.js';   // (optional)
+import Alert from '../models/Alert.js';           // (optional)
+
 
 import {
   submitAttemptSchema,
@@ -316,77 +322,120 @@ export const bulkUploadQuestions = asyncHandler(async (req, res) => {
 });
 
 // ─── BULK UPLOAD FROM FILE (CSV/XLSX) ────────────────────────────────────────
+// Acceptable difficulty values (lowercase)
+const DIFFICULTY_ENUM = ['beginner', 'intermediate', 'expert'];
+
 export const bulkUploadFromFile = asyncHandler(async (req, res) => {
-  const { quizId } = idParamSchema.parse(req.params);
+  const { quizId } = req.params; // assuming you already validated with zod
   if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
 
   const ext = path.extname(req.file.originalname).toLowerCase();
   let rows;
 
+  // STEP 1: Parse file, robustly
   try {
     if (ext === '.csv') {
       rows = await csv().fromString(req.file.buffer.toString());
     } else if (ext === '.xlsx' || ext === '.xls') {
-      const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
+      // Allow for raw Buffer OR already a string
+      let buffer = req.file.buffer;
+      if (!(buffer instanceof Buffer)) buffer = Buffer.from(buffer);
+      const workbook = XLSX.read(buffer, { type: 'buffer' });
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
       rows = XLSX.utils.sheet_to_json(sheet);
     } else {
       return res.status(400).json({ message: 'Unsupported file format. Please upload CSV or XLSX.' });
     }
-  } catch {
+  } catch (e) {
     return res.status(400).json({ message: 'Invalid file format or corrupted file.' });
   }
 
-  if (!rows.length) return res.status(400).json({ message: 'Uploaded file is empty.' });
+  if (!Array.isArray(rows) || rows.length === 0)
+    return res.status(400).json({ message: 'Uploaded file is empty or malformed.' });
 
   const session = await mongoose.startSession();
   session.startTransaction();
 
+  const created = [];
+  const errors = [];
+
   try {
-    const docs = rows.map((r, index) => {
-      if (!r.question || !r.option1 || !r.option2 || !r.option3 || !r.option4 || r.correctAnswer === undefined) {
-        throw new Error(`Missing fields in row ${index + 1}`);
+    // Map and validate each row
+    for (let index = 0; index < rows.length; index++) {
+      const r = rows[index];
+      try {
+        // Check all required columns
+        if (!r.question || !r.option1 || !r.option2 || !r.option3 || !r.option4 || r.correctAnswer === undefined)
+          throw new Error('Missing required fields (question/options/correctAnswer)');
+
+        // Normalize difficulty: default to 'intermediate'
+        let diff = String(r.difficulty || '').trim().toLowerCase();
+        if (!DIFFICULTY_ENUM.includes(diff)) diff = 'intermediate';
+
+        // Validate correctAnswer is a number [0-3]
+        const correctIndex = Number(r.correctAnswer);
+        if (
+          isNaN(correctIndex) ||
+          correctIndex < 0 ||
+          correctIndex > 3
+        ) {
+          throw new Error('correctAnswer must be 0, 1, 2, or 3 (zero-based index)');
+        }
+
+        // Prepare doc
+        const doc = {
+          quiz: quizId,
+          text: r.question.trim(),
+          options: [r.option1, r.option2, r.option3, r.option4].map((s = '') => String(s).trim()),
+          correctIndex,
+          topicTag: r.topic?.trim() || '',
+          explanation: r.explanation?.trim() || '',
+          difficulty: diff
+        };
+
+        // Save
+        const q = await Question.create([doc], { session });
+        created.push(q[0]);
+      } catch (rowErr) {
+        errors.push({
+          row: index + 1,
+          question: r.question,
+          error: rowErr.message
+        });
       }
+    }
 
-      return {
-        quiz: quizId,
-        text: r.question.trim(),
-        options: [r.option1, r.option2, r.option3, r.option4].map(s => s.trim()),
-        correctIndex: Number(r.correctAnswer),
-        topicTag: r.topic?.trim() || '',
-        explanation: r.explanation?.trim() || '',
-        difficulty: ['Beginner', 'Intermediate', 'Expert'].includes(r.difficulty) ? r.difficulty : 'Intermediate'
-      };
-    });
-
-    const created = await Question.insertMany(docs, { session });
-
-    await Quiz.findByIdAndUpdate(
-      quizId,
-      {
-        $push: { questions: created.map(x => x._id) },
-        $inc: { totalMarks: created.length }
-      },
-      { session }
-    );
+    // Update Quiz only if at least one was created
+    if (created.length) {
+      await Quiz.findByIdAndUpdate(
+        quizId,
+        {
+          $push: { questions: created.map(q => q._id) },
+          $inc: { totalMarks: created.length }
+        },
+        { session }
+      );
+    }
 
     await session.commitTransaction();
 
-    if (redis) {
+    if (typeof redis !== 'undefined' && redis) {
       redis.del(`quiz:${quizId}`).catch(() => {});
       redis.del('quizzes:all').catch(() => {});
     }
 
-    res.status(201).json({ message: 'Bulk upload successful', count: created.length });
+    res.status(errors.length ? 207 : 201).json({
+      message: `Bulk upload complete. ${created.length} added, ${errors.length} errors.`,
+      created: created.length,
+      errors
+    });
   } catch (e) {
     await session.abortTransaction();
-    console.error('CSV Upload Error:', e);
     res.status(500).json({ message: 'Bulk file upload failed', error: e.message });
   } finally {
     session.endSession();
   }
 });
-
 
 
 export const downloadQuestionsTemplate = asyncHandler(async (req, res) => {
