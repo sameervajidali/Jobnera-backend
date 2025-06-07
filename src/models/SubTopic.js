@@ -10,6 +10,25 @@ const subTopicSchema = new mongoose.Schema({
   order: { type: Number, default: 0, min: 0, max: 999 }
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
+subTopicSchema.post('save', async function(doc) {
+  // Only create if no quiz exists for this subtopic
+  const quizExists = await Quiz.findOne({ subTopic: doc._id });
+  if (!quizExists) {
+    await Quiz.create({
+      title: doc.name,
+      category: doc.topic ? (await Topic.findById(doc.topic)).category : null,
+      topic: doc.topic,
+      subTopic: doc._id,
+      level: 'Beginner',
+      questions: [],
+      duration: 30,
+      totalMarks: 0,
+      isActive: true
+    });
+  }
+});
+
+
 // 🚨 Cascade delete: Remove all quizzes that reference this subtopic
 subTopicSchema.post('findOneAndDelete', async function (doc) {
   if (!doc) return;

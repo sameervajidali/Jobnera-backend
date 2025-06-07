@@ -1010,33 +1010,50 @@ export const getJustAddedQuizzes = asyncHandler(async (req, res) => {
 });
 
 
+/**
+ * Returns available categories, topics, and levels for sidebar filters,
+ * based ONLY on currently active quizzes.
+ * 
+ * - Categories: Only those with at least one active quiz
+ * - Topics:     Only those with at least one active quiz
+ * - Levels:     All levels used by active quizzes
+ * 
+ * GET /api/quizzes/sidebar-filters
+ */
 export const getSidebarFilters = asyncHandler(async (_req, res) => {
-  // 1️⃣ Get all active quizzes’ category and topic IDs
+  // 1️⃣ Find all distinct category and topic ObjectIds from active quizzes
   const [catIds, topicIds] = await Promise.all([
     Quiz.distinct('category', { isActive: true }),
     Quiz.distinct('topic',    { isActive: true }),
   ]);
 
-  // 2️⃣ Fetch only those categories whose `type` is "all" or "quiz"
+  // 2️⃣ Fetch only those categories whose `type` is 'all' or 'quiz' and are in use
   const categories = await Category
     .find({
       _id: { $in: catIds },
       type: { $in: ['all', 'quiz'] }
     })
-    .select('_id name');
+    .select('_id name')
+    .sort({ order: 1, name: 1 });
 
-  // 3️⃣ Similarly, only topics whose `type` is "all" or "quiz"
+  // 3️⃣ Fetch only those topics whose `type` is 'all' or 'quiz' and are in use
   const topics = await Topic
     .find({
       _id: { $in: topicIds },
       type: { $in: ['all', 'quiz'] }
     })
-    .select('_id name');
+    .select('_id name category')
+    .sort({ order: 1, name: 1 });
 
-  // 4️⃣ And levels as before
+  // 4️⃣ Get all unique levels
   const levels = await Quiz.distinct('level', { isActive: true });
 
-  res.json({ categories, topics, levels });
+  // 5️⃣ Respond in clean, ready-to-use format
+  res.json({
+    categories,
+    topics,
+    levels,
+  });
 });
 
 
