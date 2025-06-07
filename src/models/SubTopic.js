@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-
+import Quiz from './Quiz.js';   // or '../models/Quiz.js' depending on your folder structure
 const subTopicSchema = new mongoose.Schema({
   name: {
     type: String,
