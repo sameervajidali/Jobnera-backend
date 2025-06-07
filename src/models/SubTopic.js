@@ -23,7 +23,7 @@ subTopicSchema.post('save', async function(doc) {
       subTopic: doc._id,
       level: 'Beginner',
       questions: [],
-      duration: 30,
+      duration: 10,
       totalMarks: 0,
       isActive: true
     });

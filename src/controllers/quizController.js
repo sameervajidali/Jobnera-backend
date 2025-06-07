@@ -2,6 +2,7 @@
 import mongoose from 'mongoose';
 import Redis from 'ioredis';
 import SubTopic from '../models/SubTopic.js';
+import path from 'path';
 
 import Question from '../models/Question.js';
 import QuizAttempt from '../models/QuizAttempt.js';
