@@ -36,12 +36,19 @@ export const getCategoryById = asyncHandler(async (req, res) => {
 // ✅ CREATE NEW CATEGORY
 // POST /api/admin/categories
 export const createCategory = asyncHandler(async (req, res) => {
-  const { name, description = '', type = 'both', icon = '', isVisible = true, order = 0 } = req.body;
-  const exists = await Category.findOne({ name });
+  const { name, description = '', type = 'all', icon = '', isVisible = true, order = 0 } = req.body;
+  const exists = await Category.findOne({ name: name.trim() });
   if (exists) {
     return res.status(400).json({ message: 'Category name already exists' });
   }
-  const category = await Category.create({ name, description, type, icon, isVisible, order });
+  const category = await Category.create({
+    name: name.trim(),
+    description: description.trim(),
+    type: type.trim() || 'all',
+    icon: icon.trim(),
+    isVisible,
+    order: parseInt(order, 10) || 0
+  });
   res.status(201).json({ category });
 });
 
@@ -58,22 +65,22 @@ export const updateCategory = asyncHandler(async (req, res) => {
   if (!category) {
     return res.status(404).json({ message: 'Category not found' });
   }
-  if (name && name !== category.name) {
-    const dup = await Category.findOne({ name });
+  if (name && name.trim() !== category.name) {
+    const dup = await Category.findOne({ name: name.trim() });
     if (dup) return res.status(400).json({ message: 'Category name already exists' });
-    category.name = name;
+    category.name = name.trim();
   }
-  if (description !== undefined) category.description = description;
-  if (type !== undefined) category.type = type;
-  if (icon !== undefined) category.icon = icon;
+  if (description !== undefined) category.description = description.trim();
+  if (type !== undefined) category.type = type.trim();
+  if (icon !== undefined) category.icon = icon.trim();
   if (isVisible !== undefined) category.isVisible = isVisible;
-  if (order !== undefined) category.order = order;
+  if (order !== undefined) category.order = parseInt(order, 10) || 0;
   await category.save();
   res.json({ category });
 });
 
 // ─────────────────────────────────────────────────────────
-// ✅ DELETE CATEGORY
+// ✅ DELETE CATEGORY (triggers cascade in model)
 // DELETE /api/admin/categories/:id
 export const deleteCategory = asyncHandler(async (req, res) => {
   const { id } = req.params;
@@ -84,7 +91,7 @@ export const deleteCategory = asyncHandler(async (req, res) => {
   if (!deleted) {
     return res.status(404).json({ message: 'Category not found' });
   }
-  res.json({ success: true });
+  res.json({ success: true, deleted });
 });
 
 // ─────────────────────────────────────────────────────────
@@ -126,20 +133,36 @@ export const bulkUploadCategories = asyncHandler(async (req, res) => {
   }
 
   let count = 0;
+  const errors = [];
   for (let r of rows) {
-    if (!r.name) continue;
+    if (!r.name || typeof r.name !== 'string' || !r.name.trim()) {
+      errors.push({ row: r, reason: 'Missing or invalid name' });
+      continue;
+    }
     const exists = await Category.findOne({ name: r.name.trim() });
-    if (exists) continue;
-
-    await Category.create({
-      name: r.name.trim(),
-      description: r.description?.trim() || '',
-      type: r.type?.trim() || 'both',
-      isVisible: r.isVisible !== 'false',
-      order: parseInt(r.order || 0, 10) || 0
-    });
-    count++;
+    if (exists) {
+      errors.push({ row: r, reason: 'Duplicate name' });
+      continue;
+    }
+    try {
+      await Category.create({
+        name: r.name.trim(),
+        description: r.description?.trim() || '',
+        type: r.type?.trim() || 'all',
+        icon: r.icon?.trim() || '',
+        isVisible: r.isVisible !== 'false',
+        order: parseInt(r.order, 10) || 0
+      });
+      count++;
+    } catch (err) {
+      errors.push({ row: r, reason: err.message });
+    }
   }
 
-  res.status(201).json({ message: 'Bulk upload successful', count });
+  res.status(201).json({
+    message: 'Bulk upload finished',
+    created: count,
+    failed: errors.length,
+    errors
+  });
 });
