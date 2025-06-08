@@ -1157,3 +1157,52 @@ export const getTestPopulatedQuizzes = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
+export const getRecommendedQuizzes = async (req, res) => {
+  const userId = req.user._id;
+  const { quizId } = req.params;
+
+  // 1. Get the quiz details
+  const quiz = await Quiz.findById(quizId).populate('topic category');
+  if (!quiz) return res.status(404).json({ message: "Quiz not found" });
+
+  // 2. Get all quizzes in same topic or category (except the current one)
+  let filter = {
+    _id: { $ne: quiz._id },
+    isPublished: true,
+    $or: [
+      { topic: quiz.topic._id },
+      { category: quiz.category?._id }
+    ]
+  };
+
+  let candidateQuizzes = await Quiz.find(filter)
+    .select('title topic category difficulty popularity createdAt attempts')
+    .limit(25);
+
+  // 3. Exclude quizzes the user already completed
+  const userAttempts = await QuizAttempt.find({ user: userId }).select('quiz');
+  const attemptedIds = new Set(userAttempts.map(a => a.quiz.toString()));
+  candidateQuizzes = candidateQuizzes.filter(q => !attemptedIds.has(q._id.toString()));
+
+  // 4. Sort/boost: Trending/popular/new/difficulty level
+  candidateQuizzes.sort((a, b) => {
+    // Example: by attempts (popularity) descending, then recent
+    return (b.attempts || 0) - (a.attempts || 0) || b.createdAt - a.createdAt;
+  });
+
+  // 5. Limit final recommendations (e.g., 5)
+  const recommendations = candidateQuizzes.slice(0, 5);
+
+  res.json({
+    recommendedQuizzes: recommendations.map(q => ({
+      _id: q._id,
+      name: q.title,
+      topic: q.topic,
+      category: q.category,
+      difficulty: q.difficulty,
+      attempts: q.attempts
+    }))
+  });
+};

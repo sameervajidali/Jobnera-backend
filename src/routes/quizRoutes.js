@@ -53,6 +53,7 @@ import {
   getAlerts,
   saveAlertConfig,
 } from '../controllers/quizController.js';
+import { getRecommendedQuizzes } from '../controllers/quizController.js';
 
 import { protect, requireRole } from '../middlewares/authMiddleware.js';
 
@@ -100,10 +101,11 @@ router.get('/:quizId/top-three', getQuizTopThree);
 router.get('/:quizId', protect, getQuizById);
 router.get('/attempts/:attemptId/stats', getAttemptStats);
 
+
 // ──────────────────────────────────────────────────────────────
 // Protected user routes (require authentication)
 // ──────────────────────────────────────────────────────────────
-
+router.get('/:quizId/recommended', protect, getRecommendedQuizzes); // protect = require login
 router.post('/submit', protect, submitQuizAttempt);
 router.get('/my-attempts', protect, getUserAttempts);
 router.get('/attempts/:attemptId', protect, getAttemptById);
