@@ -32,7 +32,8 @@ import eventBus from './middlewares/eventBus.js';
 import blogRoutes from './routes/blogRoutes.js';
 import tutorialRoutes from './routes/tutorialRoutes.js';
 import subTopicRoutes from './routes/admin/subTopicRoutes.js';
-
+// app.js or server.js
+import certificateRoutes from './routes/certificateRoutes.js';
 
 
 const app = express();
@@ -115,7 +116,7 @@ app.use('/api/materials', materialRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/blogs', blogRoutes);
 app.use('/api/tutorials', tutorialRoutes); 
-
+app.use('/api/certificates', certificateRoutes);
 // In your Express server (temporary route for debug):
 app.get('/test-populate', async (req, res) => {
   const quiz = await Quiz.findOne({}).populate('subTopic', 'name');
