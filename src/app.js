@@ -35,6 +35,9 @@ import subTopicRoutes from './routes/admin/subTopicRoutes.js';
 // app.js or server.js
 import certificateRoutes from './routes/certificateRoutes.js';
 import certificateOgRoutes from './routes/certificateOgRoutes.js';
+// In your main backend index.js or server.js
+import ogImageRoutes from './routes/ogImageRoutes.js';
+import ogRoutes from './routes/ogRoutes.js';
 
 const app = express();
 const isProd = process.env.NODE_ENV === 'production';
@@ -118,6 +121,7 @@ app.use('/api/blogs', blogRoutes);
 app.use('/api/tutorials', tutorialRoutes); 
 app.use('/api/certificates', certificateRoutes);
 app.use('/api/certificates', certificateOgRoutes);
+app.use('/api/og', ogImageRoutes);
 
 
 

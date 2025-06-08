@@ -1,39 +1,30 @@
-import puppeteer from "puppeteer";
-import Certificate from "../models/Certificate.js"; // or wherever your cert data comes from
+import puppeteer from 'puppeteer';
+import asyncHandler from '../utils/asyncHandler.js';
+import Certificate from '../models/Certificate.js';
 
-export const generateOGImage = async (req, res) => {
-  const { certificateId } = req.params;
+export const generateCertificateOgImage = asyncHandler(async (req, res) => {
+  const { id } = req.params;
 
-  try {
-    const cert = await Certificate.findOne({ certificateId });
-    if (!cert) return res.status(404).send("Certificate not found");
-
-    const browser = await puppeteer.launch({
-      args: ["--no-sandbox", "--disable-setuid-sandbox"]
-    });
-    const page = await browser.newPage();
-
-    // Generate a clean HTML layout for the certificate preview
-    const html = `
-      <html><body style="margin:0;padding:0;">
-        <div style="font-family:sans-serif;text-align:center;padding:60px;background:#fff;border:2px solid #000;">
-          <h1 style="font-size:36px;">Certificate of Excellence</h1>
-          <p style="font-size:24px;">Awarded to</p>
-          <h2 style="font-size:32px;font-weight:bold;">${cert.recipient}</h2>
-          <p>For completing the <strong>${cert.title}</strong></p>
-          <p style="margin-top:30px;">Date: ${new Date(cert.issueDate).toLocaleDateString("en-IN")}</p>
-        </div>
-      </body></html>
-    `;
-
-    await page.setContent(html);
-    const buffer = await page.screenshot({ type: "png", fullPage: true });
-    await browser.close();
-
-    res.set("Content-Type", "image/png");
-    res.send(buffer);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Failed to generate image");
+  const cert = await Certificate.findOne({ certificateId: id }).populate('user', 'name');
+  if (!cert) {
+    return res.status(404).json({ message: `Certificate not found: ${id}` });
   }
-};
+
+  const ogUrl = `${process.env.FRONTEND_URL || "https://jobneura.tech"}/certificates/${id}?og=1`;
+
+  const browser = await puppeteer.launch({
+    headless: 'new',
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
+
+  const page = await browser.newPage();
+  await page.setViewport({ width: 1200, height: 630 });
+  await page.goto(ogUrl, { waitUntil: 'networkidle0' });
+
+  const screenshot = await page.screenshot({ type: 'png' });
+  await browser.close();
+
+  res.setHeader('Content-Type', 'image/png');
+  res.setHeader('Cache-Control', 'public, max-age=86400'); // 1 day cache
+  return res.end(screenshot);
+});
