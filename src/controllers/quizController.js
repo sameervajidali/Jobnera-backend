@@ -24,7 +24,6 @@ import Certificate from '../models/Certificate.js';
 import { generateCertificateId } from '../utils/generateCertificateId.js';
 import AuditLog from '../models/AuditLog.js';
 import QuizAssignment from '../models/QuizAssignment.js';
-import { submitAttemptSchema } from '../validators/quizSchemas.js';
 import User from '../models/User.js';
 import ExportLog from '../models/ExportLog.js';   // (optional)
 import Alert from '../models/Alert.js';           // (optional)
