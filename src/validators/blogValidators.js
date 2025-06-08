@@ -1,23 +1,16 @@
 import Joi from 'joi';
 
 export const blogPostSchema = Joi.object({
-  title: Joi.string().min(5).max(180).required(),
-  slug: Joi.string().lowercase().pattern(/^[a-z0-9-]+$/).required(),
-  summary: Joi.string().max(500).allow(''),
-  content: Joi.any().required(),
+  title: Joi.string().min(5).max(150).required(),
+  summary: Joi.string().max(300),
+  content: Joi.string().min(10).required(),
   category: Joi.string().required(),
   tags: Joi.array().items(Joi.string()),
   coverImageUrl: Joi.string().uri().allow(''),
-  seo: Joi.object({
-    metaTitle: Joi.string().max(80),
-    metaDesc: Joi.string().max(180),
-    canonicalUrl: Joi.string().uri().allow(''),
-    ogImage: Joi.string().uri().allow(''),
-    robots: Joi.string().allow(''),
-  }),
-  customFields: Joi.any(),
-  // Other fields as needed...
+  status: Joi.string().valid('draft', 'review', 'published', 'archived').default('draft'),
+  // ...add your fields here
 });
+
 
 export function validateBlogPost(body, partial = false) {
   const result = partial
