@@ -43,35 +43,9 @@ export const issueCertificate = asyncHandler(async (req, res) => {
 
 // === Public: Verify a Certificate (by certificateId, QR Landing) ===
 export const verifyCertificate = asyncHandler(async (req, res) => {
-  const { certificateId } = req.params;
-  const cert = await Certificate.findOne({ certificateId: req.params.id }).populate('user', 'name').populate('quiz', 'title');
-  if (!cert) {
-    return res.status(404).send('<h1>Certificate Not Found</h1>');
-  }
-
-  // (SSR/HTML for QR landing; for API, send JSON instead)
-  res.send(`
-    <html>
-      <head>
-        <title>Certificate Verification | JobNeura</title>
-        <style>
-          body { font-family: Inter, Arial, sans-serif; background: #f7f8fa; text-align: center; padding: 2em;}
-          .verified { color: #22c55e; font-size: 2.1em; font-weight: bold; }
-        </style>
-      </head>
-      <body>
-        <div class="verified">Certificate Verified ✅</div>
-        <p><b>Name:</b> ${cert.user?.name || "User"}</p>
-        <p><b>Certificate:</b> ${cert.title}</p>
-        <p><b>Score:</b> ${cert.score ?? "--"}</p>
-        <p><b>Date:</b> ${cert.issueDate?.toLocaleDateString?.() ?? "--"}</p>
-        <p><b>Certificate ID:</b> ${cert.certificateId}</p>
-        <hr>
-        <p>Status: <span style="color:green">VALID</span></p>
-        <p><a href="https://jobneura.tech">Back to JobNeura</a></p>
-      </body>
-    </html>
-  `);
+  const cert = await Certificate.findOne({ certificateId: req.params.id });
+  if (!cert) return res.status(404).json({ valid: false });
+  return res.json({ valid: true, certificate: cert });
 });
 
 // === Bulk Issue Certificates (ADMIN) ===
