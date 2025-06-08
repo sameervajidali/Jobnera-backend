@@ -20,8 +20,11 @@ import Topic from '../models/Topic.js';
 import Category from '../models/Category.js';
 import QuizAttempt from '../models/QuizAttempt.js';
 import LeaderboardEntry from '../models/LeaderboardEntry.js';
+import Certificate from '../models/Certificate.js';
+import { generateCertificateId } from '../utils/generateCertificateId.js';
 import AuditLog from '../models/AuditLog.js';
 import QuizAssignment from '../models/QuizAssignment.js';
+import { submitAttemptSchema } from '../validators/quizSchemas.js';
 import User from '../models/User.js';
 import ExportLog from '../models/ExportLog.js';   // (optional)
 import Alert from '../models/Alert.js';           // (optional)
@@ -48,24 +51,28 @@ if (process.env.REDIS_URL) {
 }
 
 // ─── SUBMIT QUIZ ATTEMPT ──────────────────────────────────────────────────────
+
+const PASSING_PERCENTAGE = 70; // Change as needed
+
 export const submitQuizAttempt = asyncHandler(async (req, res) => {
-  // Validate request body
+  // 1. Validate body & auth
   const { quizId, answers, timeTaken } = submitAttemptSchema.parse(req.body);
 
+  // 2. Start transaction
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    // Load quiz with questions (within transaction session)
+    // 3. Fetch quiz with questions
     const quiz = await Quiz.findById(quizId).populate('questions').session(session);
     if (!quiz) throw { status: 404, message: 'Quiz not found' };
 
-    // Verify all questions answered
+    // 4. Check answers: all required
     if (Object.keys(answers).length !== quiz.questions.length) {
-      return res.status(400).json({ message: 'Invalid number of answers' });
+      throw { status: 400, message: 'Invalid number of answers' };
     }
 
-    // Grade attempt
+    // 5. Score attempt
     let correctCount = 0;
     const processed = quiz.questions.map(q => {
       const sel = answers[q._id] ?? null;
@@ -73,8 +80,13 @@ export const submitQuizAttempt = asyncHandler(async (req, res) => {
       if (isCorrect) correctCount++;
       return { question: q._id, selectedIndex: sel, isCorrect };
     });
+    const scorePercent = (correctCount / quiz.questions.length) * 100;
 
-    // Save attempt
+    // 6. Prevent duplicate attempts if policy is 1 attempt per quiz per user (optional)
+    // const alreadyAttempted = await QuizAttempt.findOne({ user: req.user._id, quiz: quizId });
+    // if (alreadyAttempted) throw { status: 409, message: "You've already attempted this quiz." };
+
+    // 7. Save attempt
     const [attempt] = await QuizAttempt.create([{
       user: req.user._id,
       quiz: quizId,
@@ -82,10 +94,10 @@ export const submitQuizAttempt = asyncHandler(async (req, res) => {
       totalQuestions: quiz.questions.length,
       correctAnswers: correctCount,
       answers: processed,
-      timeTaken
+      timeTaken,
     }], { session });
 
-    // Update leaderboard stats
+    // 8. Update leaderboard
     await LeaderboardEntry.findOneAndUpdate({
       user: req.user._id,
       category: quiz.category,
@@ -100,21 +112,55 @@ export const submitQuizAttempt = asyncHandler(async (req, res) => {
       session
     });
 
-    // Commit transaction
+    // 9. Issue Certificate if eligible
+    let certificate = null;
+    if (scorePercent >= PASSING_PERCENTAGE) {
+      // Check for existing certificate for this quiz
+      certificate = await Certificate.findOne({
+        user: req.user._id,
+        quiz: quizId
+      }).session(session);
+
+      if (!certificate) {
+        const certificateId = await generateCertificateId("JN-QUIZ");
+        certificate = await Certificate.create([{
+          user: req.user._id,
+          title: quiz.subTopic?.name || quiz.title || "Quiz",
+          score: correctCount,
+          certificateId,
+          quiz: quizId,
+          description: `Awarded for successfully completing "${quiz.subTopic?.name || quiz.title}"`,
+        }], { session });
+        certificate = certificate[0];
+      }
+    }
+
+    // 10. Commit transaction
     await session.commitTransaction();
 
-    // Clear caches related to quizzes and leaderboard
+    // 11. Cache invalidation (if needed)
     if (redis) {
       redis.del(`leaderboard:${quiz.category}:${quiz.topic || 'all'}:${quiz.level}:all-time`);
       redis.del('quizzes:all');
     }
 
-    // Respond with attempt
-    res.status(200).json({ message: 'Quiz submitted', attempt });
+    // 12. Respond
+    res.status(200).json({
+      message: 'Quiz submitted',
+      attempt,
+      certificate: certificate ? {
+        id: certificate._id,
+        certificateId: certificate.certificateId,
+        title: certificate.title
+      } : null,
+      certificateIssued: !!certificate
+    });
 
   } catch (err) {
     await session.abortTransaction();
-    throw err;
+    // Robust error response
+    const status = err.status || 500;
+    res.status(status).json({ message: err.message || "Server error" });
   } finally {
     session.endSession();
   }
