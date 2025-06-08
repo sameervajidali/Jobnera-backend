@@ -51,89 +51,101 @@ if (process.env.REDIS_URL) {
 
 // ─── SUBMIT QUIZ ATTEMPT ──────────────────────────────────────────────────────
 
-const PASSING_PERCENTAGE = 70; // Change as needed
-// When creating a certificate (quiz submission backend):
-const percentage = Math.round((correctCount / quiz.questions.length) * 100);
+const PASSING_PERCENTAGE = 70; // Could be dynamic per quiz
 
 export const submitQuizAttempt = asyncHandler(async (req, res) => {
-  // 1. Validate body & auth
+  // 1. Validate body and authentication
   const { quizId, answers, timeTaken } = submitAttemptSchema.parse(req.body);
+  const userId = req.user._id;
 
   // 2. Start transaction
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    // 3. Fetch quiz with questions
-    const quiz = await Quiz.findById(quizId).populate('questions').session(session);
-    if (!quiz) throw { status: 404, message: 'Quiz not found' };
+    // 3. Fetch quiz with populated questions
+    const quiz = await Quiz.findById(quizId).populate("questions").session(session);
+    if (!quiz) throw { status: 404, message: "Quiz not found" };
 
-    // 4. Check answers: all required
+    // 4. Validate answers count
     if (Object.keys(answers).length !== quiz.questions.length) {
-      throw { status: 400, message: 'Invalid number of answers' };
+      throw { status: 400, message: "Invalid number of answers" };
     }
 
-    // 5. Score attempt
+    // 5. Calculate scores and store detailed answers
     let correctCount = 0;
-    const processed = quiz.questions.map(q => {
+    const processedAnswers = quiz.questions.map((q) => {
       const sel = answers[q._id] ?? null;
       const isCorrect = sel === q.correctIndex;
       if (isCorrect) correctCount++;
       return { question: q._id, selectedIndex: sel, isCorrect };
     });
-    const scorePercent = (correctCount / quiz.questions.length) * 100;
 
-    // 6. Prevent duplicate attempts if policy is 1 attempt per quiz per user (optional)
-    // const alreadyAttempted = await QuizAttempt.findOne({ user: req.user._id, quiz: quizId });
+    const totalQuestions = quiz.questions.length;
+    const percentage = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
+    const rawScore = correctCount;
+
+    // 6. (Optional) Prevent duplicate attempts if policy is single-attempt per quiz/user
+    // const alreadyAttempted = await QuizAttempt.findOne({ user: userId, quiz: quizId });
     // if (alreadyAttempted) throw { status: 409, message: "You've already attempted this quiz." };
 
     // 7. Save attempt
-    const [attempt] = await QuizAttempt.create([{
-      user: req.user._id,
-      quiz: quizId,
-      score: correctCount,
-      totalQuestions: quiz.questions.length,
-      correctAnswers: correctCount,
-      answers: processed,
-      timeTaken,
-    }], { session });
+    const [attempt] = await QuizAttempt.create(
+      [
+        {
+          user: userId,
+          quiz: quizId,
+          score: rawScore,
+          totalQuestions,
+          correctAnswers: rawScore,
+          answers: processedAnswers,
+          timeTaken,
+        },
+      ],
+      { session }
+    );
 
-    // 8. Update leaderboard
-    await LeaderboardEntry.findOneAndUpdate({
-      user: req.user._id,
-      category: quiz.category,
-      topic: quiz.topic,
-      level: quiz.level
-    }, {
-      $inc: { score: correctCount, attempts: 1 },
-      lastUpdated: new Date()
-    }, {
-      upsert: true,
-      new: true,
-      session
-    });
+    // 8. Update leaderboard (upsert for atomicity)
+    await LeaderboardEntry.findOneAndUpdate(
+      {
+        user: userId,
+        category: quiz.category,
+        topic: quiz.topic,
+        level: quiz.level,
+      },
+      {
+        $inc: { score: rawScore, attempts: 1 },
+        lastUpdated: new Date(),
+      },
+      { upsert: true, new: true, session }
+    );
 
-    // 9. Issue Certificate if eligible
+    // 9. Certificate logic: only issue if not already issued and score >= threshold
     let certificate = null;
-    if (scorePercent >= PASSING_PERCENTAGE) {
-      // Check for existing certificate for this quiz
-      certificate = await Certificate.findOne({
-        user: req.user._id,
-        quiz: quizId
-      }).session(session);
-
+    if (percentage >= PASSING_PERCENTAGE) {
+      certificate = await Certificate.findOne({ user: userId, quiz: quizId }).session(session);
       if (!certificate) {
         const certificateId = await generateCertificateId("JN-QUIZ");
-        certificate = await Certificate.create([{
-          user: req.user._id,
-          title: quiz.subTopic?.name || quiz.title || "Quiz",
-          score: percentage,   // store percentage
-          rawScore: correctCount, // store raw score (optional)
-          totalQuestions: quiz.questions.length,  // add this
-          certificateId,
-          quiz: quizId,
-          description: `Awarded for successfully completing "${quiz.subTopic?.name || quiz.title}"`,
-        }], { session });
+        // Optionally: fetch user name, issue location, etc
+        certificate = await Certificate.create(
+          [
+            {
+              user: userId,
+              recipient: req.user.name, // Store user's full name for printing
+              title: quiz.subTopic?.name || quiz.title || "Quiz",
+              score: percentage,          // store as percentage (e.g., 100)
+              rawScore,                   // number of correct answers
+              totalQuestions,
+              certificateId,
+              quiz: quizId,
+              issued: "Lucknow, India",   // or use req.user.location or leave empty
+              description: `Awarded for successfully completing "${quiz.subTopic?.name || quiz.title}"`,
+              issueDate: new Date(),
+              // signers: [...] // add if you want custom signatures
+            },
+          ],
+          { session }
+        );
         certificate = certificate[0];
       }
     }
@@ -141,34 +153,36 @@ export const submitQuizAttempt = asyncHandler(async (req, res) => {
     // 10. Commit transaction
     await session.commitTransaction();
 
-    // 11. Cache invalidation (if needed)
-    if (redis) {
-      redis.del(`leaderboard:${quiz.category}:${quiz.topic || 'all'}:${quiz.level}:all-time`);
-      redis.del('quizzes:all');
+    // 11. Cache invalidation (if you use Redis)
+    if (typeof redis !== "undefined" && redis) {
+      redis.del(`leaderboard:${quiz.category}:${quiz.topic || "all"}:${quiz.level}:all-time`);
+      redis.del("quizzes:all");
     }
 
-    // 12. Respond
+    // 12. Respond with robust certificate and attempt data
     res.status(200).json({
-      message: 'Quiz submitted',
+      message: "Quiz submitted",
       attempt,
-      certificate: certificate ? {
-        id: certificate._id,
-        certificateId: certificate.certificateId,
-        title: certificate.title
-      } : null,
-      certificateIssued: !!certificate
+      certificate: certificate
+        ? {
+            id: certificate._id,
+            certificateId: certificate.certificateId,
+            title: certificate.title,
+            score: certificate.score,
+            rawScore: certificate.rawScore,
+            totalQuestions: certificate.totalQuestions,
+          }
+        : null,
+      certificateIssued: !!certificate,
     });
-
   } catch (err) {
     await session.abortTransaction();
-    // Robust error response
     const status = err.status || 500;
     res.status(status).json({ message: err.message || "Server error" });
   } finally {
     session.endSession();
   }
 });
-
 // ─── GET LEADERBOARD ──────────────────────────────────────────────────────────
 export const getLeaderboard = asyncHandler(async (req, res) => {
   const { category, topic, level, timePeriod, page, limit } = publicLeaderboardSchema.parse(req.query);
