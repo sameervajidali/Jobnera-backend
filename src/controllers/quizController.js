@@ -642,12 +642,15 @@ export const getDistinctValues = (field) => asyncHandler(async (_req, res) => {
 });
 
 // ─── GET ATTEMPT BY ID ───────────────────────────────────────────────────────
+
+// ─── GET ATTEMPT BY ID ───────────────────────────────────────────────────────
 export const getAttemptById = asyncHandler(async (req, res) => {
   const { attemptId } = attemptParamSchema.parse(req.params);
 
   const attempt = await QuizAttempt.findById(attemptId)
     .populate('quiz', 'title duration')
-    .populate('answers.question', 'text options correctIndex');
+    .populate('answers.question', 'text options correctIndex')
+    .populate('quiz.subTopic', 'name');
 
   if (!attempt) return res.status(404).json({ message: 'Attempt not found' });
 
