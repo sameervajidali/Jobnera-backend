@@ -82,3 +82,61 @@ router.put(
 router.delete('/profile', protect, deleteAccount);
 
 export default router;
+
+
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Login with email and password
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "vajid@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "supersecurepassword"
+ *           example:
+ *             email: "vajid@example.com"
+ *             password: "supersecurepassword"
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Login successful"
+ *               user:
+ *                 _id: "666cb2aec5f26c18b4cb236a"
+ *                 name: "Vajid Ali"
+ *                 email: "vajid@example.com"
+ *                 role: "USER"
+ *                 avatar: "https://cdn.jobneura.tech/avatars/vajid.jpg"
+ *               accessToken: "JWT_TOKEN_HERE"
+ *               refreshToken: "REFRESH_TOKEN_HERE"
+ *       400:
+ *         description: Invalid credentials
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Invalid email or password"
+ *       403:
+ *         description: User account not activated or locked
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Account not activated"
+ *       429:
+ *         description: Too many login attempts
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Too many login attempts. Please try again later."
+ */

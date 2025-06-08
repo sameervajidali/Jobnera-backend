@@ -39,6 +39,14 @@ import certificateOgRoutes from './routes/certificateOgRoutes.js';
 import ogImageRoutes from './routes/ogImageRoutes.js';
 import ogRoutes from './routes/ogRoutes.js';
 
+import blogTagRoutes from './routes/blogTagRoutes.js';
+import blogCategoryRoutes from './routes/blogCategoryRoutes.js';
+import blogMediaRoutes from './routes/blogMediaRoutes.js';
+import blogCommentRoutes from './routes/blogCommentRoutes.js';
+
+import swaggerUi from 'swagger-ui-express';
+import swaggerJSDoc from 'swagger-jsdoc';
+
 const app = express();
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -79,6 +87,91 @@ app.use(
   })
 );
 
+
+// OpenAPI spec config (edit these details for your project)
+const swaggerDefinition = {
+  openapi: '3.0.0',
+  info: {
+    title: 'JobNeura SaaS Blog API',
+    version: '1.0.0',
+    description: 'Full API documentation for your SaaS blog system',
+    contact: { name: 'JobNeura Dev Team', email: 'support@jobneura.tech' }
+  },
+  servers: [
+    { url: 'http://localhost:5000', description: 'Local server' },
+    { url: 'https://api.jobneura.tech', description: 'Production' }
+  ],
+  components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT'
+      }
+    },
+    schemas: {
+      // 👇👇👇 ADD ALL YOUR MODELS HERE 👇👇👇
+      BlogPost: {
+        type: 'object',
+        properties: {
+          title: { type: 'string' },
+          slug: { type: 'string' },
+          summary: { type: 'string' },
+          content: { type: 'string' },
+          status: { type: 'string', enum: ['draft', 'review', 'scheduled', 'published', 'archived'] },
+          category: { type: 'string' },
+          tags: { type: 'array', items: { type: 'string' } },
+          coverImageUrl: { type: 'string' },
+          seo: { type: 'object' },
+          readingTime: { type: 'integer' }
+        }
+      },
+      Tag: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          slug: { type: 'string' },
+          description: { type: 'string' },
+          color: { type: 'string' }
+        }
+      },
+      Category: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          slug: { type: 'string' },
+          description: { type: 'string' },
+          icon: { type: 'string' },
+          order: { type: 'integer' },
+          isVisible: { type: 'boolean' }
+        }
+      },
+      Comment: {
+        type: 'object',
+        properties: {
+          content: { type: 'string' },
+          parentComment: { type: 'string', description: 'Parent comment ID (for replies)' }
+        }
+      }
+    }
+  }
+};
+
+
+security: [{ bearerAuth: [] }]
+
+
+const options = {
+  swaggerDefinition,
+  // Tell swagger-jsdoc where to look for API docs in JSDoc comments (see below)
+  apis: ['./src/routes/*.js', './src/models/*.js'],
+
+};
+
+const swaggerSpec = swaggerJSDoc(options);
+
+
+
 // =========================
 // ✅ Logging and JSON parsing
 // =========================
@@ -118,13 +211,23 @@ app.use("/api/admin/subtopics", subTopicRoutes);
 app.use('/api/materials', materialRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/blogs', blogRoutes);
-app.use('/api/tutorials', tutorialRoutes); 
+app.use('/api/tutorials', tutorialRoutes);
 app.use('/api/certificates', certificateRoutes);
 app.use('/api/certificates', certificateOgRoutes);
 app.use('/api/og', ogImageRoutes);
 
+// API mount points
+app.use('/api/blog', blogRoutes);
+app.use('/api/blog/tags', blogTagRoutes);
+app.use('/api/blog/categories', blogCategoryRoutes);
+app.use('/api/blog/media', blogMediaRoutes);
+app.use('/api/blog', blogCommentRoutes); // Attach to /api/blog for clarity
 
 
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Optional: redirect root to docs for easy access
+app.get('/', (req, res) => res.redirect('/api/docs'));
 // =========================
 // ✅ Seed SuperAdmin (on startup)
 // =========================
@@ -176,7 +279,7 @@ mongoose
   .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => seedSuperAdmin())
   .catch(console.error);
-  
+
 
 // =========================
 // ❌ 404 and general error handler
