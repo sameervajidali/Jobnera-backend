@@ -9,11 +9,13 @@ const SignerSchema = new mongoose.Schema({
 
 const CertificateSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+  recipient: String, // <- user's name
   title: { type: String, required: true, trim: true },
   issuer: { type: String, default: 'JobNeura', trim: true },
   certificateId: { type: String, unique: true, required: true }, // public-facing
   location: { type: String, trim: true, default: '' },
   issueDate: { type: Date, required: true, default: Date.now },
+   issued: String,
   expirationDate: { type: Date },
   score: { type: Number, default: null },
   badgeUrl: { type: String, trim: true, default: '' },

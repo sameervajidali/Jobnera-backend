@@ -44,7 +44,7 @@ export const issueCertificate = asyncHandler(async (req, res) => {
 // === Public: Verify a Certificate (by certificateId, QR Landing) ===
 export const verifyCertificate = asyncHandler(async (req, res) => {
   const { certificateId } = req.params;
-  const cert = await Certificate.findOne({ certificateId }).populate('user', 'name').populate('quiz', 'title');
+  const cert = await Certificate.findOne({ certificateId: req.params.id }).populate('user', 'name').populate('quiz', 'title');
   if (!cert) {
     return res.status(404).send('<h1>Certificate Not Found</h1>');
   }
