@@ -14,11 +14,13 @@ import { protect, requireRole } from '../middlewares/authMiddleware.js';
 import validateRequest from '../middlewares/validateRequest.js';
 import { blogPostSchema } from '../validators/blogValidators.js';
 import blogTagRoutes from './blogTagRoutes.js';
+import blogCategoryRoutes from './blogCategoryRoutes.js';
 
 const router = express.Router();
 
 
 router.use('/tags', blogTagRoutes); // THIS enables /api/blog/tags
+router.use('/categories', blogCategoryRoutes); // Enables /api/blog/categories
 // Public
 router.get('/', listBlogPosts); // ?category=&tag=&search=
 router.get('/category/:slug', listBlogPosts); // List by category
