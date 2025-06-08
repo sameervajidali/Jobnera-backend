@@ -15,10 +15,13 @@ import validateRequest from '../middlewares/validateRequest.js';
 import { blogPostSchema } from '../validators/blogValidators.js';
 import blogTagRoutes from './blogTagRoutes.js';
 import blogCategoryRoutes from './blogCategoryRoutes.js';
+import blogCommentRoutes from './blogCommentRoutes.js';
+import blogMediaRoutes from './blogMediaRoutes.js';
 
 const router = express.Router();
 
-
+router.use('/media', blogMediaRoutes);
+router.use('/comments', blogCommentRoutes);
 router.use('/tags', blogTagRoutes); // THIS enables /api/blog/tags
 router.use('/categories', blogCategoryRoutes); // Enables /api/blog/categories
 // Public
@@ -31,15 +34,15 @@ router.get('/:slug', getBlogPost); // Single post by slug
 router.get('/my-posts', protect, listMyBlogPosts);
 
 // Create/update/delete
-router.post('/', protect, requireRole(['AUTHOR', 'EDITOR', 'ADMIN']), validateRequest(blogPostSchema), createBlogPost);
-router.put('/:id', protect, requireRole(['AUTHOR', 'EDITOR', 'ADMIN']), validateRequest(blogPostSchema, true), updateBlogPost);
-router.delete('/:id', protect, requireRole(['AUTHOR', 'EDITOR', 'ADMIN']), deleteBlogPost);
+router.post('/', protect, requireRole(['AUTHOR','SUPERADMIN', 'EDITOR', 'ADMIN']), validateRequest(blogPostSchema), createBlogPost);
+router.put('/:id', protect, requireRole(['AUTHOR', 'SUPERADMIN','EDITOR', 'ADMIN']), validateRequest(blogPostSchema, true), updateBlogPost);
+router.delete('/:id', protect, requireRole(['AUTHOR', 'SUPERADMIN','EDITOR', 'ADMIN']), deleteBlogPost);
 
 // Publish/unpublish (schedule)
-router.patch('/:id/publish', protect, requireRole(['AUTHOR', 'EDITOR', 'ADMIN']), publishBlogPost);
+router.patch('/:id/publish', protect, requireRole(['AUTHOR','SUPERADMIN', 'EDITOR', 'ADMIN']), publishBlogPost);
 
 // Revisions
-router.get('/:id/revisions', protect, requireRole(['AUTHOR', 'EDITOR', 'ADMIN']), getBlogRevisions);
+router.get('/:id/revisions', protect, requireRole(['AUTHOR', 'SUPERADMIN','EDITOR', 'ADMIN']), getBlogRevisions);
 
 export default router;
 
