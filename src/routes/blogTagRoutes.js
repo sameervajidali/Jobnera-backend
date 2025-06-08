@@ -1,6 +1,6 @@
 import express from 'express';
 import {
-  listTags,
+  listBlogTags,
   createTag,
   updateTag,
   deleteTag
@@ -11,7 +11,7 @@ import { blogTagSchema } from '../validators/blogValidators.js';
 
 const router = express.Router();
 
-router.get('/', listTags); // Public
+router.get('/', listBlogTags); // Public
 router.post('/', protect, requireRole(['ADMIN']), validateRequest(blogTagSchema), createTag);
 router.put('/:id', protect, requireRole(['ADMIN']), validateRequest(blogTagSchema, true), updateTag);
 router.delete('/:id', protect, requireRole(['ADMIN']), deleteTag);

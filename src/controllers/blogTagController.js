@@ -1,8 +1,11 @@
 import BlogTag from '../models/BlogTag.js';
 import asyncHandler from '../utils/asyncHandler.js';
 
+
+// src/controllers/blogTagController.js
+
 // GET /api/blog/tags
-export const listTags = asyncHandler(async (req, res) => {
+export const listBlogTags = asyncHandler(async (req, res) => {
   const tags = await BlogTag.find({}).sort({ name: 1 });
   res.json(tags);
 });
