@@ -42,11 +42,13 @@ export const issueCertificate = asyncHandler(async (req, res) => {
 });
 
 // === Public: Verify a Certificate (by certificateId, QR Landing) ===
-export const verifyCertificate = asyncHandler(async (req, res) => {
-  const cert = await Certificate.findOne({ certificateId: req.params.id });
-  if (!cert) return res.status(404).json({ valid: false });
-  return res.json({ valid: true, certificate: cert });
-});
+// controllers/certificateController.js
+export const verifyCertificate = async (req, res) => {
+  const { certificateId } = req.params;
+  const cert = await Certificate.findOne({ certificateId });
+  if (!cert) return res.status(404).json({ valid: false, message: "Certificate not found" });
+  res.json({ valid: true, certificate: cert });
+};
 
 // === Bulk Issue Certificates (ADMIN) ===
 export const bulkIssueCertificates = asyncHandler(async (req, res) => {

@@ -52,6 +52,8 @@ if (process.env.REDIS_URL) {
 // ─── SUBMIT QUIZ ATTEMPT ──────────────────────────────────────────────────────
 
 const PASSING_PERCENTAGE = 70; // Change as needed
+// When creating a certificate (quiz submission backend):
+const percentage = Math.round((correctCount / quiz.questions.length) * 100);
 
 export const submitQuizAttempt = asyncHandler(async (req, res) => {
   // 1. Validate body & auth
@@ -125,7 +127,9 @@ export const submitQuizAttempt = asyncHandler(async (req, res) => {
         certificate = await Certificate.create([{
           user: req.user._id,
           title: quiz.subTopic?.name || quiz.title || "Quiz",
-          score: correctCount,
+          score: percentage,   // store percentage
+          rawScore: correctCount, // store raw score (optional)
+          totalQuestions: quiz.questions.length,  // add this
           certificateId,
           quiz: quizId,
           description: `Awarded for successfully completing "${quiz.subTopic?.name || quiz.title}"`,
@@ -352,8 +356,8 @@ export const bulkUploadQuestions = asyncHandler(async (req, res) => {
     await session.commitTransaction();
 
     if (redis) {
-      redis.del(`quiz:${quizId}`).catch(() => {});
-      redis.del('quizzes:all').catch(() => {});
+      redis.del(`quiz:${quizId}`).catch(() => { });
+      redis.del('quizzes:all').catch(() => { });
     }
 
     res.status(201).json({ message: 'Questions uploaded', count: created.length });
@@ -462,8 +466,8 @@ export const bulkUploadFromFile = asyncHandler(async (req, res) => {
     await session.commitTransaction();
 
     if (redis) {
-      redis.del(`quiz:${quizId}`).catch(() => {});
-      redis.del('quizzes:all').catch(() => {});
+      redis.del(`quiz:${quizId}`).catch(() => { });
+      redis.del('quizzes:all').catch(() => { });
     }
 
     res.status(201).json({
@@ -630,12 +634,12 @@ export const getPublicQuizzes = asyncHandler(async (req, res) => {
 
   // No Redis cache logic!
   const quizzesRaw = await Quiz.find(match);
-console.log('BEFORE POPULATE', quizzesRaw[0]);
-const quizzes = await Quiz.find(match)
-  .populate('category', 'name')
-  .populate('topic', 'name')
-  .populate('subTopic', 'name');
-console.log('AFTER POPULATE', quizzes[0]);
+  console.log('BEFORE POPULATE', quizzesRaw[0]);
+  const quizzes = await Quiz.find(match)
+    .populate('category', 'name')
+    .populate('topic', 'name')
+    .populate('subTopic', 'name');
+  console.log('AFTER POPULATE', quizzes[0]);
 
   // Add questionCount field
   quizzes.forEach(q => {
@@ -1125,7 +1129,7 @@ export const getSidebarFilters = asyncHandler(async (_req, res) => {
   // 1️⃣ Find all distinct category and topic ObjectIds from active quizzes
   const [catIds, topicIds] = await Promise.all([
     Quiz.distinct('category', { isActive: true }),
-    Quiz.distinct('topic',    { isActive: true }),
+    Quiz.distinct('topic', { isActive: true }),
   ]);
 
   // 2️⃣ Fetch only those categories whose `type` is 'all' or 'quiz' and are in use
