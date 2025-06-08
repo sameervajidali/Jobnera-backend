@@ -34,6 +34,7 @@ import tutorialRoutes from './routes/tutorialRoutes.js';
 import subTopicRoutes from './routes/admin/subTopicRoutes.js';
 // app.js or server.js
 import certificateRoutes from './routes/certificateRoutes.js';
+import QuizAttempt from './models/QuizAttempt.js';
 
 
 const app = express();
@@ -118,9 +119,33 @@ app.use('/api/blogs', blogRoutes);
 app.use('/api/tutorials', tutorialRoutes); 
 app.use('/api/certificates', certificateRoutes);
 // In your Express server (temporary route for debug):
-app.get('/test-populate', async (req, res) => {
-  const quiz = await Quiz.findOne({}).populate('subTopic', 'name');
-  res.json({ quiz });
+// app.get('/test-populate', async (req, res) => {
+//   const quiz = await Quiz.findOne({}).populate('subTopic', 'name');
+//   res.json({ quiz });
+// });
+app.get('/test-attempts', async (req, res) => {
+  try {
+    // 1. Get one quiz
+    const quizDoc = await Quiz.findOne({}).populate('subTopic category topic');
+
+    if (!quizDoc) return res.status(404).json({ message: "No quiz found" });
+
+    const quiz = quizDoc.toObject(); // convert to plain object
+
+    // 2. Aggregate attempt count
+    const result = await QuizAttempt.aggregate([
+      { $match: { quiz: new mongoose.Types.ObjectId(quiz._id) } },
+      { $group: { _id: "$quiz", count: { $sum: 1 } } }
+    ]);
+
+    quiz.attemptCount = result.length > 0 ? result[0].count : 0;
+    quiz.questionCount = quiz.questions?.length || 0;
+
+    return res.json({ quiz });
+  } catch (err) {
+    console.error("[/test-attempts error]", err);
+    return res.status(500).json({ message: "Error testing attemptCount", error: err.message });
+  }
 });
 
 

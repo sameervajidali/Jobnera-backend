@@ -83,13 +83,17 @@ export const issueCertificate = asyncHandler(async (req, res) => {
  */
 export const verifyCertificate = asyncHandler(async (req, res) => {
   const { certificateId } = req.params;
-  // .lean() for performance, add .populate('user', 'name email') if needed
-  const cert = await Certificate.findOne({ certificateId }).lean();
+
+  const cert = await Certificate.findOne({ certificateId })
+    .populate('user', 'name email')  // ✅ FIXED HERE
+    .lean();
+
   if (!cert)
     return res.status(404).json({ valid: false, message: "Certificate not found" });
 
   res.json({ valid: true, certificate: sanitizeCertificate(cert) });
 });
+
 
 /**
  * Bulk Issue Certificates (ADMIN)
@@ -126,7 +130,9 @@ export const getUserCertificates = asyncHandler(async (req, res) => {
     userId = req.query.user;
   }
   // You can add .populate('quiz', 'title') etc for richer response
-  const certs = await Certificate.find({ user: userId }).sort({ issueDate: -1 });
+  const certs = await Certificate.find({ user: userId })
+  .populate('user', 'name email')   // ✅ Optional for admin side
+  .sort({ issueDate: -1 });
   res.json({ certificates: certs.map(sanitizeCertificate) });
 });
 

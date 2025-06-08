@@ -639,45 +639,98 @@ export const getPublicQuizzes = asyncHandler(async (req, res) => {
   const { category, topic, level, page = 1, limit = 12 } = req.query;
   const match = { isActive: true };
 
-  // Only add filters if valid
   if (category && mongoose.isValidObjectId(category)) match.category = category;
   if (topic && mongoose.isValidObjectId(topic)) match.topic = topic;
   if (level) match.level = level;
 
   const skip = (Number(page) - 1) * Number(limit);
 
-  // No Redis cache logic!
-  const quizzesRaw = await Quiz.find(match);
-  console.log('BEFORE POPULATE', quizzesRaw[0]);
   const quizzes = await Quiz.find(match)
     .populate('category', 'name')
     .populate('topic', 'name')
-    .populate('subTopic', 'name');
-  console.log('AFTER POPULATE', quizzes[0]);
+    .populate('subTopic', 'name')
+    .skip(skip)
+    .limit(limit)
+    .lean(); // Ensure plain JS objects
 
-  // Add questionCount field
-  quizzes.forEach(q => {
-    q.questionCount = q.questions?.length || 0;
-  });
+  const total = await Quiz.countDocuments(match);
 
-  // Get attempt counts (optional)
   const attemptCounts = await QuizAttempt.aggregate([
     { $match: { quiz: { $in: quizzes.map(q => q._id) } } },
     { $group: { _id: '$quiz', count: { $sum: 1 } } }
   ]);
+
+  const attemptMap = Object.fromEntries(
+    attemptCounts.map(a => [a._id.toString(), a.count])
+  );
+
+  // 🔒️ Safely construct plain quiz objects
+  const safeQuizzes = quizzes.map((q) => ({
+    ...q,
+    questionCount: Array.isArray(q.questions) ? q.questions.length : 0,
+    attemptCount: attemptMap[q._id.toString()] || 0,
+  }));
+
+  res.json({
+  quizzes: JSON.parse(JSON.stringify(safeQuizzes)),
+  total,
+  page: Number(page),
+  limit: Number(limit),
+});
+});
+
+
+
+// ── NEW CLEAN QUIZ STATS CONTROLLER ──
+export const getPublicQuizzesWithStats = asyncHandler(async (req, res) => {
+  const { category, topic, level, page = 1, limit = 12 } = req.query;
+  const match = { isActive: true };
+
+  if (category && mongoose.isValidObjectId(category)) match.category = category;
+  if (topic && mongoose.isValidObjectId(topic)) match.topic = topic;
+  if (level) match.level = level;
+
+  const skip = (Number(page) - 1) * Number(limit);
+
+  // Raw query with populates
+  const docs = await Quiz.find(match)
+    .populate("category", "name")
+    .populate("topic", "name")
+    .populate("subTopic", "name")
+    .sort({ createdAt: -1 }) // recent first
+    .skip(skip)
+    .limit(Number(limit));
+
+  const raw = docs.map(doc => doc.toObject());
+
+  // Get attempt counts
+  const attemptCounts = await QuizAttempt.aggregate([
+    { $match: { quiz: { $in: raw.map(q => q._id) } } },
+    { $group: { _id: "$quiz", count: { $sum: 1 } } },
+  ]);
   const attemptMap = Object.fromEntries(attemptCounts.map(a => [a._id.toString(), a.count]));
 
-  quizzes.forEach(q => {
-    q.attemptCount = attemptMap[q._id.toString()] || 0;
+  // Inject stats
+  const quizzes = raw.map((q) => {
+    const idStr = q._id.toString();
+    return {
+      ...q,
+      _id: idStr,
+      attemptCount: attemptMap[idStr] || 0,
+      questionCount: Array.isArray(q.questions) ? q.questions.length : 0,
+    };
   });
 
   const total = await Quiz.countDocuments(match);
 
-  // Debug log for DEV (remove/comment in prod)
-  // console.log('Sample quiz:', quizzes[0]);
-
-  res.json({ quizzes, total, page: Number(page), limit: Number(limit) });
+  res.json({
+    quizzes,
+    total,
+    page: Number(page),
+    limit: Number(limit),
+  });
 });
+
 
 
 // ─── DISTINCT FILTER VALUES ───────────────────────────────────────────────────
