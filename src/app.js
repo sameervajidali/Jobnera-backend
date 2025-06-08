@@ -34,7 +34,7 @@ import tutorialRoutes from './routes/tutorialRoutes.js';
 import subTopicRoutes from './routes/admin/subTopicRoutes.js';
 // app.js or server.js
 import certificateRoutes from './routes/certificateRoutes.js';
-import ogRoutes from "./routes/ogRoutes.js";
+import certificateOgRoutes from './routes/certificateOgRoutes.js';
 
 const app = express();
 const isProd = process.env.NODE_ENV === 'production';
@@ -117,7 +117,7 @@ app.use('/api/jobs', jobRoutes);
 app.use('/api/blogs', blogRoutes);
 app.use('/api/tutorials', tutorialRoutes); 
 app.use('/api/certificates', certificateRoutes);
-app.use("/og", ogRoutes);
+app.use('/api/certificates', certificateOgRoutes);
 
 
 
