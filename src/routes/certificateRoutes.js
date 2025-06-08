@@ -3,7 +3,8 @@ import {
   issueCertificate,
   verifyCertificate,
   bulkIssueCertificates,
-  getUserCertificates
+  getUserCertificates,
+  generateCertificateThumbnail
 } from '../controllers/certificateController.js';
 import { protect, requireRole } from '../middlewares/authMiddleware.js';
 
@@ -11,6 +12,7 @@ const router = express.Router();
 
 // --- PUBLIC: Certificate Verification (for QR) ---
 router.get('/verify/:certificateId', verifyCertificate);
+router.get("/certificates/:certificateId/thumbnail", generateCertificateThumbnail);
 
 // --- ADMIN: Issue and Bulk Issue Certificates (protected) ---
 router.use('/admin', protect, requireRole(['SUPERADMIN', 'ADMIN', 'CREATOR']));

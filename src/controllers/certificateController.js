@@ -2,6 +2,7 @@
 import Certificate from '../models/Certificate.js';
 import { generateCertificateId } from '../utils/generateCertificateId.js';
 import asyncHandler from '../utils/asyncHandler.js';
+import puppeteer from "puppeteer";
 
 /**
  * Helper: Sanitize and format certificate for public/frontend
@@ -53,7 +54,9 @@ export const issueCertificate = asyncHandler(async (req, res) => {
     return res.status(400).json({ success: false, message: "User and title are required." });
 
   // Idempotency: prevent duplicate certificates per user/quiz/title
-  const existing = await Certificate.findOne({ user: userId, title, quiz });
+  const existing = await Certificate.findOne({ user: userId, title, quiz })
+   .populate("user", "name email") // ✅ Populate user
+    .lean();
   if (existing)
     return res.status(409).json({ success: false, message: "Certificate already issued for this user/quiz.", certificate: sanitizeCertificate(existing) });
 
@@ -136,3 +139,22 @@ export const getUserCertificates = asyncHandler(async (req, res) => {
   res.json({ certificates: certs.map(sanitizeCertificate) });
 });
 
+
+export const generateCertificateThumbnail = async (req, res) => {
+  const { certificateId } = req.params;
+
+  const url = `https://jobneura.tech/certificates/${certificateId}?preview=true`;
+
+  const browser = await puppeteer.launch({
+    headless: "new",
+    args: ["--no-sandbox", "--disable-setuid-sandbox"]
+  });
+  const page = await browser.newPage();
+  await page.goto(url, { waitUntil: "networkidle0" });
+
+  const screenshot = await page.screenshot({ type: "png", fullPage: true });
+  await browser.close();
+
+  res.set("Content-Type", "image/png");
+  res.send(screenshot);
+};

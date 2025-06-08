@@ -48,6 +48,7 @@
     "passport": "^0.7.0",
     "passport-github2": "^0.1.12",
     "pdfkit": "^0.17.0",
+    "puppeteer": "^24.10.0",
     "react-i18next": "^15.5.1",
     "sequelize": "^6.37.7",
     "slugify": "^1.6.6",
