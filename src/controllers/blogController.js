@@ -106,12 +106,13 @@ export const createBlogPost = asyncHandler(async (req, res) => {
 
   // --- Audit log ---
   await AuditLog.create({
-    user: req.user._id,
-    action: 'create',
-    resource: 'BlogPost',
-    resourceId: post._id,
-    data: post,
-  });
+  user: req.user._id,
+  action: 'create',
+  resourceType: 'BlogPost',  // ✅ Correct field name!
+  resourceId: post._id,
+  details: post,             // ✅ Use 'details' if you want to store the whole post
+});
+
 
   // --- Webhook/notification (stub, fill as needed) ---
   sendNotification({ type: 'blog_created', post });
