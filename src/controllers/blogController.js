@@ -39,8 +39,22 @@ function notDeleted() {
 
 // --- List with soft delete, full-text search, scheduled publish ---
 export const listBlogPosts = asyncHandler(async (req, res) => {
-  const { category, tag, search, page = 1, limit = 10, showDeleted = false } = req.query;
-  const filter = { status: 'published', ...notDeleted() };
+  const { category, tag, search, page = 1, limit = 10, showDeleted = false, status } = req.query;
+  const filter = { ...notDeleted() };
+
+  // 🔑 Only filter status for normal users, not admin
+  if (
+    !req.user || // not logged in
+    (req.user.role !== 'ADMIN' && req.user.role !== 'SUPERADMIN')
+  ) {
+    filter.status = 'published';
+    filter.publishedAt = { $lte: new Date() }; // Only published time for users
+  } else {
+    // For admin, allow status filter if requested
+    if (status) filter.status = status;
+    // Optional: if you want admin to see scheduled, drafts, etc., don't filter publishedAt
+  }
+
   if (showDeleted === 'true') delete filter.deletedAt;
   if (category) {
     const cat = await Category.findOne({ slug: category, type: 'blog' });
@@ -51,7 +65,6 @@ export const listBlogPosts = asyncHandler(async (req, res) => {
     filter.tags = tagDoc?._id || null;
   }
   if (search) {
-    // Use $text if index exists, fallback to regex
     filter.$or = [
       { $text: { $search: search } },
       { title: new RegExp(search, 'i') },
@@ -59,8 +72,6 @@ export const listBlogPosts = asyncHandler(async (req, res) => {
       { content: new RegExp(search, 'i') }
     ];
   }
-  // Scheduled publishing: only show publishedAt <= now
-  filter.publishedAt = { $lte: new Date() };
 
   const posts = await BlogPost.find(filter)
     .sort({ publishedAt: -1 })
@@ -73,6 +84,7 @@ export const listBlogPosts = asyncHandler(async (req, res) => {
   const count = await BlogPost.countDocuments(filter);
   res.json({ posts, count, page: Number(page), limit: Number(limit) });
 });
+
 
 // --- Get single post, with deleted filter ---
 export const getBlogPost = asyncHandler(async (req, res) => {
