@@ -2,13 +2,14 @@ import Joi from 'joi';
 
 export const blogPostSchema = Joi.object({
   title: Joi.string().min(5).max(150).required(),
+  slug: Joi.string().pattern(/^[a-z0-9-]+$/).lowercase(),  // <-- ADD THIS LINE!
   summary: Joi.string().max(300),
   content: Joi.string().min(10).required(),
   category: Joi.string().required(),
   tags: Joi.array().items(Joi.string()),
   coverImageUrl: Joi.string().uri().allow(''),
+  deletedAt: { type: Date },
   status: Joi.string().valid('draft', 'review', 'published', 'archived').default('draft'),
-  // ...add your fields here
 });
 
 

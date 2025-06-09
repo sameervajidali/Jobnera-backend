@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-
+import slugify from 'slugify';
 const seoSchema = new mongoose.Schema({
   metaTitle:     { type: String, trim: true, maxlength: 80 },
   metaDesc:      { type: String, trim: true, maxlength: 180 },
@@ -32,10 +32,20 @@ const blogPostSchema = new mongoose.Schema({
   customFields: { type: mongoose.Schema.Types.Mixed }, // For plugin/future use
 }, { timestamps: true });
 
+blogPostSchema.pre('save', function (next) {
+  if (!this.slug && this.title) {
+    this.slug = slugify(this.title, { lower: true, strict: true });
+  }
+  next();
+});
+
+
 blogPostSchema.index({ slug: 1 }, { unique: true });
 blogPostSchema.index({ status: 1 });
 blogPostSchema.index({ category: 1 });
 blogPostSchema.index({ author: 1 });
 blogPostSchema.index({ publishedAt: -1 });
+blogPostSchema.index({ title: 'text', summary: 'text', content: 'text' });
+
 
 export default mongoose.model('BlogPost', blogPostSchema);

@@ -1,3 +1,4 @@
+// src/routes/blogRoutes.js
 
 import express from 'express';
 import {
@@ -8,41 +9,91 @@ import {
   deleteBlogPost,
   listMyBlogPosts,
   publishBlogPost,
-  getBlogRevisions
+  getBlogRevisions,
 } from '../controllers/blogController.js';
 import { protect, requireRole } from '../middlewares/authMiddleware.js';
-import validateRequest from '../middlewares/validateRequest.js';
 import { blogPostSchema } from '../validators/blogValidators.js';
+import validateRequest from '../middlewares/validateRequest.js';
+
 import blogTagRoutes from './blogTagRoutes.js';
 import blogCategoryRoutes from './blogCategoryRoutes.js';
 import blogCommentRoutes from './blogCommentRoutes.js';
 import blogMediaRoutes from './blogMediaRoutes.js';
 
+// For debug only: log schema on server startup
+if (process.env.NODE_ENV !== 'production') {
+  // eslint-disable-next-line no-console
+  console.log("blogPostSchema", blogPostSchema, typeof blogPostSchema, !!blogPostSchema?.validate);
+}
+
 const router = express.Router();
 
+// ─────────────── Related Routers (subresources) ──────────────
 router.use('/media', blogMediaRoutes);
 router.use('/comments', blogCommentRoutes);
-router.use('/tags', blogTagRoutes); // THIS enables /api/blog/tags
-router.use('/categories', blogCategoryRoutes); // Enables /api/blog/categories
-// Public
-router.get('/', listBlogPosts); // ?category=&tag=&search=
-router.get('/category/:slug', listBlogPosts); // List by category
-router.get('/tag/:slug', listBlogPosts); // List by tag
-router.get('/:slug', getBlogPost); // Single post by slug
+router.use('/tags', blogTagRoutes);         // /api/blog/tags
+router.use('/categories', blogCategoryRoutes); // /api/blog/categories
 
-// Authenticated
+// ─────────────── PUBLIC ROUTES ──────────────
+
+// List all published posts, with optional query
+router.get('/', listBlogPosts); // ?category=&tag=&search=&page=&limit=
+
+// List by category/tag for SEO-friendly URLs (category/tag slugs)
+router.get('/category/:slug', listBlogPosts);
+router.get('/tag/:slug', listBlogPosts);
+
+// Single published post by slug
+router.get('/:slug', getBlogPost);
+
+// ─────────────── AUTH ROUTES ──────────────
+
+// List my authored posts (authenticated)
 router.get('/my-posts', protect, listMyBlogPosts);
 
-// Create/update/delete
-router.post('/', protect, requireRole(['AUTHOR','SUPERADMIN', 'EDITOR', 'ADMIN']), validateRequest(blogPostSchema), createBlogPost);
-router.put('/:id', protect, requireRole(['AUTHOR', 'SUPERADMIN','EDITOR', 'ADMIN']), validateRequest(blogPostSchema, true), updateBlogPost);
-router.delete('/:id', protect, requireRole(['AUTHOR', 'SUPERADMIN','EDITOR', 'ADMIN']), deleteBlogPost);
+// ─────────────── ADMIN/AUTHOR ROUTES ──────────────
 
-// Publish/unpublish (schedule)
-router.patch('/:id/publish', protect, requireRole(['AUTHOR','SUPERADMIN', 'EDITOR', 'ADMIN']), publishBlogPost);
+// Create a new post (requires AUTHOR, SUPERADMIN, etc)
+router.post(
+  '/',
+  protect,
+  requireRole(['AUTHOR', 'SUPERADMIN', 'EDITOR', 'ADMIN']),
+  validateRequest(blogPostSchema),
+  createBlogPost
+);
 
-// Revisions
-router.get('/:id/revisions', protect, requireRole(['AUTHOR', 'SUPERADMIN','EDITOR', 'ADMIN']), getBlogRevisions);
+// Update a post (requires role/ownership, partial validation)
+router.put(
+  '/:id',
+  protect,
+  requireRole(['AUTHOR', 'SUPERADMIN', 'EDITOR', 'ADMIN']),
+  validateRequest(blogPostSchema, true),
+  updateBlogPost
+);
+
+// Delete a post (requires role/ownership)
+router.delete(
+  '/:id',
+  protect,
+  requireRole(['AUTHOR', 'SUPERADMIN', 'EDITOR', 'ADMIN']),
+  deleteBlogPost
+);
+
+// Publish a post (requires role/ownership)
+router.patch(
+  '/:id/publish',
+  protect,
+  requireRole(['AUTHOR', 'SUPERADMIN', 'EDITOR', 'ADMIN']),
+  publishBlogPost
+);
+
+// Get revision history (requires role/ownership)
+router.get(
+  '/:id/revisions',
+  protect,
+  requireRole(['AUTHOR', 'SUPERADMIN', 'EDITOR', 'ADMIN']),
+  getBlogRevisions
+);
 
 export default router;
 
